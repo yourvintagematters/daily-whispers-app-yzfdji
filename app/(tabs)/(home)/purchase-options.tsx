@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View, Text, Platform, ScrollView } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
 
@@ -25,7 +25,7 @@ const PURCHASE_OPTIONS: PurchaseOption[] = [
   },
   {
     id: 'bestiesBundle',
-    name: 'Besties Bundle',
+    name: 'Share 3 x the love',
     description: 'Gift 3 different quote sets to 3 people',
     price: 18.99,
     count: 3,
@@ -33,7 +33,7 @@ const PURCHASE_OPTIONS: PurchaseOption[] = [
   },
   {
     id: 'shareTheLoveBigTime',
-    name: 'Share the Love Big Time',
+    name: 'Share 10 x the love',
     description: 'Gift 10 quote sets to 10 people + bonus theme for you',
     price: 49.99,
     count: 10,
@@ -105,49 +105,61 @@ export default function PurchaseOptionsScreen() {
           }}
         />
       )}
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <ScrollView
-          contentContainerStyle={[
-            styles.scrollContainer,
-            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
-          ]}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Header Section */}
-          <View style={styles.headerSection}>
-            <Text style={[styles.title, { color: theme.colors.text }]}>
-              How Many People?
-            </Text>
-            <Text style={[styles.subtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
-              Choose how many people you want to gift to
-            </Text>
-          </View>
+      <ImageBackground
+        source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop' }}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
+      >
+        <View style={[styles.container, { backgroundColor: theme.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)' }]}>
+          <ScrollView
+            contentContainerStyle={[
+              styles.scrollContainer,
+              Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Header Section */}
+            <View style={styles.headerSection}>
+              <Text style={[styles.title, { color: theme.colors.text }]}>
+                How Many People?
+              </Text>
+              <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+                Choose how many people you want to gift to
+              </Text>
+            </View>
 
-          {/* Purchase Options */}
-          <View style={styles.optionsContainer}>
-            {PURCHASE_OPTIONS.map(option => renderOptionButton(option))}
-          </View>
+            {/* Purchase Options */}
+            <View style={styles.optionsContainer}>
+              {PURCHASE_OPTIONS.map(option => renderOptionButton(option))}
+            </View>
 
-          {/* Info Section */}
-          <View style={[styles.infoSection, { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }]}>
-            <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
-              What Happens Next?
-            </Text>
-            <Text style={[styles.infoText, { color: theme.dark ? '#98989D' : '#666' }]}>
-              1. Choose your option above{'\n'}
-              2. Enter recipient details{'\n'}
-              3. Select themes for each recipient{'\n'}
-              4. Complete payment{'\n'}
-              5. Recipients get daily quotes for a year!
-            </Text>
-          </View>
-        </ScrollView>
-      </View>
+            {/* Info Section */}
+            <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(242,242,247,0.9)' }]}>
+              <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+                What Happens Next?
+              </Text>
+              <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+                1. Choose your option above{'\n'}
+                2. Enter recipient details{'\n'}
+                3. Select themes for each recipient{'\n'}
+                4. Complete payment{'\n'}
+                5. Recipients get daily quotes for a year!
+              </Text>
+            </View>
+          </ScrollView>
+        </View>
+      </ImageBackground>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+  },
+  backgroundImageStyle: {
+    opacity: 0.3,
+  },
   container: {
     flex: 1,
   },

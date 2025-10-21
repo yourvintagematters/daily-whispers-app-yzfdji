@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Share, Alert } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Share, Alert, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
@@ -9,12 +11,12 @@ import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors
 
 export default function ProfileScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [currentQuote, setCurrentQuote] = useState<string>("");
   const [currentTheme, setCurrentTheme] = useState<string>("");
 
   useEffect(() => {
-    // Set up notification handler
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowBanner: true,
@@ -23,10 +25,7 @@ export default function ProfileScreen() {
       }),
     });
 
-    // Check notification permissions
     checkNotificationPermissions();
-
-    // Load a sample quote
     loadSampleQuote();
   }, []);
 
@@ -87,129 +86,158 @@ export default function ProfileScreen() {
 
   const themeData = currentTheme ? DAILY_WHISPERS_THEMES[currentTheme as keyof typeof DAILY_WHISPERS_THEMES] : null;
 
+  const renderHeaderLeft = () => (
+    <Pressable
+      onPress={() => router.back()}
+      style={styles.headerButtonContainer}
+    >
+      <IconSymbol name="chevron.left" color={theme.colors.primary} />
+    </Pressable>
+  );
+
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={[
-          styles.contentContainer,
-          Platform.OS !== 'ios' && styles.contentContainerWithTabBar
-        ]}
-        showsVerticalScrollIndicator={false}
+    <>
+      {Platform.OS === 'ios' && (
+        <Stack.Screen
+          options={{
+            title: "Today's Quote",
+            headerLeft: renderHeaderLeft,
+          }}
+        />
+      )}
+      <ImageBackground
+        source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop' }}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
       >
-        <Text style={[styles.title, { color: theme.colors.text }]}>Today's Quote</Text>
-
-        {/* Quote Display */}
-        {themeData && (
-          <View
-            style={[
-              styles.quoteContainer,
-              { backgroundColor: themeData.pastelColor },
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)' }]} edges={['top']}>
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={[
+              styles.contentContainer,
+              Platform.OS !== 'ios' && styles.contentContainerWithTabBar
             ]}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.quoteEmoji}>{themeData.emoji}</Text>
-            <Text style={[styles.quoteText, { color: theme.colors.text }]}>
-              {currentQuote}
-            </Text>
-            <Text style={[styles.quoteDate, { color: theme.colors.text }]}>
-              {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </Text>
-          </View>
-        )}
+            <Text style={[styles.title, { color: theme.colors.text }]}>Today's Quote</Text>
 
-        {/* Action Buttons */}
-        <View style={styles.buttonRow}>
-          <Pressable
-            style={[
-              styles.button,
-              { backgroundColor: theme.colors.primary },
-            ]}
-            onPress={handleShare}
-          >
-            <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-              Share
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.button,
-              { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' },
-            ]}
-            onPress={loadSampleQuote}
-          >
-            <Text style={[styles.buttonText, { color: theme.colors.text }]}>
-              Next Quote
-            </Text>
-          </Pressable>
-        </View>
-
-        {/* Notification Settings */}
-        <GlassView style={[
-          styles.settingsSection,
-          Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-        ]} glassEffectStyle="regular">
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            Notifications
-          </Text>
-          <Pressable
-            style={styles.settingItem}
-            onPress={() => {
-              if (!notificationsEnabled) {
-                requestNotificationPermissions();
-              } else {
-                setNotificationsEnabled(false);
-              }
-            }}
-          >
-            <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
-              Daily Quotes
-            </Text>
-            <View
-              style={[
-                styles.toggle,
-                {
-                  backgroundColor: notificationsEnabled ? '#34C759' : '#E5E5EA',
-                },
-              ]}
-            >
+            {themeData && (
               <View
                 style={[
-                  styles.toggleInner,
-                  {
-                    alignSelf: notificationsEnabled ? 'flex-end' : 'flex-start',
-                  },
+                  styles.quoteCard,
+                  { backgroundColor: themeData.pastelColor },
                 ]}
-              />
-            </View>
-          </Pressable>
-        </GlassView>
+              >
+                <View style={styles.cardInner}>
+                  <Text style={styles.quoteEmoji}>{themeData.emoji}</Text>
+                  <Text style={[styles.quoteText, { color: theme.colors.text }]}>
+                    {currentQuote}
+                  </Text>
+                  <Text style={[styles.quoteDate, { color: theme.colors.text }]}>
+                    {new Date().toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </Text>
+                </View>
+              </View>
+            )}
 
-        {/* About Section */}
-        <GlassView style={[
-          styles.section,
-          Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-        ]} glassEffectStyle="regular">
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            About Daily Whispers
-          </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text }]}>
-            Daily Whispers is a gift-based app that delivers daily inspiration through carefully curated quotes. Gift a quote set to someone special and they'll receive a unique quote every day for a year.
-          </Text>
-          <Text style={[styles.infoText, { color: theme.dark ? '#98989D' : '#666' }]}>
-            Version 1.0.0
-          </Text>
-        </GlassView>
-      </ScrollView>
-    </SafeAreaView>
+            <View style={styles.buttonRow}>
+              <Pressable
+                style={[
+                  styles.button,
+                  { backgroundColor: theme.colors.primary },
+                ]}
+                onPress={handleShare}
+              >
+                <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
+                  Share
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.button,
+                  { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(242,242,247,0.9)' },
+                ]}
+                onPress={loadSampleQuote}
+              >
+                <Text style={[styles.buttonText, { color: theme.colors.text }]}>
+                  Next Quote
+                </Text>
+              </Pressable>
+            </View>
+
+            <GlassView style={[
+              styles.settingsSection,
+              Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+            ]} glassEffectStyle="regular">
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+                Notifications
+              </Text>
+              <Pressable
+                style={styles.settingItem}
+                onPress={() => {
+                  if (!notificationsEnabled) {
+                    requestNotificationPermissions();
+                  } else {
+                    setNotificationsEnabled(false);
+                  }
+                }}
+              >
+                <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
+                  Daily Quotes
+                </Text>
+                <View
+                  style={[
+                    styles.toggle,
+                    {
+                      backgroundColor: notificationsEnabled ? '#34C759' : '#E5E5EA',
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.toggleInner,
+                      {
+                        alignSelf: notificationsEnabled ? 'flex-end' : 'flex-start',
+                      },
+                    ]}
+                  />
+                </View>
+              </Pressable>
+            </GlassView>
+
+            <GlassView style={[
+              styles.section,
+              Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+            ]} glassEffectStyle="regular">
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+                About Daily Whispers
+              </Text>
+              <Text style={[styles.infoText, { color: theme.colors.text }]}>
+                Daily Whispers is a gift-based app that delivers daily inspiration through carefully curated quotes. Gift a quote set to someone special and they'll receive a unique quote every day for a year.
+              </Text>
+              <Text style={[styles.infoText, { color: theme.dark ? '#98989D' : '#666' }]}>
+                Version 1.0.0
+              </Text>
+            </GlassView>
+          </ScrollView>
+        </SafeAreaView>
+      </ImageBackground>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+  },
+  backgroundImageStyle: {
+    opacity: 0.3,
+  },
   safeArea: {
     flex: 1,
   },
@@ -227,29 +255,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
-  quoteContainer: {
-    borderRadius: 16,
-    padding: 24,
+  quoteCard: {
+    borderRadius: 20,
+    padding: 0,
     marginBottom: 24,
-    minHeight: 200,
+    minHeight: 280,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  cardInner: {
+    padding: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   quoteEmoji: {
-    fontSize: 48,
+    fontSize: 56,
     marginBottom: 16,
   },
   quoteText: {
-    fontSize: 18,
+    fontSize: 20,
     fontStyle: 'italic',
     textAlign: 'center',
-    lineHeight: 26,
-    marginBottom: 16,
+    lineHeight: 28,
+    marginBottom: 20,
+    fontWeight: '500',
   },
   quoteDate: {
     fontSize: 12,
@@ -321,5 +355,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 8,
+  },
+  headerButtonContainer: {
+    padding: 6,
   },
 });
