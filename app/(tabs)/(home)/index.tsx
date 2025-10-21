@@ -25,7 +25,7 @@ function ThemeButton({ item, isSelected, onPress, themeColors }: ThemeButtonProp
   }));
 
   const handlePress = () => {
-    scaleValue.value = withSpring(1.05, { damping: 10, mass: 1 }, () => {
+    scaleValue.value = withSpring(1.1, { damping: 10, mass: 1 }, () => {
       scaleValue.value = withSpring(1, { damping: 10, mass: 1 });
     });
     onPress(item.id);
@@ -35,28 +35,32 @@ function ThemeButton({ item, isSelected, onPress, themeColors }: ThemeButtonProp
   const borderColor = isSelected ? item.buttonColor : 'transparent';
 
   return (
-    <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
-      <Pressable
-        onPress={handlePress}
-        style={[
-          styles.themeButton,
-          {
-            backgroundColor: item.buttonColor,
-            borderColor: borderColor,
-            borderWidth: isSelected ? 3 : 0,
-          },
-        ]}
-      >
-        <Text style={styles.themeEmoji}>{item.emoji}</Text>
-        <Text style={[styles.themeName, { color: textColor }]}>{item.name}</Text>
-        <Text style={[styles.themePrice, { color: textColor, opacity: 0.8 }]}>
+    <View style={styles.themeButtonContainer}>
+      <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
+        <Pressable
+          onPress={handlePress}
+          style={[
+            styles.themeButton,
+            {
+              backgroundColor: item.buttonColor,
+              borderColor: borderColor,
+              borderWidth: isSelected ? 3 : 0,
+            },
+          ]}
+        >
+          <Text style={styles.themeEmoji}>{item.emoji}</Text>
+        </Pressable>
+      </Animated.View>
+      <View style={styles.themeTextContainer}>
+        <Text style={[styles.themeName, { color: themeColors.text }]}>{item.name}</Text>
+        <Text style={[styles.themePrice, { color: themeColors.text, opacity: 0.7 }]}>
           ${item.price.toFixed(2)}
         </Text>
-      </Pressable>
-      <Text style={[styles.themeDescription, { color: themeColors.text }]}>
-        {item.description}
-      </Text>
-    </Animated.View>
+        <Text style={[styles.themeDescription, { color: themeColors.text }]}>
+          {item.description}
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -283,15 +287,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 12,
   },
-  themeButtonWrapper: {
+  themeButtonContainer: {
+    flexDirection: 'row',
     marginBottom: 16,
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  themeButtonWrapper: {
+    flexShrink: 0,
   },
   themeButton: {
-    borderRadius: 16,
-    padding: 20,
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+    padding: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 120,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -300,21 +311,25 @@ const styles = StyleSheet.create({
   },
   themeEmoji: {
     fontSize: 40,
-    marginBottom: 8,
+  },
+  themeTextContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    paddingTop: 4,
   },
   themeName: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  themePrice: {
+    fontSize: 13,
     fontWeight: '600',
     marginBottom: 4,
   },
-  themePrice: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
   themeDescription: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 8,
+    fontSize: 12,
+    lineHeight: 16,
   },
   examplesContainer: {
     borderRadius: 12,
