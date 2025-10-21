@@ -53,11 +53,11 @@ function ThemeButton({ item, isSelected, onPress, themeColors }: ThemeButtonProp
       </Animated.View>
       <View style={styles.themeTextContainer}>
         <Text style={[styles.themeName, { color: themeColors.text }]}>{item.name}</Text>
-        <Text style={[styles.themePrice, { color: themeColors.text, opacity: 0.7 }]}>
-          ${item.price.toFixed(2)}
-        </Text>
         <Text style={[styles.themeDescription, { color: themeColors.text }]}>
           {item.description}
+        </Text>
+        <Text style={[styles.themePrice, { color: themeColors.text, opacity: 0.7 }]}>
+          ${item.price.toFixed(2)}
         </Text>
       </View>
     </View>
@@ -102,66 +102,46 @@ export default function HomeScreen() {
             </View>
           ))}
         </ScrollView>
-        <Pressable
-          style={[styles.purchaseButton, { backgroundColor: theme_data.buttonColor }]}
-          onPress={() => {
-            Alert.alert(
-              "Purchase",
-              `Purchase "${theme_data.name}" for $${theme_data.price.toFixed(2)}?`,
-              [
-                { text: "Cancel", onPress: () => console.log("Cancelled"), style: "cancel" },
-                {
-                  text: "Purchase",
-                  onPress: () => {
-                    Alert.alert("Success", "Quote set purchased! You can now gift it or start receiving daily quotes.");
+        <View style={styles.examplesButtonContainer}>
+          <Pressable
+            style={[styles.purchaseButton, { backgroundColor: theme_data.buttonColor }]}
+            onPress={() => {
+              Alert.alert(
+                "Purchase",
+                `Purchase "${theme_data.name}" for $${theme_data.price.toFixed(2)}?`,
+                [
+                  { text: "Cancel", onPress: () => console.log("Cancelled"), style: "cancel" },
+                  {
+                    text: "Purchase",
+                    onPress: () => {
+                      Alert.alert("Success", "Quote set purchased! You can now gift it or start receiving daily quotes.");
+                    },
                   },
-                },
-              ]
-            );
-          }}
-        >
-          <Text style={[styles.purchaseButtonText, { color: theme_data.textColor || '#FFFFFF' }]}>
-            Purchase for ${theme_data.price.toFixed(2)}
-          </Text>
-        </Pressable>
+                ]
+              );
+            }}
+          >
+            <Text style={[styles.purchaseButtonText, { color: theme_data.textColor || '#FFFFFF' }]}>
+              Purchase for ${theme_data.price.toFixed(2)}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[styles.bundlesButton, { backgroundColor: theme.colors.primary }]}
+            onPress={() => {
+              router.push({
+                pathname: '/(tabs)/(home)/bundles',
+                params: { selectedTheme }
+              });
+            }}
+          >
+            <Text style={[styles.bundlesButtonText, { color: '#FFFFFF' }]}>
+              View Bundles
+            </Text>
+          </Pressable>
+        </View>
       </View>
     );
   };
-
-  const renderBundleButton = ({ item }: { item: typeof DAILY_WHISPERS_BUNDLES[0] }) => (
-    <Pressable
-      style={[
-        styles.bundleButton,
-        { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' },
-      ]}
-      onPress={() => {
-        Alert.alert(
-          "Purchase Bundle",
-          `Purchase "${item.name}" for $${item.price.toFixed(2)}? (${item.savings})`,
-          [
-            { text: "Cancel", onPress: () => console.log("Cancelled"), style: "cancel" },
-            {
-              text: "Purchase",
-              onPress: () => {
-                Alert.alert("Success", `${item.name} purchased! You can now gift these quote sets.`);
-              },
-            },
-          ]
-        );
-      }}
-    >
-      <View style={styles.bundleContent}>
-        <Text style={[styles.bundleName, { color: theme.colors.text }]}>{item.name}</Text>
-        <Text style={[styles.bundleDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
-          {item.description}
-        </Text>
-        <Text style={[styles.bundleSavings, { color: '#34C759' }]}>{item.savings}</Text>
-      </View>
-      <Text style={[styles.bundlePrice, { color: theme.colors.primary }]}>
-        ${item.price.toFixed(2)}
-      </Text>
-    </Pressable>
-  );
 
   const renderHeaderRight = () => (
     <Pressable
@@ -196,7 +176,7 @@ export default function HomeScreen() {
               Daily Whispers
             </Text>
             <Text style={[styles.subtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
-              Gift daily inspiration for a year
+              Gift someone you care about a whole year of love
             </Text>
           </View>
 
@@ -223,20 +203,6 @@ export default function HomeScreen() {
 
           {/* Example Quotes Section */}
           {renderExampleQuotes()}
-
-          {/* Bundles Section */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-              Bundle Deals
-            </Text>
-            <FlatList
-              data={DAILY_WHISPERS_BUNDLES}
-              renderItem={renderBundleButton}
-              keyExtractor={(item) => item.id}
-              scrollEnabled={false}
-              nestedScrollEnabled={false}
-            />
-          </View>
 
           {/* Info Section */}
           <View style={[styles.infoSection, { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }]}>
@@ -269,6 +235,7 @@ const styles = StyleSheet.create({
   },
   titleSection: {
     marginBottom: 24,
+    alignItems: 'center',
   },
   mainTitle: {
     fontSize: 32,
@@ -276,8 +243,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
-    fontWeight: '400',
+    fontSize: 20,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   section: {
     marginBottom: 24,
@@ -320,16 +288,16 @@ const styles = StyleSheet.create({
   themeName: {
     fontSize: 16,
     fontWeight: '700',
-    marginBottom: 2,
-  },
-  themePrice: {
-    fontSize: 13,
-    fontWeight: '600',
     marginBottom: 4,
   },
   themeDescription: {
     fontSize: 12,
     lineHeight: 16,
+    marginBottom: 6,
+  },
+  themePrice: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   examplesContainer: {
     borderRadius: 12,
@@ -365,7 +333,12 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     lineHeight: 20,
   },
+  examplesButtonContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
   purchaseButton: {
+    flex: 1,
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -374,39 +347,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  bundleButton: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  bundleContent: {
+  bundlesButton: {
     flex: 1,
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
   },
-  bundleName: {
+  bundlesButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4,
-  },
-  bundleDescription: {
-    fontSize: 13,
-    marginBottom: 4,
-  },
-  bundleSavings: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  bundlePrice: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginLeft: 12,
   },
   infoSection: {
     borderRadius: 12,

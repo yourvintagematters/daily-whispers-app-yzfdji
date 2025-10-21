@@ -11,6 +11,13 @@ export default function HomeLayout() {
           title: 'Daily Whispers'
         }}
       />
+      <Stack.Screen
+        name="bundles"
+        options={{
+          title: 'Bundle Deals',
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }
