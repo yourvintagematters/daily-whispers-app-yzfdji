@@ -1,47 +1,87 @@
 
 import React from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform, ScrollView } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { DAILY_WHISPERS_BUNDLES, DAILY_WHISPERS_THEMES } from "@/constants/Colors";
 import { IconSymbol } from "@/components/IconSymbol";
 
-export default function BundlesScreen() {
+interface PurchaseOption {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  count: number;
+  icon: string;
+}
+
+const PURCHASE_OPTIONS: PurchaseOption[] = [
+  {
+    id: 'singleTheme',
+    name: 'A Special Someone',
+    description: 'Gift one quote set to a special person',
+    price: 9.99,
+    count: 1,
+    icon: '💝',
+  },
+  {
+    id: 'bestiesBundle',
+    name: 'Besties Bundle',
+    description: 'Gift 3 different quote sets to 3 people',
+    price: 18.99,
+    count: 3,
+    icon: '👯',
+  },
+  {
+    id: 'shareTheLoveBigTime',
+    name: 'Share the Love Big Time',
+    description: 'Gift 10 quote sets to 10 people + bonus theme for you',
+    price: 49.99,
+    count: 10,
+    icon: '🌍',
+  },
+];
+
+export default function PurchaseOptionsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { selectedTheme } = useLocalSearchParams();
 
-  const renderBundleButton = ({ item }: { item: typeof DAILY_WHISPERS_BUNDLES[0] }) => (
+  const handleOptionSelect = (option: PurchaseOption) => {
+    console.log(`Selected option: ${option.id}`);
+    router.push({
+      pathname: '/(tabs)/(home)/recipient-details',
+      params: {
+        selectedTheme,
+        optionId: option.id,
+        optionName: option.name,
+        optionPrice: option.price.toString(),
+        optionCount: option.count.toString(),
+      }
+    });
+  };
+
+  const renderOptionButton = (option: PurchaseOption) => (
     <Pressable
+      key={option.id}
       style={[
-        styles.bundleButton,
+        styles.optionButton,
         { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' },
       ]}
-      onPress={() => {
-        Alert.alert(
-          "Purchase Bundle",
-          `Purchase "${item.name}" for $${item.price.toFixed(2)}? (${item.savings})`,
-          [
-            { text: "Cancel", onPress: () => console.log("Cancelled"), style: "cancel" },
-            {
-              text: "Purchase",
-              onPress: () => {
-                Alert.alert("Success", `${item.name} purchased! You can now gift these quote sets.`);
-              },
-            },
-          ]
-        );
-      }}
+      onPress={() => handleOptionSelect(option)}
     >
-      <View style={styles.bundleContent}>
-        <Text style={[styles.bundleName, { color: theme.colors.text }]}>{item.name}</Text>
-        <Text style={[styles.bundleDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
-          {item.description}
-        </Text>
-        <Text style={[styles.bundleSavings, { color: '#34C759' }]}>{item.savings}</Text>
+      <View style={styles.optionContent}>
+        <Text style={styles.optionIcon}>{option.icon}</Text>
+        <View style={styles.optionTextContainer}>
+          <Text style={[styles.optionName, { color: theme.colors.text }]}>
+            {option.name}
+          </Text>
+          <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
+            {option.description}
+          </Text>
+        </View>
       </View>
-      <Text style={[styles.bundlePrice, { color: theme.colors.primary }]}>
-        ${item.price.toFixed(2)}
+      <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
+        ${option.price.toFixed(2)}
       </Text>
     </Pressable>
   );
@@ -60,7 +100,7 @@ export default function BundlesScreen() {
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: "Bundle Deals",
+            title: "Purchase Options",
             headerLeft: renderHeaderLeft,
           }}
         />
@@ -76,32 +116,29 @@ export default function BundlesScreen() {
           {/* Header Section */}
           <View style={styles.headerSection}>
             <Text style={[styles.title, { color: theme.colors.text }]}>
-              Bundle Deals
+              How Many People?
             </Text>
             <Text style={[styles.subtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
-              Save more when you buy multiple quote sets
+              Choose how many people you want to gift to
             </Text>
           </View>
 
-          {/* Bundles List */}
-          <FlatList
-            data={DAILY_WHISPERS_BUNDLES}
-            renderItem={renderBundleButton}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false}
-            nestedScrollEnabled={false}
-          />
+          {/* Purchase Options */}
+          <View style={styles.optionsContainer}>
+            {PURCHASE_OPTIONS.map(option => renderOptionButton(option))}
+          </View>
 
           {/* Info Section */}
           <View style={[styles.infoSection, { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }]}>
             <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
-              Why Buy a Bundle?
+              What Happens Next?
             </Text>
             <Text style={[styles.infoText, { color: theme.dark ? '#98989D' : '#666' }]}>
-              • Save money on multiple quote sets{'\n'}
-              • Gift different themes to different people{'\n'}
-              • Enjoy variety throughout the year{'\n'}
-              • Perfect for group gifting
+              1. Choose your option above{'\n'}
+              2. Enter recipient details{'\n'}
+              3. Select themes for each recipient{'\n'}
+              4. Complete payment{'\n'}
+              5. Recipients get daily quotes for a year!
             </Text>
           </View>
         </ScrollView>
@@ -133,7 +170,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
-  bundleButton: {
+  optionsContainer: {
+    marginBottom: 24,
+  },
+  optionButton: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -146,23 +186,27 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  bundleContent: {
+  optionContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  optionIcon: {
+    fontSize: 32,
+  },
+  optionTextContainer: {
     flex: 1,
   },
-  bundleName: {
+  optionName: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
   },
-  bundleDescription: {
+  optionDescription: {
     fontSize: 13,
-    marginBottom: 4,
   },
-  bundleSavings: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  bundlePrice: {
+  optionPrice: {
     fontSize: 18,
     fontWeight: '700',
     marginLeft: 12,

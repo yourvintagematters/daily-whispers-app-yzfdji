@@ -129,13 +129,13 @@ export default function HomeScreen() {
             style={[styles.bundlesButton, { backgroundColor: theme.colors.primary }]}
             onPress={() => {
               router.push({
-                pathname: '/(tabs)/(home)/bundles',
+                pathname: '/(tabs)/(home)/purchase-options',
                 params: { selectedTheme }
               });
             }}
           >
             <Text style={[styles.bundlesButtonText, { color: '#FFFFFF' }]}>
-              View Bundles
+              View Options
             </Text>
           </Pressable>
         </View>

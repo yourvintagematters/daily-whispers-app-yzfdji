@@ -12,9 +12,23 @@ export default function HomeLayout() {
         }}
       />
       <Stack.Screen
-        name="bundles"
+        name="purchase-options"
         options={{
-          title: 'Bundle Deals',
+          title: 'Purchase Options',
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
+        name="recipient-details"
+        options={{
+          title: 'Recipient Details',
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
+        name="payment"
+        options={{
+          title: 'Payment',
           headerShown: true,
         }}
       />
