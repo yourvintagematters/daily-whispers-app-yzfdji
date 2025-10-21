@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Stack, Link, useRouter } from "expo-router";
 import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform, ScrollView } from "react-native";
@@ -9,6 +10,56 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-na
 
 const ICON_COLOR = "#007AFF";
 
+interface ThemeButtonProps {
+  item: typeof DAILY_WHISPERS_THEMES[keyof typeof DAILY_WHISPERS_THEMES];
+  isSelected: boolean;
+  onPress: (themeId: string) => void;
+  themeColors: any;
+}
+
+function ThemeButton({ item, isSelected, onPress, themeColors }: ThemeButtonProps) {
+  const scaleValue = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleValue.value }],
+  }));
+
+  const handlePress = () => {
+    scaleValue.value = withSpring(1.05, { damping: 10, mass: 1 }, () => {
+      scaleValue.value = withSpring(1, { damping: 10, mass: 1 });
+    });
+    onPress(item.id);
+  };
+
+  const textColor = item.textColor || '#FFFFFF';
+  const borderColor = isSelected ? item.buttonColor : 'transparent';
+
+  return (
+    <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
+      <Pressable
+        onPress={handlePress}
+        style={[
+          styles.themeButton,
+          {
+            backgroundColor: item.buttonColor,
+            borderColor: borderColor,
+            borderWidth: isSelected ? 3 : 0,
+          },
+        ]}
+      >
+        <Text style={styles.themeEmoji}>{item.emoji}</Text>
+        <Text style={[styles.themeName, { color: textColor }]}>{item.name}</Text>
+        <Text style={[styles.themePrice, { color: textColor, opacity: 0.8 }]}>
+          ${item.price.toFixed(2)}
+        </Text>
+      </Pressable>
+      <Text style={[styles.themeDescription, { color: themeColors.text }]}>
+        {item.description}
+      </Text>
+    </Animated.View>
+  );
+}
+
 export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -17,49 +68,9 @@ export default function HomeScreen() {
 
   const themes = Object.values(DAILY_WHISPERS_THEMES);
 
-  const renderThemeButton = ({ item }: { item: typeof DAILY_WHISPERS_THEMES[keyof typeof DAILY_WHISPERS_THEMES] }) => {
-    const isSelected = selectedTheme === item.id;
-    const scaleValue = useSharedValue(1);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: scaleValue.value }],
-    }));
-
-    const handlePress = () => {
-      scaleValue.value = withSpring(1.05, { damping: 10, mass: 1 }, () => {
-        scaleValue.value = withSpring(1, { damping: 10, mass: 1 });
-      });
-      setSelectedTheme(item.id);
-      setShowExamples(true);
-    };
-
-    const textColor = item.textColor || '#FFFFFF';
-    const borderColor = isSelected ? item.buttonColor : 'transparent';
-
-    return (
-      <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
-        <Pressable
-          onPress={handlePress}
-          style={[
-            styles.themeButton,
-            {
-              backgroundColor: item.buttonColor,
-              borderColor: borderColor,
-              borderWidth: isSelected ? 3 : 0,
-            },
-          ]}
-        >
-          <Text style={styles.themeEmoji}>{item.emoji}</Text>
-          <Text style={[styles.themeName, { color: textColor }]}>{item.name}</Text>
-          <Text style={[styles.themePrice, { color: textColor, opacity: 0.8 }]}>
-            ${item.price.toFixed(2)}
-          </Text>
-        </Pressable>
-        <Text style={[styles.themeDescription, { color: theme.colors.text }]}>
-          {item.description}
-        </Text>
-      </Animated.View>
-    );
+  const handleThemePress = (themeId: string) => {
+    setSelectedTheme(themeId);
+    setShowExamples(true);
   };
 
   const renderExampleQuotes = () => {
@@ -192,7 +203,14 @@ export default function HomeScreen() {
             </Text>
             <FlatList
               data={themes}
-              renderItem={renderThemeButton}
+              renderItem={({ item }) => (
+                <ThemeButton
+                  item={item}
+                  isSelected={selectedTheme === item.id}
+                  onPress={handleThemePress}
+                  themeColors={theme.colors}
+                />
+              )}
               keyExtractor={(item) => item.id}
               scrollEnabled={false}
               nestedScrollEnabled={false}
