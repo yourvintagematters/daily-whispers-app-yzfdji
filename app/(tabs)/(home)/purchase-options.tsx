@@ -4,6 +4,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
+import { APP_CUSTOMIZATION } from "@/constants/Colors";
 
 interface PurchaseOption {
   id: string;
@@ -17,27 +18,27 @@ interface PurchaseOption {
 const PURCHASE_OPTIONS: PurchaseOption[] = [
   {
     id: 'singleTheme',
-    name: 'A Special Someone',
-    description: 'Gift one quote set to a special person',
+    name: 'For Someone Special',
+    description: 'Let someone special know you think of them',
     price: 9.99,
     count: 1,
-    icon: '💝',
+    icon: '',
   },
   {
     id: 'bestiesBundle',
-    name: 'Share 3 x the love',
-    description: 'Gift 3 different quote sets to 3 people',
+    name: 'Besties Bundle',
+    description: 'Share 3x the Love for just 2x the price',
     price: 18.99,
     count: 3,
-    icon: '👯',
+    icon: '',
   },
   {
     id: 'shareTheLoveBigTime',
-    name: 'Share 10 x the love',
-    description: 'Gift 10 quote sets to 10 people + bonus theme for you',
+    name: 'Share the Love Big Time!',
+    description: 'Share 10x the Love, and feel the love back with a bonus selection for yourself',
     price: 49.99,
     count: 10,
-    icon: '🌍',
+    icon: '',
   },
 ];
 
@@ -70,7 +71,6 @@ export default function PurchaseOptionsScreen() {
       onPress={() => handleOptionSelect(option)}
     >
       <View style={styles.optionContent}>
-        <Text style={styles.optionIcon}>{option.icon}</Text>
         <View style={styles.optionTextContainer}>
           <Text style={[styles.optionName, { color: theme.colors.text }]}>
             {option.name}
@@ -78,11 +78,11 @@ export default function PurchaseOptionsScreen() {
           <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
             {option.description}
           </Text>
+          <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
+            ${option.price.toFixed(2)}
+          </Text>
         </View>
       </View>
-      <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
-        ${option.price.toFixed(2)}
-      </Text>
     </Pressable>
   );
 
@@ -106,7 +106,7 @@ export default function PurchaseOptionsScreen() {
         />
       )}
       <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop' }}
+        source={{ uri: APP_CUSTOMIZATION.backgroundImages.purchaseOptions }}
         style={styles.backgroundImage}
         imageStyle={styles.backgroundImageStyle}
       >
@@ -204,9 +204,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  optionIcon: {
-    fontSize: 32,
-  },
   optionTextContainer: {
     flex: 1,
   },
@@ -217,11 +214,11 @@ const styles = StyleSheet.create({
   },
   optionDescription: {
     fontSize: 13,
+    marginBottom: 8,
   },
   optionPrice: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
-    marginLeft: 12,
   },
   infoSection: {
     borderRadius: 12,

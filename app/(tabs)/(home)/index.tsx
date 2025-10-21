@@ -4,7 +4,7 @@ import { Stack, useRouter } from "expo-router";
 import { FlatList, Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { useTheme } from "@react-navigation/native";
-import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
+import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES, APP_CUSTOMIZATION } from "@/constants/Colors";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 interface ThemeButtonProps {
@@ -67,7 +67,6 @@ function QuoteCardPreview({ themeId, themeColors }: { themeId: string; themeColo
 
   return (
     <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
-      <Text style={styles.quoteCardEmoji}>{theme_data.emoji}</Text>
       <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
         "{randomQuote}"
       </Text>
@@ -111,7 +110,7 @@ export default function HomeScreen() {
         />
       )}
       <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop' }}
+        source={{ uri: APP_CUSTOMIZATION.backgroundImages.home }}
         style={styles.backgroundImage}
         imageStyle={styles.backgroundImageStyle}
       >
@@ -277,10 +276,6 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
     transform: [{ perspective: 1000 }, { rotateY: '-5deg' }],
-  },
-  quoteCardEmoji: {
-    fontSize: 32,
-    marginBottom: 12,
   },
   quoteCardText: {
     fontSize: 16,

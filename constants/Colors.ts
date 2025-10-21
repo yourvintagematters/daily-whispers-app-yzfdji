@@ -605,3 +605,45 @@ export const DAILY_WHISPERS_QUOTES = {
     "Together, we are stronger than we ever could be alone.",
   ],
 };
+
+// APP CUSTOMIZATION - You can easily change these settings!
+// HOW TO CUSTOMIZE:
+// 1. To change backgrounds: Replace the URLs in backgroundImages below with any URL from BACKGROUND_OPTIONS
+// 2. To add quote card graphics: Set showDecorations to true and add decorative text
+// 3. All changes are made in this file - no need to edit other files!
+export const APP_CUSTOMIZATION = {
+  // Background image URLs for different screens
+  // Change these to use different background images
+  backgroundImages: {
+    home: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop',
+    purchaseOptions: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop',
+  },
+  
+  // Quote card styling
+  quoteCardStyle: {
+    // Set to true to show decorative elements on quote cards
+    showDecorations: false,
+    // You can add custom decorative text/symbols here
+    decorationTop: '',
+    decorationBottom: '',
+  },
+};
+
+// BACKGROUND IMAGE OPTIONS - Choose one for each screen
+// Simply copy the URL you like and paste it into the backgroundImages object above
+export const BACKGROUND_OPTIONS = {
+  nature: [
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop', // Flowers
+    'https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=1200&h=1600&fit=crop', // Forest
+    'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&h=1600&fit=crop', // Ocean
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=1600&fit=crop', // Mountains
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=1600&fit=crop', // Sunset
+  ],
+  abstract: [
+    'https://images.unsplash.com/photo-1557672172-298e090d0f80?w=1200&h=1600&fit=crop', // Gradient
+    'https://images.unsplash.com/photo-1557672172-298e090d0f80?w=1200&h=1600&fit=crop', // Watercolor
+  ],
+  minimal: [
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop', // Light
+  ],
+};
