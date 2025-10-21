@@ -459,3 +459,143 @@ export const emojies = [
   "💛",
   "💜",
 ];
+
+// Daily Whispers Theme Colors and Styles
+export const DAILY_WHISPERS_THEMES = {
+  youAreLoved: {
+    id: 'youAreLoved',
+    name: 'You Are Loved',
+    emoji: '❤️',
+    buttonColor: '#EF4444',
+    pastelColor: '#FEE2E2',
+    description: 'Celebrating our value and the importance of self-love, and reminding us that we are appreciated',
+    price: 9.99,
+  },
+  funnySideOfLife: {
+    id: 'funnySideOfLife',
+    name: 'The Funny Side of Life',
+    emoji: '😂',
+    buttonColor: '#14B8A6',
+    pastelColor: '#CCFBF1',
+    description: 'Give someone a daily laugh with 365 days of funny quotes about being human',
+    price: 9.99,
+  },
+  gratitudePearls: {
+    id: 'gratitudePearls',
+    name: 'Gratitude Pearls',
+    emoji: '🦪',
+    buttonColor: '#3B82F6',
+    pastelColor: '#DBEAFE',
+    description: 'Daily reminders to appreciate the simple joys and blessings in life, fostering a heart of gratitude.',
+    price: 9.99,
+  },
+  whispersFromNature: {
+    id: 'whispersFromNature',
+    name: 'Whispers from Nature',
+    emoji: '🍃',
+    buttonColor: '#86EFAC',
+    pastelColor: '#DCFCE7',
+    description: '365 days of inspiration drawn from the natural world and our connection to it',
+    price: 9.99,
+  },
+  aCatsLife: {
+    id: 'aCatsLife',
+    name: 'A Cat\'s Life',
+    emoji: '🐱',
+    buttonColor: '#FFFFFF',
+    pastelColor: '#F5F5F5',
+    description: '365 days of feline philosophy - celebrating independence and self-love',
+    price: 9.99,
+    textColor: '#000000',
+  },
+  aDogsLife: {
+    id: 'aDogsLife',
+    name: 'A Dog\'s Life',
+    emoji: '🐕',
+    buttonColor: '#3B82F6',
+    pastelColor: '#DBEAFE',
+    description: 'Daily lessons from our canine companions - celebrating loyalty, unconditional love, living in the moment, and the pure joy dogs bring',
+    price: 9.99,
+  },
+  threadsOfConnection: {
+    id: 'threadsOfConnection',
+    name: 'Threads of Connection',
+    emoji: '🤝',
+    buttonColor: '#A855F7',
+    pastelColor: '#F3E8FF',
+    description: '365 Days affirming Human connection, being part of a global community, and the beautiful ways we touch each other\'s lives',
+    price: 9.99,
+  },
+};
+
+export const DAILY_WHISPERS_BUNDLES = [
+  {
+    id: 'bestiesBundle',
+    name: 'Besties Bundle',
+    description: 'Get 3 quote sets',
+    price: 18.99,
+    count: 3,
+    savings: '5% off',
+  },
+  {
+    id: 'shareTheLoveBigTime',
+    name: 'Share the Love Big Time',
+    description: 'Get all 7 quote sets',
+    price: 49.99,
+    count: 7,
+    savings: '30% off',
+  },
+];
+
+// Sample quotes for each theme (3 examples shown, in real app would have 365)
+export const DAILY_WHISPERS_QUOTES = {
+  youAreLoved: [
+    "You are worthy of love, exactly as you are.",
+    "Your presence matters more than you know.",
+    "Self-love is not selfish; it's essential.",
+    "You deserve kindness, especially from yourself.",
+    "Your value is not determined by others' opinions.",
+  ],
+  funnySideOfLife: [
+    "Life is too short to be serious all the time.",
+    "Laughter is the best medicine, and it's free.",
+    "I'm not weird, I'm just limited edition.",
+    "Adulting is like folding a fitted sheet - nobody really knows how.",
+    "Coffee: because adulting is hard.",
+  ],
+  gratitudePearls: [
+    "Gratitude turns what we have into enough.",
+    "Every moment is a gift; that's why it's called the present.",
+    "Appreciate the little things; they are the big things.",
+    "A grateful heart is a magnet for miracles.",
+    "Thank you for the lessons, the growth, and the journey.",
+  ],
+  whispersFromNature: [
+    "In nature, we find peace and perspective.",
+    "The forest whispers secrets to those who listen.",
+    "Nature doesn't hurry, yet everything is accomplished.",
+    "Every flower is a soul blossoming in nature.",
+    "The earth has music for those who listen.",
+  ],
+  aCatsLife: [
+    "Independence is not lonely; it's freedom.",
+    "Cats know the secret: life is about balance and rest.",
+    "Purr through life's challenges with grace.",
+    "A cat's wisdom: do what makes you happy.",
+    "Elegance is an attitude; cats know this well.",
+  ],
+  aDogsLife: [
+    "Love unconditionally, like a dog loves their human.",
+    "Live in the moment; yesterday is gone, tomorrow hasn't come.",
+    "Loyalty is a choice, and it's beautiful.",
+    "A dog's joy is pure and infectious.",
+    "Greet each day with enthusiasm and an open heart.",
+  ],
+  threadsOfConnection: [
+    "We are all connected by invisible threads of compassion.",
+    "In helping others, we help ourselves.",
+    "Community is where we find strength and belonging.",
+    "Your kindness ripples through the world.",
+    "Together, we are stronger than we ever could be alone.",
+  ],
+};

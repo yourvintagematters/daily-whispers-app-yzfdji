@@ -1,78 +1,159 @@
-import React from "react";
-import { Stack, Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Stack, Link, useRouter } from "expo-router";
+import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform, ScrollView } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
+import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_BUNDLES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 const ICON_COLOR = "#007AFF";
 
 export default function HomeScreen() {
   const theme = useTheme();
-  const modalDemos = [
-    {
-      title: "Standard Modal",
-      description: "Full screen modal presentation",
-      route: "/modal",
-      color: "#007AFF",
-    },
-    {
-      title: "Form Sheet",
-      description: "Bottom sheet with detents and grabber",
-      route: "/formsheet",
-      color: "#34C759",
-    },
-    {
-      title: "Transparent Modal",
-      description: "Overlay without obscuring background",
-      route: "/transparent-modal",
-      color: "#FF9500",
-    }
-  ];
+  const router = useRouter();
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [showExamples, setShowExamples] = useState(false);
 
-  const renderModalDemo = ({ item }: { item: (typeof modalDemos)[0] }) => (
-    <GlassView style={[
-      styles.demoCard,
-      Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-    ]} glassEffectStyle="regular">
-      <View style={[styles.demoIcon, { backgroundColor: item.color }]}>
-        <IconSymbol name="square.grid.3x3" color="white" size={24} />
-      </View>
-      <View style={styles.demoContent}>
-        <Text style={[styles.demoTitle, { color: theme.colors.text }]}>{item.title}</Text>
-        <Text style={[styles.demoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>{item.description}</Text>
-      </View>
-      <Link href={item.route as any} asChild>
-        <Pressable>
-          <GlassView style={[
-            styles.tryButton,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }
-          ]} glassEffectStyle="clear">
-            <Text style={[styles.tryButtonText, { color: theme.colors.primary }]}>Try It</Text>
-          </GlassView>
+  const themes = Object.values(DAILY_WHISPERS_THEMES);
+
+  const renderThemeButton = ({ item }: { item: typeof DAILY_WHISPERS_THEMES[keyof typeof DAILY_WHISPERS_THEMES] }) => {
+    const isSelected = selectedTheme === item.id;
+    const scaleValue = useSharedValue(1);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scaleValue.value }],
+    }));
+
+    const handlePress = () => {
+      scaleValue.value = withSpring(1.05, { damping: 10, mass: 1 }, () => {
+        scaleValue.value = withSpring(1, { damping: 10, mass: 1 });
+      });
+      setSelectedTheme(item.id);
+      setShowExamples(true);
+    };
+
+    const textColor = item.textColor || '#FFFFFF';
+    const borderColor = isSelected ? item.buttonColor : 'transparent';
+
+    return (
+      <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
+        <Pressable
+          onPress={handlePress}
+          style={[
+            styles.themeButton,
+            {
+              backgroundColor: item.buttonColor,
+              borderColor: borderColor,
+              borderWidth: isSelected ? 3 : 0,
+            },
+          ]}
+        >
+          <Text style={styles.themeEmoji}>{item.emoji}</Text>
+          <Text style={[styles.themeName, { color: textColor }]}>{item.name}</Text>
+          <Text style={[styles.themePrice, { color: textColor, opacity: 0.8 }]}>
+            ${item.price.toFixed(2)}
+          </Text>
         </Pressable>
-      </Link>
-    </GlassView>
+        <Text style={[styles.themeDescription, { color: theme.colors.text }]}>
+          {item.description}
+        </Text>
+      </Animated.View>
+    );
+  };
+
+  const renderExampleQuotes = () => {
+    if (!selectedTheme || !showExamples) return null;
+
+    const theme_data = DAILY_WHISPERS_THEMES[selectedTheme as keyof typeof DAILY_WHISPERS_THEMES];
+    const quotes = DAILY_WHISPERS_QUOTES[selectedTheme as keyof typeof DAILY_WHISPERS_QUOTES] || [];
+
+    return (
+      <View style={[styles.examplesContainer, { backgroundColor: theme_data.pastelColor }]}>
+        <View style={styles.examplesHeader}>
+          <Text style={[styles.examplesTitle, { color: theme.colors.text }]}>
+            Sample Quotes
+          </Text>
+          <Pressable onPress={() => setShowExamples(false)}>
+            <Text style={[styles.closeButton, { color: theme.colors.text }]}>✕</Text>
+          </Pressable>
+        </View>
+        <ScrollView style={styles.quotesList} showsVerticalScrollIndicator={false}>
+          {quotes.slice(0, 3).map((quote, index) => (
+            <View key={index} style={styles.quoteItem}>
+              <Text style={[styles.quoteText, { color: theme.colors.text }]}>
+                "{quote}"
+              </Text>
+            </View>
+          ))}
+        </ScrollView>
+        <Pressable
+          style={[styles.purchaseButton, { backgroundColor: theme_data.buttonColor }]}
+          onPress={() => {
+            Alert.alert(
+              "Purchase",
+              `Purchase "${theme_data.name}" for $${theme_data.price.toFixed(2)}?`,
+              [
+                { text: "Cancel", onPress: () => console.log("Cancelled"), style: "cancel" },
+                {
+                  text: "Purchase",
+                  onPress: () => {
+                    Alert.alert("Success", "Quote set purchased! You can now gift it or start receiving daily quotes.");
+                  },
+                },
+              ]
+            );
+          }}
+        >
+          <Text style={[styles.purchaseButtonText, { color: theme_data.textColor || '#FFFFFF' }]}>
+            Purchase for ${theme_data.price.toFixed(2)}
+          </Text>
+        </Pressable>
+      </View>
+    );
+  };
+
+  const renderBundleButton = ({ item }: { item: typeof DAILY_WHISPERS_BUNDLES[0] }) => (
+    <Pressable
+      style={[
+        styles.bundleButton,
+        { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' },
+      ]}
+      onPress={() => {
+        Alert.alert(
+          "Purchase Bundle",
+          `Purchase "${item.name}" for $${item.price.toFixed(2)}? (${item.savings})`,
+          [
+            { text: "Cancel", onPress: () => console.log("Cancelled"), style: "cancel" },
+            {
+              text: "Purchase",
+              onPress: () => {
+                Alert.alert("Success", `${item.name} purchased! You can now gift these quote sets.`);
+              },
+            },
+          ]
+        );
+      }}
+    >
+      <View style={styles.bundleContent}>
+        <Text style={[styles.bundleName, { color: theme.colors.text }]}>{item.name}</Text>
+        <Text style={[styles.bundleDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
+          {item.description}
+        </Text>
+        <Text style={[styles.bundleSavings, { color: '#34C759' }]}>{item.savings}</Text>
+      </View>
+      <Text style={[styles.bundlePrice, { color: theme.colors.primary }]}>
+        ${item.price.toFixed(2)}
+      </Text>
+    </Pressable>
   );
 
   const renderHeaderRight = () => (
     <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
+      onPress={() => Alert.alert("Settings", "Settings not yet implemented")}
       style={styles.headerButtonContainer}
     >
-      <IconSymbol name="plus" color={theme.colors.primary} />
-    </Pressable>
-  );
-
-  const renderHeaderLeft = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol
-        name="gear"
-        color={theme.colors.primary}
-      />
+      <IconSymbol name="gear" color={theme.colors.primary} />
     </Pressable>
   );
 
@@ -81,24 +162,73 @@ export default function HomeScreen() {
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: "Building the app...",
+            title: "Daily Whispers",
             headerRight: renderHeaderRight,
-            headerLeft: renderHeaderLeft,
           }}
         />
       )}
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <FlatList
-          data={modalDemos}
-          renderItem={renderModalDemo}
-          keyExtractor={(item) => item.route}
+        <ScrollView
           contentContainerStyle={[
-            styles.listContainer,
-            Platform.OS !== 'ios' && styles.listContainerWithTabBar
+            styles.scrollContainer,
+            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
           ]}
-          contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
-        />
+        >
+          {/* Title Section */}
+          <View style={styles.titleSection}>
+            <Text style={[styles.mainTitle, { color: theme.colors.text }]}>
+              Daily Whispers
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
+              Gift daily inspiration for a year
+            </Text>
+          </View>
+
+          {/* Themes Section */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+              Choose a Theme
+            </Text>
+            <FlatList
+              data={themes}
+              renderItem={renderThemeButton}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+              nestedScrollEnabled={false}
+            />
+          </View>
+
+          {/* Example Quotes Section */}
+          {renderExampleQuotes()}
+
+          {/* Bundles Section */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+              Bundle Deals
+            </Text>
+            <FlatList
+              data={DAILY_WHISPERS_BUNDLES}
+              renderItem={renderBundleButton}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+              nestedScrollEnabled={false}
+            />
+          </View>
+
+          {/* Info Section */}
+          <View style={[styles.infoSection, { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }]}>
+            <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+              How It Works
+            </Text>
+            <Text style={[styles.infoText, { color: theme.dark ? '#98989D' : '#666' }]}>
+              1. Choose a theme and purchase a quote set{'\n'}
+              2. Gift it to someone special{'\n'}
+              3. They receive a daily notification with a unique quote{'\n'}
+              4. Each day for 365 days, a new quote arrives
+            </Text>
+          </View>
+        </ScrollView>
       </View>
     </>
   );
@@ -107,55 +237,159 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor handled dynamically
   },
-  listContainer: {
+  scrollContainer: {
     paddingVertical: 16,
     paddingHorizontal: 16,
   },
-  listContainerWithTabBar: {
-    paddingBottom: 100, // Extra padding for floating tab bar
+  scrollContainerWithTabBar: {
+    paddingBottom: 100,
   },
-  demoCard: {
+  titleSection: {
+    marginBottom: 24,
+  },
+  mainTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '400',
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  themeButtonWrapper: {
+    marginBottom: 16,
+  },
+  themeButton: {
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 120,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  themeEmoji: {
+    fontSize: 40,
+    marginBottom: 8,
+  },
+  themeName: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  themePrice: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  themeDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 8,
+  },
+  examplesContainer: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+  },
+  examplesHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  examplesTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  closeButton: {
+    fontSize: 24,
+    fontWeight: '600',
+  },
+  quotesList: {
+    maxHeight: 200,
+    marginBottom: 12,
+  },
+  quoteItem: {
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  quoteText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    lineHeight: 20,
+  },
+  purchaseButton: {
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+  },
+  purchaseButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  bundleButton: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  demoIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  demoContent: {
+  bundleContent: {
     flex: 1,
   },
-  demoTitle: {
-    fontSize: 18,
+  bundleName: {
+    fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
-    // color handled dynamically
   },
-  demoDescription: {
+  bundleDescription: {
+    fontSize: 13,
+    marginBottom: 4,
+  },
+  bundleSavings: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  bundlePrice: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginLeft: 12,
+  },
+  infoSection: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+  },
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  infoText: {
     fontSize: 14,
-    lineHeight: 18,
-    // color handled dynamically
+    lineHeight: 20,
   },
   headerButtonContainer: {
     padding: 6,
-  },
-  tryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  tryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    // color handled dynamically
   },
 });

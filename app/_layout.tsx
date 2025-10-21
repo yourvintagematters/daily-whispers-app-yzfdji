@@ -16,6 +16,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Button } from "@/components/button";
 import { WidgetProvider } from "@/contexts/WidgetContext";
+import * as Notifications from "expo-notifications";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,6 +37,28 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    // Set up notification handler
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowBanner: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+
+    // Listen for notification responses
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log("Notification response:", response);
+      }
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   React.useEffect(() => {
     if (

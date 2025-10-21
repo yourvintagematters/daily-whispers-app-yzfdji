@@ -11,13 +11,13 @@ export default function TabLayout() {
       name: '(home)',
       route: '/(tabs)/(home)/',
       icon: 'house.fill',
-      label: 'Home',
+      label: 'Shop',
     },
     {
       name: 'profile',
       route: '/(tabs)/profile',
-      icon: 'person.fill',
-      label: 'Profile',
+      icon: 'quote.bubble.fill',
+      label: 'Today',
     },
   ];
 
@@ -27,11 +27,11 @@ export default function TabLayout() {
       <NativeTabs>
         <NativeTabs.Trigger name="(home)">
           <Icon sf="house.fill" drawable="ic_home" />
-          <Label>Home</Label>
+          <Label>Shop</Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="profile">
-          <Icon sf="person.fill" drawable="ic_profile" />
-          <Label>Profile</Label>
+          <Icon sf="quote.bubble.fill" drawable="ic_profile" />
+          <Label>Today</Label>
         </NativeTabs.Trigger>
       </NativeTabs>
     );
