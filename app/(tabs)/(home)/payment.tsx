@@ -144,7 +144,7 @@ export default function PaymentScreen() {
           {/* Order Summary */}
           <View style={[
             styles.summaryCard,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }
+            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' }
           ]}>
             <Text style={[styles.summaryTitle, { color: theme.colors.text }]}>
               Order Summary
@@ -171,7 +171,7 @@ export default function PaymentScreen() {
           {/* Payment Form */}
           <View style={[
             styles.formCard,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }
+            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' }
           ]}>
             <Text style={[styles.formTitle, { color: theme.colors.text }]}>
               Card Details
@@ -187,7 +187,7 @@ export default function PaymentScreen() {
                   {
                     backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
                     color: theme.colors.text,
-                    borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
+                    borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
                   }
                 ]}
                 placeholder="John Doe"
@@ -207,7 +207,7 @@ export default function PaymentScreen() {
                   {
                     backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
                     color: theme.colors.text,
-                    borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
+                    borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
                   }
                 ]}
                 placeholder="1234 5678 9012 3456"
@@ -230,7 +230,7 @@ export default function PaymentScreen() {
                     {
                       backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
                       color: theme.colors.text,
-                      borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
+                      borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
                     }
                   ]}
                   placeholder="MM/YY"
@@ -252,7 +252,7 @@ export default function PaymentScreen() {
                     {
                       backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
                       color: theme.colors.text,
-                      borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
+                      borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
                     }
                   ]}
                   placeholder="123"
@@ -270,7 +270,7 @@ export default function PaymentScreen() {
           {/* Security Notice */}
           <View style={[
             styles.securityNotice,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }
+            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' }
           ]}>
             <IconSymbol name="lock.fill" color={theme.colors.primary} />
             <Text style={[styles.securityText, { color: theme.dark ? '#98989D' : '#666' }]}>

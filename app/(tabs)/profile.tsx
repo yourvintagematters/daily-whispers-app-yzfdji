@@ -84,6 +84,30 @@ export default function ProfileScreen() {
     }
   };
 
+  const simulateFakePurchase = () => {
+    const themeKeys = Object.keys(DAILY_WHISPERS_THEMES);
+    const randomThemeKey = themeKeys[Math.floor(Math.random() * themeKeys.length)];
+    const theme = DAILY_WHISPERS_THEMES[randomThemeKey as keyof typeof DAILY_WHISPERS_THEMES];
+    
+    Alert.alert(
+      "🎁 You Received a Gift!",
+      `Someone special sent you "${theme.name}" - a year of daily inspiration!\n\nYou'll receive your first quote tomorrow at 9:00 AM.`,
+      [
+        {
+          text: "View Theme",
+          onPress: () => {
+            setCurrentTheme(randomThemeKey);
+            loadSampleQuote();
+          }
+        },
+        {
+          text: "OK",
+          onPress: () => console.log("Gift received")
+        }
+      ]
+    );
+  };
+
   const themeData = currentTheme ? DAILY_WHISPERS_THEMES[currentTheme as keyof typeof DAILY_WHISPERS_THEMES] : null;
 
   const renderHeaderLeft = () => (
@@ -160,7 +184,7 @@ export default function ProfileScreen() {
               <Pressable
                 style={[
                   styles.button,
-                  { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(242,242,247,0.9)' },
+                  { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(227,218,201,0.9)' },
                 ]}
                 onPress={loadSampleQuote}
               >
@@ -169,6 +193,18 @@ export default function ProfileScreen() {
                 </Text>
               </Pressable>
             </View>
+
+            <Pressable
+              style={[
+                styles.testButton,
+                { backgroundColor: theme.dark ? 'rgba(76,175,80,0.2)' : 'rgba(76,175,80,0.15)' },
+              ]}
+              onPress={simulateFakePurchase}
+            >
+              <Text style={[styles.testButtonText, { color: '#4CAF50' }]}>
+                🧪 Test: Simulate Receiving a Gift
+              </Text>
+            </Pressable>
 
             <GlassView style={[
               styles.settingsSection,
@@ -358,5 +394,19 @@ const styles = StyleSheet.create({
   },
   headerButtonContainer: {
     padding: 6,
+  },
+  testButton: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  testButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });

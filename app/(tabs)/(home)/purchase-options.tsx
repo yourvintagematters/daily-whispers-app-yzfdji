@@ -66,7 +66,7 @@ export default function PurchaseOptionsScreen() {
       key={option.id}
       style={[
         styles.optionButton,
-        { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' },
+        { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' },
       ]}
       onPress={() => handleOptionSelect(option)}
     >
@@ -134,7 +134,7 @@ export default function PurchaseOptionsScreen() {
             </View>
 
             {/* Info Section */}
-            <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(242,242,247,0.9)' }]}>
+            <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(227,218,201,0.9)' }]}>
               <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
                 What Happens Next?
               </Text>

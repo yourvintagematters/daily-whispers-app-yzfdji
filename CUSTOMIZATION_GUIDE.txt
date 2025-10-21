@@ -1,0 +1,250 @@
+
+================================================================================
+                    DAILY WHISPERS - CUSTOMIZATION GUIDE
+================================================================================
+
+Welcome to Daily Whispers! This guide will help you customize the app to match
+your vision. All customization is done in one file: constants/Colors.ts
+
+================================================================================
+                          QUICK START CUSTOMIZATION
+================================================================================
+
+1. CHANGE BUTTON COLORS
+   Location: constants/Colors.ts
+   
+   Find the DAILY_WHISPERS_THEMES object and modify the buttonColor property:
+   
+   Example:
+   youAreLoved: {
+     buttonColor: '#5d8aa8',  // Change this hex color
+     pastelColor: '#f0f8ff',  // And this for the quote card background
+     ...
+   }
+
+2. CHANGE BACKGROUND IMAGES
+   Location: constants/Colors.ts
+   
+   Find the APP_CUSTOMIZATION object and update the backgroundImages URLs:
+   
+   backgroundImages: {
+     home: 'YOUR_NEW_URL_HERE',
+     purchaseOptions: 'YOUR_NEW_URL_HERE',
+   }
+   
+   Recommended sources:
+   - Unsplash: https://unsplash.com (free, high quality)
+   - Pexels: https://pexels.com (free, high quality)
+   - Pixabay: https://pixabay.com (free, high quality)
+
+3. CHANGE BUTTON STYLING (Light Grey to #e3dac9)
+   The default light grey buttons have been changed to #e3dac9 (warm beige).
+   
+   Files affected:
+   - app/(tabs)/(home)/purchase-options.tsx
+   - app/(tabs)/(home)/payment.tsx
+   - app/(tabs)/profile.tsx
+   
+   To change this color globally, search for '#e3dac9' in these files and
+   replace with your preferred color.
+
+================================================================================
+                        DETAILED CUSTOMIZATION OPTIONS
+================================================================================
+
+THEME COLORS
+============
+Each theme has the following customizable properties:
+
+- id: Unique identifier (don't change)
+- name: Display name (e.g., "You Are Loved")
+- emoji: Emoji shown on buttons (e.g., "❤️")
+- buttonColor: Main button color (hex code)
+- pastelColor: Quote card background color (hex code)
+- description: Text shown under the button
+- price: Cost of the theme ($9.99 default)
+- textColor: Text color on the button (#FFFFFF or #000000)
+
+Example modification:
+  youAreLoved: {
+    id: 'youAreLoved',
+    name: 'You Are Loved',
+    emoji: '❤️',
+    buttonColor: '#FF0000',      // Changed to bright red
+    pastelColor: '#FFE6E6',      // Changed to light red
+    description: 'Your custom description here',
+    price: 9.99,
+    textColor: '#FFFFFF',
+  }
+
+BUNDLE PRICING
+==============
+Modify bundle prices in the DAILY_WHISPERS_BUNDLES array:
+
+DAILY_WHISPERS_BUNDLES = [
+  {
+    id: 'bestiesBundle',
+    name: 'Besties Bundle',
+    description: 'Share 3x the Love for just 2x the price',
+    price: 18.99,  // Change this
+    count: 3,
+    savings: '5% off',
+  },
+  ...
+]
+
+QUOTE CARD STYLING
+==================
+Enable decorative elements on quote cards:
+
+quoteCardStyle: {
+  showDecorations: true,  // Set to true to enable
+  decorationTop: '✨',    // Add any emoji or symbol
+  decorationBottom: '✨',
+}
+
+================================================================================
+                        BACKGROUND IMAGE SUGGESTIONS
+================================================================================
+
+NATURE THEMES:
+- Flowers: https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop
+- Forest: https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=1200&h=1600&fit=crop
+- Ocean: https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&h=1600&fit=crop
+- Mountains: https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=1600&fit=crop
+- Sunset: https://images.unsplash.com/photo-1495567720989-cebdbdd97913?w=1200&h=1600&fit=crop
+
+ABSTRACT THEMES:
+- Gradient: https://images.unsplash.com/photo-1557672172-298e090d0f80?w=1200&h=1600&fit=crop
+- Watercolor: https://images.unsplash.com/photo-1578926078328-123456789012?w=1200&h=1600&fit=crop
+- Geometric: https://images.unsplash.com/photo-1557821552-17105176677c?w=1200&h=1600&fit=crop
+
+MINIMAL THEMES:
+- Soft Blur: https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop
+- Pastel: https://images.unsplash.com/photo-1557672172-298e090d0f80?w=1200&h=1600&fit=crop
+
+================================================================================
+                        TESTING FEATURES
+================================================================================
+
+SIMULATE RECEIVING A GIFT
+=========================
+To test how the app looks from a recipient's perspective:
+
+1. Go to the Profile/Today's Quote screen
+2. Tap the green "🧪 Test: Simulate Receiving a Gift" button
+3. You'll see an alert showing a random theme being gifted to you
+4. Tap "View Theme" to see how the recipient would experience it
+5. The app will show a random quote from that theme
+
+This is useful for:
+- Testing the gift notification flow
+- Seeing how different themes look
+- Verifying quote card styling
+- Testing the share functionality
+
+================================================================================
+                        COLOR HEX CODE REFERENCE
+================================================================================
+
+CURRENT THEME COLORS:
+- You Are Loved: #5d8aa8 (blue) with #f0f8ff (light blue)
+- The Funny Side of Life: #ff2052 (red) with #f4c2c2 (light pink)
+- Gratitude Pearls: #ed872d (orange) with #fad6a5 (light orange)
+- Whispers from Nature: #a4c639 (green) with #ace1af (light green)
+- A Cat's Life: #0095b6 (teal) with #e7feff (light cyan)
+- A Dog's Life: #f0e130 (yellow) with #e3dac9 (warm beige)
+- Threads of Connection: #de5d83 (pink) with #ffb7c5 (light pink)
+
+DEFAULT UI COLORS:
+- Primary Button: #007AFF (Apple Blue)
+- Light Grey (Updated): #e3dac9 (Warm Beige)
+- Dark Mode Background: #151718
+- Light Mode Background: #FFFFFF
+
+================================================================================
+                        COMMON CUSTOMIZATIONS
+================================================================================
+
+CHANGE ALL BUTTON COLORS TO MATCH A THEME:
+1. Open constants/Colors.ts
+2. Find the color you want (e.g., #e3dac9)
+3. Search and replace in purchase-options.tsx and payment.tsx
+4. Update the backgroundColor values in the styles
+
+CHANGE QUOTE CARD APPEARANCE:
+1. Open app/(tabs)/profile.tsx
+2. Find the quoteCard style
+3. Modify borderRadius, padding, or add new properties
+4. Update the pastelColor in each theme
+
+ADD NEW THEMES:
+1. Open constants/Colors.ts
+2. Add a new entry to DAILY_WHISPERS_THEMES
+3. Add corresponding quotes to DAILY_WHISPERS_QUOTES
+4. The theme will automatically appear on the home screen
+
+================================================================================
+                        TROUBLESHOOTING
+================================================================================
+
+COLORS NOT UPDATING?
+- Clear the app cache and restart
+- Make sure you saved the file
+- Check for typos in hex color codes
+
+BACKGROUND IMAGE NOT SHOWING?
+- Verify the URL is accessible (test in browser)
+- Check internet connection
+- Try a different image URL
+
+BUTTONS LOOK WRONG?
+- Verify the backgroundColor hex code is valid
+- Check that text color contrasts with background
+- Ensure borderRadius values are reasonable
+
+NEED HELP?
+- Check the file paths in this guide
+- Verify you're editing constants/Colors.ts
+- Look for console errors in the Expo dev tools
+
+================================================================================
+                        FILE LOCATIONS REFERENCE
+================================================================================
+
+Main Customization File:
+  constants/Colors.ts
+
+Screen Files (if you need to modify styling):
+  app/(tabs)/(home)/index.tsx (Home screen with themes)
+  app/(tabs)/(home)/purchase-options.tsx (Purchase options)
+  app/(tabs)/(home)/recipient-details.tsx (Recipient form)
+  app/(tabs)/(home)/payment.tsx (Payment screen)
+  app/(tabs)/profile.tsx (Today's Quote screen)
+
+Component Files:
+  components/button.tsx (Button styling)
+  components/FloatingTabBar.tsx (Bottom navigation)
+
+================================================================================
+                        QUICK REFERENCE: HEX COLOR PICKER
+================================================================================
+
+To find new colors, use:
+- https://htmlcolorcodes.com
+- https://colorhexa.com
+- https://www.color-hex.com
+
+Popular color palettes:
+- Pastel colors: https://www.canva.com/colors/color-palettes/pastel/
+- Nature colors: https://www.canva.com/colors/color-palettes/nature/
+- Warm colors: https://www.canva.com/colors/color-palettes/warm/
+
+================================================================================
+
+Last Updated: 2024
+Daily Whispers v1.0.0
+
+For more information, check the app's source code comments in constants/Colors.ts
+
+================================================================================

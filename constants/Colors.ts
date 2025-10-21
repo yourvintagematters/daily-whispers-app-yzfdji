@@ -647,3 +647,5 @@ export const BACKGROUND_OPTIONS = {
     'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop', // Light
   ],
 };
+
+// CUSTOMIZATION GUIDE - See CUSTOMIZATION_GUIDE.txt for detailed instructions
