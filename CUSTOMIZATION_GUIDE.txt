@@ -104,6 +104,88 @@ quoteCardStyle: {
 }
 
 ================================================================================
+                        HOW TO ADD IMAGES TO YOUR PROJECT
+================================================================================
+
+OPTION 1: USE IMAGES FROM THE WEB (EASIEST)
+============================================
+The app currently uses images from Unsplash (a free image service).
+
+To use a different web image:
+1. Go to https://unsplash.com or https://pexels.com
+2. Find an image you like
+3. Right-click and copy the image URL
+4. Open constants/Colors.ts
+5. Find the APP_CUSTOMIZATION section
+6. Replace the URL in backgroundImages:
+   
+   backgroundImages: {
+     home: 'https://your-new-image-url-here',
+     purchaseOptions: 'https://your-new-image-url-here',
+   }
+
+7. Save the file and refresh your app
+
+OPTION 2: ADD LOCAL IMAGES TO YOUR PROJECT
+===========================================
+To add images stored locally in your project:
+
+1. Create or find an image file (.png, .jpg, .webp, etc.)
+2. Place it in the assets/images/ folder
+   - Path: assets/images/my-image.png
+3. Import it in the file where you want to use it:
+   
+   import myImage from '@/assets/images/my-image.png';
+   
+4. Use it in an ImageBackground or Image component:
+   
+   <ImageBackground
+     source={myImage}
+     style={styles.backgroundImage}
+   >
+     {/* Your content here */}
+   </ImageBackground>
+
+OPTION 3: USE QUOTE CARD GRAPHICS
+==================================
+To add decorative graphics to quote cards:
+
+1. Open constants/Colors.ts
+2. Find the APP_CUSTOMIZATION section
+3. Enable decorations:
+   
+   quoteCardStyle: {
+     showDecorations: true,
+     decorationTop: '✨',
+     decorationBottom: '✨',
+   }
+
+4. You can use any emoji or Unicode symbol as decoration
+
+OPTION 4: CUSTOMIZE QUOTE CARD APPEARANCE
+==========================================
+To change how quote cards look:
+
+1. Open app/(tabs)/profile.tsx
+2. Find the styles.quoteCard section
+3. Modify properties like:
+   - borderRadius: 20 (roundness of corners)
+   - padding: 24 (space inside the card)
+   - shadowColor, shadowOffset, shadowOpacity (shadow effect)
+   - elevation (Android shadow)
+
+Example:
+  quoteCard: {
+    borderRadius: 20,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
+  }
+
+================================================================================
                         BACKGROUND IMAGE SUGGESTIONS
 ================================================================================
 

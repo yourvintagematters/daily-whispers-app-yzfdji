@@ -1,12 +1,15 @@
 
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Share, Alert, ImageBackground } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Share, Alert, ImageBackground, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 
 export default function ProfileScreen() {
@@ -15,6 +18,10 @@ export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [currentQuote, setCurrentQuote] = useState<string>("");
   const [currentTheme, setCurrentTheme] = useState<string>("");
+  const [recipientName, setRecipientName] = useState<string>("Friend");
+  const [quoteHistory, setQuoteHistory] = useState<string[]>([]);
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState<number>(0);
+  const quoteCardRef = useRef<View>(null);
 
   useEffect(() => {
     Notifications.setNotificationHandler({
@@ -42,6 +49,17 @@ export default function ProfileScreen() {
     
     setCurrentTheme(randomThemeKey);
     setCurrentQuote(randomQuote);
+    setQuoteHistory([randomQuote]);
+    setCurrentQuoteIndex(0);
+  };
+
+  const loadPreviousQuote = () => {
+    if (currentQuoteIndex < quoteHistory.length - 1) {
+      setCurrentQuoteIndex(currentQuoteIndex + 1);
+      setCurrentQuote(quoteHistory[currentQuoteIndex + 1]);
+    } else {
+      Alert.alert("No More Previous Quotes", "You've reached the beginning of your quote history.");
+    }
   };
 
   const requestNotificationPermissions = async () => {
@@ -75,23 +93,51 @@ export default function ProfileScreen() {
 
   const handleShare = async () => {
     try {
-      await Share.share({
-        message: `"${currentQuote}"\n\nReceive daily inspiration with Daily Whispers! Download the app to get your own daily quotes.`,
-        title: "Daily Whispers Quote",
-      });
+      Alert.alert("Sharing Quote", "Preparing your quote card to share...");
+      
+      if (quoteCardRef.current) {
+        const uri = await captureRef(quoteCardRef, {
+          format: "png",
+          quality: 0.95,
+        });
+
+        const fileName = `DailyWhispers_${Date.now()}.png`;
+        const newPath = `${FileSystem.documentDirectory}${fileName}`;
+        
+        await FileSystem.copyAsync({
+          from: uri,
+          to: newPath,
+        });
+
+        const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\nExplore Daily Whispers and discover more inspiring quotes: https://dailywhispers.app`;
+
+        await Sharing.shareAsync(newPath, {
+          mimeType: "image/png",
+          dialogTitle: "Share Your Daily Whispers Quote",
+          UTI: "com.apple.share",
+        });
+
+        console.log("Quote shared successfully!");
+      }
     } catch (error) {
       console.log("Error sharing:", error);
+      Alert.alert("Share Error", "Could not share the quote. Please try again.");
     }
   };
 
   const simulateFakePurchase = () => {
     const themeKeys = Object.keys(DAILY_WHISPERS_THEMES);
     const randomThemeKey = themeKeys[Math.floor(Math.random() * themeKeys.length)];
-    const theme = DAILY_WHISPERS_THEMES[randomThemeKey as keyof typeof DAILY_WHISPERS_THEMES];
+    const themeData = DAILY_WHISPERS_THEMES[randomThemeKey as keyof typeof DAILY_WHISPERS_THEMES];
+    
+    const recipientNames = ["Sarah", "John", "Emma", "Michael", "Jessica", "David", "Sophie", "Alex"];
+    const randomRecipientName = recipientNames[Math.floor(Math.random() * recipientNames.length)];
+    
+    setRecipientName(randomRecipientName);
     
     Alert.alert(
-      "🎁 You Received a Gift!",
-      `Someone special sent you "${theme.name}" - a year of daily inspiration!\n\nYou'll receive your first quote tomorrow at 9:00 AM.`,
+      "You Received a Gift!",
+      `${randomRecipientName} sent you "${themeData.name}" - a year of daily inspiration!\n\nYou'll receive your first quote tomorrow at 9:00 AM.`,
       [
         {
           text: "View Theme",
@@ -147,13 +193,16 @@ export default function ProfileScreen() {
 
             {themeData && (
               <View
+                ref={quoteCardRef}
                 style={[
                   styles.quoteCard,
                   { backgroundColor: themeData.pastelColor },
                 ]}
               >
                 <View style={styles.cardInner}>
-                  <Text style={styles.quoteEmoji}>{themeData.emoji}</Text>
+                  <Text style={[styles.recipientName, { color: theme.colors.text }]}>
+                    {recipientName}
+                  </Text>
                   <Text style={[styles.quoteText, { color: theme.colors.text }]}>
                     {currentQuote}
                   </Text>
@@ -186,10 +235,10 @@ export default function ProfileScreen() {
                   styles.button,
                   { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(227,218,201,0.9)' },
                 ]}
-                onPress={loadSampleQuote}
+                onPress={loadPreviousQuote}
               >
                 <Text style={[styles.buttonText, { color: theme.colors.text }]}>
-                  Next Quote
+                  Previous Quote
                 </Text>
               </Pressable>
             </View>
@@ -202,7 +251,7 @@ export default function ProfileScreen() {
               onPress={simulateFakePurchase}
             >
               <Text style={[styles.testButtonText, { color: '#4CAF50' }]}>
-                🧪 Test: Simulate Receiving a Gift
+                Test: Simulate Receiving a Gift
               </Text>
             </Pressable>
 
@@ -309,9 +358,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  quoteEmoji: {
-    fontSize: 56,
+  recipientName: {
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: 16,
+    textAlign: 'center',
   },
   quoteText: {
     fontSize: 20,
