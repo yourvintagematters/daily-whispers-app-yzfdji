@@ -465,7 +465,7 @@ export const DAILY_WHISPERS_THEMES = {
   youAreLoved: {
     id: 'youAreLoved',
     name: 'You Are Loved',
-    emoji: '',
+    emoji: '❤️',
     buttonColor: '#5d8aa8',
     pastelColor: '#f0f8ff',
     description: 'Celebrating our value and the importance of self-love, and reminding us that we are appreciated',
@@ -475,7 +475,7 @@ export const DAILY_WHISPERS_THEMES = {
   funnySideOfLife: {
     id: 'funnySideOfLife',
     name: 'The Funny Side of Life',
-    emoji: '',
+    emoji: '😂',
     buttonColor: '#ff2052',
     pastelColor: '#f4c2c2',
     description: 'Give someone a daily laugh with 365 days of funny quotes about being human',
@@ -485,7 +485,7 @@ export const DAILY_WHISPERS_THEMES = {
   gratitudePearls: {
     id: 'gratitudePearls',
     name: 'Gratitude Pearls',
-    emoji: '',
+    emoji: '🦪',
     buttonColor: '#ed872d',
     pastelColor: '#fad6a5',
     description: 'Daily reminders to appreciate the simple joys and blessings in life, fostering a heart of gratitude.',
@@ -495,7 +495,7 @@ export const DAILY_WHISPERS_THEMES = {
   whispersFromNature: {
     id: 'whispersFromNature',
     name: 'Whispers from Nature',
-    emoji: '',
+    emoji: '🍃',
     buttonColor: '#a4c639',
     pastelColor: '#ace1af',
     description: '365 days of inspiration drawn from the natural world and our connection to it',
@@ -505,7 +505,7 @@ export const DAILY_WHISPERS_THEMES = {
   aCatsLife: {
     id: 'aCatsLife',
     name: 'A Cat\'s Life',
-    emoji: '',
+    emoji: '🐱',
     buttonColor: '#0095b6',
     pastelColor: '#e7feff',
     description: '365 days of feline philosophy - celebrating independence and self-love',
@@ -515,7 +515,7 @@ export const DAILY_WHISPERS_THEMES = {
   aDogsLife: {
     id: 'aDogsLife',
     name: 'A Dog\'s Life',
-    emoji: '',
+    emoji: '🐕',
     buttonColor: '#f0e130',
     pastelColor: '#e3dac9',
     description: 'Daily lessons from our canine companions - celebrating loyalty, unconditional love, living in the moment, and the pure joy dogs bring',
@@ -525,7 +525,7 @@ export const DAILY_WHISPERS_THEMES = {
   threadsOfConnection: {
     id: 'threadsOfConnection',
     name: 'Threads of Connection',
-    emoji: '',
+    emoji: '🤝',
     buttonColor: '#de5d83',
     pastelColor: '#ffb7c5',
     description: '365 Days affirming Human connection, being part of a global community, and the beautiful ways we touch each other\'s lives',
