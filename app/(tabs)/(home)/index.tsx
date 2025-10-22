@@ -128,7 +128,7 @@ export default function HomeScreen() {
                 Daily Whispers
               </Text>
               <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
-                Gift someone you care about a whole year of love
+                Gift someone a year of daily quotes to show them you care.
               </Text>
             </View>
 
@@ -160,7 +160,7 @@ export default function HomeScreen() {
             </View>
 
             {/* Info Section */}
-            <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(242,242,247,0.9)' }]}>
+            <View style={[styles.infoSection, { backgroundColor: '#E3DAC9' }]}>
               <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
                 How It Works
               </Text>

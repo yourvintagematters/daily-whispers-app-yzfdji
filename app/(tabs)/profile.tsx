@@ -9,6 +9,7 @@ import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import * as ImagePicker from "expo-image-picker";
 import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 
@@ -21,6 +22,7 @@ export default function ProfileScreen() {
   const [recipientName, setRecipientName] = useState<string>("Friend");
   const [quoteHistory, setQuoteHistory] = useState<string[]>([]);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState<number>(0);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const quoteCardRef = useRef<View>(null);
 
   useEffect(() => {
@@ -162,6 +164,27 @@ export default function ProfileScreen() {
     );
   };
 
+  const handleImageUpload = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const imageUri = result.assets[0].uri;
+        setUploadedImages([...uploadedImages, imageUri]);
+        Alert.alert("Success", "Image uploaded successfully!");
+        console.log("Image uploaded:", imageUri);
+      }
+    } catch (error) {
+      console.log("Error uploading image:", error);
+      Alert.alert("Error", "Failed to upload image. Please try again.");
+    }
+  };
+
   const themeData = currentTheme ? DAILY_WHISPERS_THEMES[currentTheme as keyof typeof DAILY_WHISPERS_THEMES] : null;
 
   const renderHeaderLeft = () => (
@@ -262,6 +285,50 @@ export default function ProfileScreen() {
                 Test: Simulate Receiving a Gift
               </Text>
             </Pressable>
+
+            <Pressable
+              style={[
+                styles.uploadButton,
+                { backgroundColor: theme.colors.primary },
+              ]}
+              onPress={handleImageUpload}
+            >
+              <IconSymbol name="photo.badge.plus" color="#FFFFFF" size={20} />
+              <Text style={[styles.uploadButtonText, { color: '#FFFFFF' }]}>
+                Upload Image
+              </Text>
+            </Pressable>
+
+            {uploadedImages.length > 0 && (
+              <View style={styles.imagesSection}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+                  Uploaded Images ({uploadedImages.length})
+                </Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.imagesScroll}
+                >
+                  {uploadedImages.map((imageUri, index) => (
+                    <View key={index} style={styles.imageContainer}>
+                      <Image
+                        source={{ uri: imageUri }}
+                        style={styles.uploadedImage}
+                      />
+                      <Pressable
+                        style={styles.deleteImageButton}
+                        onPress={() => {
+                          const newImages = uploadedImages.filter((_, i) => i !== index);
+                          setUploadedImages(newImages);
+                        }}
+                      >
+                        <IconSymbol name="xmark.circle.fill" color="#FF3B30" size={24} />
+                      </Pressable>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
 
             <GlassView style={[
               styles.settingsSection,
@@ -467,5 +534,48 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  uploadButton: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  uploadButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  imagesSection: {
+    marginBottom: 24,
+  },
+  imagesScroll: {
+    marginTop: 12,
+  },
+  imageContainer: {
+    marginRight: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  uploadedImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+  },
+  deleteImageButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: 12,
+    padding: 2,
   },
 });
