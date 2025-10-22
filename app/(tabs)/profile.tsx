@@ -207,7 +207,6 @@ export default function ProfileScreen() {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const imageUri = result.assets[0].uri;
         
-        // Create the uploaded_images directory if it doesn't exist
         const documentsDir = FileSystem.documentDirectory || '';
         if (!documentsDir) {
           Alert.alert("Error", "Could not access file system.");
@@ -222,11 +221,9 @@ export default function ProfileScreen() {
           console.log("Directory already exists or error creating:", error);
         }
 
-        // Generate a unique filename
         const fileName = `image_${Date.now()}.png`;
         const savedPath = `${imagesDir}${fileName}`;
 
-        // Copy the image to the uploaded_images folder
         await FileSystem.copyAsync({
           from: imageUri,
           to: savedPath,
@@ -236,7 +233,6 @@ export default function ProfileScreen() {
         Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
         console.log("Image saved to:", savedPath);
         
-        // Reload images to ensure they're displayed
         await loadUploadedImages();
       }
     } catch (error) {
