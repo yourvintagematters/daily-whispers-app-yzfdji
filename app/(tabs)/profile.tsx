@@ -102,7 +102,15 @@ export default function ProfileScreen() {
         });
 
         const fileName = `DailyWhispers_${Date.now()}.png`;
-        const newPath = `${FileSystem.documentDirectory}${fileName}`;
+        const cacheDir = FileSystem.cacheDirectory;
+        
+        if (!cacheDir) {
+          console.log("Cache directory not available");
+          Alert.alert("Share Error", "Could not access file system. Please try again.");
+          return;
+        }
+        
+        const newPath = `${cacheDir}${fileName}`;
         
         await FileSystem.copyAsync({
           from: uri,
