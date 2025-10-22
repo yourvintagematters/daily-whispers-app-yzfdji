@@ -22,7 +22,7 @@ export default function ProfileScreen() {
   const [recipientName, setRecipientName] = useState<string>("Friend");
   const [quoteHistory, setQuoteHistory] = useState<string[]>([]);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState<number>(0);
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<Array<{ uri: string; name: string }>>([]);
   const quoteCardRef = useRef<View>(null);
 
   useEffect(() => {
@@ -181,7 +181,10 @@ export default function ProfileScreen() {
           file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg')
         );
         
-        const imagePaths = imageFiles.map(file => `${imagesDir}${file}`);
+        const imagePaths = imageFiles.map(file => ({
+          uri: `${imagesDir}${file}`,
+          name: file
+        }));
         setUploadedImages(imagePaths);
         console.log("Loaded images:", imagePaths);
       } catch (error) {
@@ -229,8 +232,8 @@ export default function ProfileScreen() {
           to: savedPath,
         });
 
-        setUploadedImages([...uploadedImages, savedPath]);
-        Alert.alert("Success", `Image saved successfully!\nFile: ${fileName}\n\nLocation: ${imagesDir}`);
+        setUploadedImages([...uploadedImages, { uri: savedPath, name: fileName }]);
+        Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
         console.log("Image saved to:", savedPath);
         
         // Reload images to ensure they're displayed
@@ -245,7 +248,7 @@ export default function ProfileScreen() {
   const deleteImage = async (imagePath: string) => {
     try {
       await FileSystem.deleteAsync(imagePath);
-      const newImages = uploadedImages.filter(img => img !== imagePath);
+      const newImages = uploadedImages.filter(img => img.uri !== imagePath);
       setUploadedImages(newImages);
       Alert.alert("Success", "Image deleted successfully.");
       console.log("Image deleted:", imagePath);
@@ -374,26 +377,27 @@ export default function ProfileScreen() {
                 <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
                   Uploaded Images ({uploadedImages.length})
                 </Text>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  style={styles.imagesScroll}
-                >
-                  {uploadedImages.map((imageUri, index) => (
-                    <View key={index} style={styles.imageContainer}>
-                      <Image
-                        source={{ uri: imageUri }}
-                        style={styles.uploadedImage}
-                      />
-                      <Pressable
-                        style={styles.deleteImageButton}
-                        onPress={() => deleteImage(imageUri)}
-                      >
-                        <IconSymbol name="xmark.circle.fill" color="#FF3B30" size={24} />
-                      </Pressable>
+                <View style={styles.imagesGrid}>
+                  {uploadedImages.map((imageData, index) => (
+                    <View key={index} style={styles.imageCard}>
+                      <View style={styles.imageWrapper}>
+                        <Image
+                          source={{ uri: imageData.uri }}
+                          style={styles.uploadedImage}
+                        />
+                        <Pressable
+                          style={styles.deleteImageButton}
+                          onPress={() => deleteImage(imageData.uri)}
+                        >
+                          <IconSymbol name="xmark.circle.fill" color="#FF3B30" size={24} />
+                        </Pressable>
+                      </View>
+                      <Text style={[styles.fileName, { color: theme.colors.text }]} numberOfLines={2}>
+                        {imageData.name}
+                      </Text>
                     </View>
                   ))}
-                </ScrollView>
+                </View>
               </View>
             )}
 
@@ -623,18 +627,25 @@ const styles = StyleSheet.create({
   imagesSection: {
     marginBottom: 24,
   },
-  imagesScroll: {
+  imagesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
     marginTop: 12,
   },
-  imageContainer: {
-    marginRight: 12,
+  imageCard: {
+    width: '48%',
     borderRadius: 12,
     overflow: 'hidden',
+  },
+  imageWrapper: {
     position: 'relative',
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   uploadedImage: {
-    width: 120,
-    height: 120,
+    width: '100%',
+    height: 140,
     borderRadius: 12,
   },
   deleteImageButton: {
@@ -644,5 +655,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 12,
     padding: 2,
+  },
+  fileName: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 8,
+    textAlign: 'center',
   },
 });
