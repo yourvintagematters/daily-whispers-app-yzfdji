@@ -173,7 +173,7 @@ export default function ProfileScreen() {
         return;
       }
 
-      const imagesDir = `${documentsDir}assets/images/`;
+      const imagesDir = `${documentsDir}uploaded_images/`;
       
       try {
         const files = await FileSystem.readDirectoryAsync(imagesDir);
@@ -204,14 +204,14 @@ export default function ProfileScreen() {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const imageUri = result.assets[0].uri;
         
-        // Create the assets/images directory if it doesn't exist
+        // Create the uploaded_images directory if it doesn't exist
         const documentsDir = FileSystem.documentDirectory;
         if (!documentsDir) {
           Alert.alert("Error", "Could not access file system.");
           return;
         }
 
-        const imagesDir = `${documentsDir}assets/images/`;
+        const imagesDir = `${documentsDir}uploaded_images/`;
         
         try {
           await FileSystem.makeDirectoryAsync(imagesDir, { intermediates: true });
@@ -223,14 +223,14 @@ export default function ProfileScreen() {
         const fileName = `image_${Date.now()}.png`;
         const savedPath = `${imagesDir}${fileName}`;
 
-        // Copy the image to the assets/images folder
+        // Copy the image to the uploaded_images folder
         await FileSystem.copyAsync({
           from: imageUri,
           to: savedPath,
         });
 
         setUploadedImages([...uploadedImages, savedPath]);
-        Alert.alert("Success", `Image saved to assets/images folder!\nPath: ${fileName}`);
+        Alert.alert("Success", `Image saved successfully!\nFile: ${fileName}`);
         console.log("Image saved to:", savedPath);
       }
     } catch (error) {
@@ -362,7 +362,7 @@ export default function ProfileScreen() {
             >
               <IconSymbol name="photo.badge.plus" color="#FFFFFF" size={20} />
               <Text style={[styles.uploadButtonText, { color: '#FFFFFF' }]}>
-                Upload Image to assets/images
+                Upload Image
               </Text>
             </Pressable>
 
