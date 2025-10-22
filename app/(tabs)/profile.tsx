@@ -13,8 +13,6 @@ import * as ImagePicker from "expo-image-picker";
 import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 
-const { cacheDirectory, documentDirectory } = FileSystem;
-
 export default function ProfileScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -107,7 +105,7 @@ export default function ProfileScreen() {
         });
 
         const fileName = `DailyWhispers_${Date.now()}.png`;
-        const cacheDir = cacheDirectory || '';
+        const cacheDir = FileSystem.cacheDirectory;
         
         if (!cacheDir) {
           console.log("Cache directory not available");
@@ -169,7 +167,7 @@ export default function ProfileScreen() {
 
   const loadUploadedImages = async () => {
     try {
-      const documentsDir = documentDirectory || '';
+      const documentsDir = FileSystem.documentDirectory;
       if (!documentsDir) {
         console.log("Documents directory not available");
         return;
@@ -207,7 +205,7 @@ export default function ProfileScreen() {
         const imageUri = result.assets[0].uri;
         
         // Create the uploaded_images directory if it doesn't exist
-        const documentsDir = documentDirectory || '';
+        const documentsDir = FileSystem.documentDirectory;
         if (!documentsDir) {
           Alert.alert("Error", "Could not access file system.");
           return;
@@ -232,8 +230,11 @@ export default function ProfileScreen() {
         });
 
         setUploadedImages([...uploadedImages, savedPath]);
-        Alert.alert("Success", `Image saved successfully!\nFile: ${fileName}`);
+        Alert.alert("Success", `Image saved successfully!\nFile: ${fileName}\n\nLocation: ${imagesDir}`);
         console.log("Image saved to:", savedPath);
+        
+        // Reload images to ensure they're displayed
+        await loadUploadedImages();
       }
     } catch (error) {
       console.log("Error uploading image:", error);
