@@ -36,6 +36,7 @@ export default function ProfileScreen() {
 
     checkNotificationPermissions();
     loadSampleQuote();
+    loadUploadedImages();
   }, []);
 
   const checkNotificationPermissions = async () => {
@@ -164,6 +165,33 @@ export default function ProfileScreen() {
     );
   };
 
+  const loadUploadedImages = async () => {
+    try {
+      const documentsDir = FileSystem.documentDirectory;
+      if (!documentsDir) {
+        console.log("Documents directory not available");
+        return;
+      }
+
+      const imagesDir = `${documentsDir}assets/images/`;
+      
+      try {
+        const files = await FileSystem.readDirectoryAsync(imagesDir);
+        const imageFiles = files.filter(file => 
+          file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg')
+        );
+        
+        const imagePaths = imageFiles.map(file => `${imagesDir}${file}`);
+        setUploadedImages(imagePaths);
+        console.log("Loaded images:", imagePaths);
+      } catch (error) {
+        console.log("Images directory does not exist yet, will create on first upload");
+      }
+    } catch (error) {
+      console.log("Error loading images:", error);
+    }
+  };
+
   const handleImageUpload = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -175,13 +203,52 @@ export default function ProfileScreen() {
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const imageUri = result.assets[0].uri;
-        setUploadedImages([...uploadedImages, imageUri]);
-        Alert.alert("Success", "Image uploaded successfully!");
-        console.log("Image uploaded:", imageUri);
+        
+        // Create the assets/images directory if it doesn't exist
+        const documentsDir = FileSystem.documentDirectory;
+        if (!documentsDir) {
+          Alert.alert("Error", "Could not access file system.");
+          return;
+        }
+
+        const imagesDir = `${documentsDir}assets/images/`;
+        
+        try {
+          await FileSystem.makeDirectoryAsync(imagesDir, { intermediates: true });
+        } catch (error) {
+          console.log("Directory already exists or error creating:", error);
+        }
+
+        // Generate a unique filename
+        const fileName = `image_${Date.now()}.png`;
+        const savedPath = `${imagesDir}${fileName}`;
+
+        // Copy the image to the assets/images folder
+        await FileSystem.copyAsync({
+          from: imageUri,
+          to: savedPath,
+        });
+
+        setUploadedImages([...uploadedImages, savedPath]);
+        Alert.alert("Success", `Image saved to assets/images folder!\nPath: ${fileName}`);
+        console.log("Image saved to:", savedPath);
       }
     } catch (error) {
       console.log("Error uploading image:", error);
       Alert.alert("Error", "Failed to upload image. Please try again.");
+    }
+  };
+
+  const deleteImage = async (imagePath: string) => {
+    try {
+      await FileSystem.deleteAsync(imagePath);
+      const newImages = uploadedImages.filter(img => img !== imagePath);
+      setUploadedImages(newImages);
+      Alert.alert("Success", "Image deleted successfully.");
+      console.log("Image deleted:", imagePath);
+    } catch (error) {
+      console.log("Error deleting image:", error);
+      Alert.alert("Error", "Failed to delete image.");
     }
   };
 
@@ -295,7 +362,7 @@ export default function ProfileScreen() {
             >
               <IconSymbol name="photo.badge.plus" color="#FFFFFF" size={20} />
               <Text style={[styles.uploadButtonText, { color: '#FFFFFF' }]}>
-                Upload Image
+                Upload Image to assets/images
               </Text>
             </Pressable>
 
@@ -317,10 +384,7 @@ export default function ProfileScreen() {
                       />
                       <Pressable
                         style={styles.deleteImageButton}
-                        onPress={() => {
-                          const newImages = uploadedImages.filter((_, i) => i !== index);
-                          setUploadedImages(newImages);
-                        }}
+                        onPress={() => deleteImage(imageUri)}
                       >
                         <IconSymbol name="xmark.circle.fill" color="#FF3B30" size={24} />
                       </Pressable>

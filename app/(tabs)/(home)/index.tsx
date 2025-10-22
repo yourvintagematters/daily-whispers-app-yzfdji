@@ -63,7 +63,9 @@ function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: Them
 function QuoteCardPreview({ themeId, themeColors }: { themeId: string; themeColors: any }) {
   const theme_data = DAILY_WHISPERS_THEMES[themeId as keyof typeof DAILY_WHISPERS_THEMES];
   const quotes = DAILY_WHISPERS_QUOTES[themeId as keyof typeof DAILY_WHISPERS_QUOTES] || [];
-  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  
+  // Show only quotes from the selected theme (purchased collection)
+  const randomQuote = quotes.length > 0 ? quotes[Math.floor(Math.random() * quotes.length)] : "No quotes available";
 
   return (
     <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
@@ -82,6 +84,7 @@ export default function HomeScreen() {
   const themes = Object.values(DAILY_WHISPERS_THEMES);
 
   const handleThemePress = (themeId: string) => {
+    console.log("Theme selected:", themeId);
     router.push({
       pathname: '/(tabs)/(home)/purchase-options',
       params: { selectedTheme: themeId }
