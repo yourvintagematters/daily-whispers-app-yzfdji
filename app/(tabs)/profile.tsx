@@ -372,6 +372,27 @@ export default function ProfileScreen() {
               </Text>
             </Pressable>
 
+            <GlassView style={[
+              styles.folderInfoSection,
+              Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+            ]} glassEffectStyle="regular">
+              <View style={styles.folderInfoHeader}>
+                <IconSymbol name="folder.fill" color={theme.colors.primary} size={20} />
+                <Text style={[styles.folderInfoTitle, { color: theme.colors.text }]}>
+                  Uploaded Images Folder
+                </Text>
+              </View>
+              <Text style={[styles.folderPath, { color: theme.dark ? '#98989D' : '#666' }]}>
+                {FileSystem.documentDirectory}uploaded_images/
+              </Text>
+              <Text style={[styles.folderInfoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
+                This is where your uploaded images are stored. This folder is part of the app's internal storage and is not visible in your device's file explorer.
+              </Text>
+              <Text style={[styles.folderInfoCount, { color: theme.colors.primary }]}>
+                {uploadedImages.length} image{uploadedImages.length !== 1 ? 's' : ''} stored
+              </Text>
+            </GlassView>
+
             {uploadedImages.length > 0 && (
               <View style={styles.imagesSection}>
                 <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
@@ -661,5 +682,38 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: 8,
     textAlign: 'center',
+  },
+  folderInfoSection: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+  },
+  folderInfoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  folderInfoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  folderPath: {
+    fontSize: 12,
+    fontFamily: 'monospace',
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    padding: 8,
+    borderRadius: 6,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  folderInfoDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 12,
+  },
+  folderInfoCount: {
+    fontSize: 13,
+    fontWeight: '600',
   },
 });
