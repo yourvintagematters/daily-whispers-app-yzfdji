@@ -105,7 +105,7 @@ export default function ProfileScreen() {
         });
 
         const fileName = `DailyWhispers_${Date.now()}.png`;
-        const cacheDir = FileSystem.cacheDirectory || '';
+        const cacheDir = FileSystem.cacheDirectory;
         
         if (!cacheDir) {
           console.log("Cache directory not available");
@@ -167,7 +167,7 @@ export default function ProfileScreen() {
 
   const loadUploadedImages = async () => {
     try {
-      const documentsDir = FileSystem.documentDirectory || '';
+      const documentsDir = FileSystem.documentDirectory;
       if (!documentsDir) {
         console.log("Documents directory not available");
         return;
@@ -207,7 +207,7 @@ export default function ProfileScreen() {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const imageUri = result.assets[0].uri;
         
-        const documentsDir = FileSystem.documentDirectory || '';
+        const documentsDir = FileSystem.documentDirectory;
         if (!documentsDir) {
           Alert.alert("Error", "Could not access file system.");
           return;
