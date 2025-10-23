@@ -168,189 +168,135 @@ export default function ProfileScreen() {
 
   const loadUploadedImages = async () => {
     try {
+      console.log("Loading uploaded images...");
       const documentsDir = FileSystem.documentDirectory;
+      
       if (!documentsDir) {
         console.log("Documents directory not available");
         setUploadedImages([]);
         return;
       }
 
-      const imagesDirPath = `${documentsDir}uploaded_images/`;
-      console.log("Loading images from:", imagesDirPath);
+      const uploadDir = `${documentsDir}uploaded_images/`;
+      const dirInfo = await FileSystem.getInfoAsync(uploadDir);
       
-      try {
-        const dirInfo = await FileSystem.getInfoAsync(imagesDirPath);
-        console.log("Directory info:", dirInfo);
-        
-        if (!dirInfo.exists) {
-          console.log("Images directory does not exist yet");
-          setUploadedImages([]);
-          return;
-        }
-
-        const files = await FileSystem.readDirectoryAsync(imagesDirPath);
-        console.log("Files in directory:", files);
-        console.log("Total files:", files.length);
-        
-        const imageFiles = files.filter(file => {
-          const isImage = file.endsWith('.png') || 
-                         file.endsWith('.jpg') || 
-                         file.endsWith('.jpeg');
-          console.log(`File: ${file}, is image: ${isImage}`);
-          return isImage;
-        });
-        
-        console.log("Image files found:", imageFiles.length);
-        
-        const imagePaths = imageFiles.map(fileName => {
-          const uri = `${imagesDirPath}${fileName}`;
-          console.log(`Mapping image: ${fileName} -> ${uri}`);
-          return {
-            uri,
-            name: fileName
-          };
-        });
-        
-        setUploadedImages(imagePaths);
-        console.log("Loaded images successfully:", imagePaths.length);
-      } catch (error) {
-        console.log("Error reading directory:", error);
-        console.log("Error type:", typeof error);
+      if (!dirInfo.exists) {
+        console.log("Upload directory does not exist");
         setUploadedImages([]);
+        return;
       }
+
+      const files = await FileSystem.readDirectoryAsync(uploadDir);
+      console.log("Files found:", files.length);
+
+      const imageFiles = files.filter(file => 
+        file.toLowerCase().endsWith('.jpg') || 
+        file.toLowerCase().endsWith('.jpeg') || 
+        file.toLowerCase().endsWith('.png')
+      );
+
+      console.log("Image files:", imageFiles.length);
+
+      const images = imageFiles.map(fileName => ({
+        uri: `${uploadDir}${fileName}`,
+        name: fileName
+      }));
+
+      setUploadedImages(images);
+      console.log("Images loaded successfully:", images.length);
     } catch (error) {
       console.log("Error loading images:", error);
-      console.log("Error type:", typeof error);
       setUploadedImages([]);
     }
   };
 
   const handleImageUpload = async () => {
     try {
-      console.log("Starting image upload process...");
+      console.log("=== Starting image upload ===");
       
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
+        allowsEditing: false,
+        quality: 0.7,
       });
 
-      console.log("Image picker result - cancelled:", result.canceled);
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const imageUri = result.assets[0].uri;
-        console.log("Selected image URI:", imageUri);
-        
-        const documentsDir = FileSystem.documentDirectory;
-        if (!documentsDir) {
-          console.log("ERROR: Documents directory is null");
-          Alert.alert("Error", "Could not access file system. Please try again.");
-          return;
-        }
-
-        console.log("Documents directory:", documentsDir);
-
-        const imagesDirPath = `${documentsDir}uploaded_images/`;
-        console.log("Images directory path:", imagesDirPath);
-        
-        try {
-          const dirInfo = await FileSystem.getInfoAsync(imagesDirPath);
-          if (!dirInfo.exists) {
-            console.log("Creating directory...");
-            await FileSystem.makeDirectoryAsync(imagesDirPath, { intermediates: true });
-            console.log("Directory created successfully");
-          } else {
-            console.log("Directory already exists");
-          }
-        } catch (dirError) {
-          console.log("Error checking/creating directory:", dirError);
-          Alert.alert("Error", "Could not create image directory. Please try again.");
-          return;
-        }
-
-        const fileName = `image_${Date.now()}.jpg`;
-        const destinationUri = `${imagesDirPath}${fileName}`;
-        console.log("Attempting to save to:", destinationUri);
-
-        try {
-          // First, compress and save the image using ImageManipulator
-          const manipulatedImage = await ImageManipulator.manipulateAsync(
-            imageUri,
-            [],
-            { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
-          );
-          
-          console.log("Image manipulated, URI:", manipulatedImage.uri);
-          
-          // Copy the manipulated image to our destination
-          await FileSystem.copyAsync({
-            from: manipulatedImage.uri,
-            to: destinationUri,
-          });
-          console.log("File copied successfully to:", destinationUri);
-          
-          // Verify the file was created
-          const fileInfo = await FileSystem.getInfoAsync(destinationUri);
-          console.log("File verification - exists:", fileInfo.exists, "size:", fileInfo.size);
-          
-          if (!fileInfo.exists) {
-            throw new Error("File was not created successfully");
-          }
-          
-          setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
-          Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
-          console.log("Image saved to:", destinationUri);
-          
-          await loadUploadedImages();
-        } catch (copyError) {
-          console.log("Copy error details:", copyError);
-          console.log("Copy error type:", typeof copyError);
-          
-          // Fallback: try using moveAsync instead
-          try {
-            console.log("Attempting fallback with moveAsync...");
-            await FileSystem.moveAsync({
-              from: imageUri,
-              to: destinationUri,
-            });
-            console.log("File moved successfully with fallback");
-            
-            setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
-            Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
-            
-            await loadUploadedImages();
-          } catch (moveError) {
-            console.log("Move error details:", moveError);
-            console.log("Move error type:", typeof moveError);
-            
-            // Last resort: try direct copy from original URI
-            try {
-              console.log("Attempting direct copy from original URI...");
-              await FileSystem.copyAsync({
-                from: imageUri,
-                to: destinationUri,
-              });
-              console.log("Direct copy successful");
-              
-              setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
-              Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
-              
-              await loadUploadedImages();
-            } catch (directCopyError) {
-              console.log("Direct copy error:", directCopyError);
-              Alert.alert("Error", "Failed to save image file. Please try again.");
-            }
-          }
-        }
-      } else {
-        console.log("Image selection was cancelled or no assets found");
+      if (result.canceled) {
+        console.log("Image selection cancelled by user");
+        return;
       }
+
+      if (!result.assets || result.assets.length === 0) {
+        console.log("No assets returned from image picker");
+        Alert.alert("Error", "No image selected. Please try again.");
+        return;
+      }
+
+      const selectedAsset = result.assets[0];
+      const sourceUri = selectedAsset.uri;
+      console.log("Selected image URI:", sourceUri);
+
+      const documentsDir = FileSystem.documentDirectory;
+      if (!documentsDir) {
+        console.log("ERROR: Documents directory is null");
+        Alert.alert("Error", "Could not access file system.");
+        return;
+      }
+
+      const uploadDir = `${documentsDir}uploaded_images/`;
+      console.log("Upload directory:", uploadDir);
+
+      // Ensure directory exists
+      const dirInfo = await FileSystem.getInfoAsync(uploadDir);
+      if (!dirInfo.exists) {
+        console.log("Creating upload directory...");
+        await FileSystem.makeDirectoryAsync(uploadDir, { intermediates: true });
+        console.log("Directory created");
+      }
+
+      const fileName = `img_${Date.now()}.jpg`;
+      const destinationUri = `${uploadDir}${fileName}`;
+      console.log("Destination URI:", destinationUri);
+
+      // Compress the image
+      console.log("Compressing image...");
+      const compressed = await ImageManipulator.manipulateAsync(
+        sourceUri,
+        [{ resize: { width: 1200, height: 1200 } }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      console.log("Compressed image URI:", compressed.uri);
+
+      // Copy to destination
+      console.log("Copying file...");
+      await FileSystem.copyAsync({
+        from: compressed.uri,
+        to: destinationUri,
+      });
+      console.log("File copied successfully");
+
+      // Verify file exists
+      const fileCheck = await FileSystem.getInfoAsync(destinationUri);
+      console.log("File verification - exists:", fileCheck.exists, "size:", fileCheck.size);
+
+      if (!fileCheck.exists) {
+        throw new Error("File verification failed - file does not exist");
+      }
+
+      // Update state and reload
+      setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
+      Alert.alert("Success", "Image uploaded successfully!");
+      console.log("=== Image upload complete ===");
+      
+      // Reload images to ensure consistency
+      await loadUploadedImages();
     } catch (error) {
-      console.log("Error uploading image:", error);
-      console.log("Error type:", typeof error);
-      console.log("Error message:", error instanceof Error ? error.message : "Unknown error");
-      Alert.alert("Error", "Failed to upload image. Please try again.");
+      console.log("=== Image upload error ===");
+      console.log("Error:", error);
+      if (error instanceof Error) {
+        console.log("Error message:", error.message);
+        console.log("Error stack:", error.stack);
+      }
+      Alert.alert("Upload Failed", "Could not upload image. Please try again.");
     }
   };
 
