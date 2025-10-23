@@ -171,6 +171,7 @@ export default function ProfileScreen() {
       const documentsDir = FileSystem.documentDirectory;
       if (!documentsDir) {
         console.log("Documents directory not available");
+        setUploadedImages([]);
         return;
       }
 
@@ -179,6 +180,7 @@ export default function ProfileScreen() {
       
       try {
         const dirInfo = await FileSystem.getInfoAsync(imagesDirPath);
+        console.log("Directory info:", dirInfo);
         
         if (!dirInfo.exists) {
           console.log("Images directory does not exist yet");
@@ -188,27 +190,37 @@ export default function ProfileScreen() {
 
         const files = await FileSystem.readDirectoryAsync(imagesDirPath);
         console.log("Files in directory:", files);
+        console.log("Total files:", files.length);
         
-        const imageFiles = files.filter(file => 
-          file.endsWith('.png') || 
-          file.endsWith('.jpg') || 
-          file.endsWith('.jpeg')
-        );
+        const imageFiles = files.filter(file => {
+          const isImage = file.endsWith('.png') || 
+                         file.endsWith('.jpg') || 
+                         file.endsWith('.jpeg');
+          console.log(`File: ${file}, is image: ${isImage}`);
+          return isImage;
+        });
         
         console.log("Image files found:", imageFiles.length);
         
-        const imagePaths = imageFiles.map(fileName => ({
-          uri: `${imagesDirPath}${fileName}`,
-          name: fileName
-        }));
+        const imagePaths = imageFiles.map(fileName => {
+          const uri = `${imagesDirPath}${fileName}`;
+          console.log(`Mapping image: ${fileName} -> ${uri}`);
+          return {
+            uri,
+            name: fileName
+          };
+        });
+        
         setUploadedImages(imagePaths);
-        console.log("Loaded images:", imagePaths);
+        console.log("Loaded images successfully:", imagePaths.length);
       } catch (error) {
         console.log("Error reading directory:", error);
+        console.log("Error type:", typeof error);
         setUploadedImages([]);
       }
     } catch (error) {
       console.log("Error loading images:", error);
+      console.log("Error type:", typeof error);
       setUploadedImages([]);
     }
   };
@@ -262,7 +274,7 @@ export default function ProfileScreen() {
         console.log("Attempting to save to:", destinationUri);
 
         try {
-          // Use ImageManipulator to properly save the image
+          // First, compress and save the image using ImageManipulator
           const manipulatedImage = await ImageManipulator.manipulateAsync(
             imageUri,
             [],
@@ -271,12 +283,26 @@ export default function ProfileScreen() {
           
           console.log("Image manipulated, URI:", manipulatedImage.uri);
           
-          // Now copy the manipulated image to our destination
+          // Copy the manipulated image to our destination
           await FileSystem.copyAsync({
             from: manipulatedImage.uri,
             to: destinationUri,
           });
-          console.log("File copied successfully");
+          console.log("File copied successfully to:", destinationUri);
+          
+          // Verify the file was created
+          const fileInfo = await FileSystem.getInfoAsync(destinationUri);
+          console.log("File verification - exists:", fileInfo.exists, "size:", fileInfo.size);
+          
+          if (!fileInfo.exists) {
+            throw new Error("File was not created successfully");
+          }
+          
+          setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
+          Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
+          console.log("Image saved to:", destinationUri);
+          
+          await loadUploadedImages();
         } catch (copyError) {
           console.log("Copy error details:", copyError);
           console.log("Copy error type:", typeof copyError);
@@ -289,18 +315,34 @@ export default function ProfileScreen() {
               to: destinationUri,
             });
             console.log("File moved successfully with fallback");
+            
+            setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
+            Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
+            
+            await loadUploadedImages();
           } catch (moveError) {
             console.log("Move error details:", moveError);
-            Alert.alert("Error", "Failed to save image file. Please try again.");
-            return;
+            console.log("Move error type:", typeof moveError);
+            
+            // Last resort: try direct copy from original URI
+            try {
+              console.log("Attempting direct copy from original URI...");
+              await FileSystem.copyAsync({
+                from: imageUri,
+                to: destinationUri,
+              });
+              console.log("Direct copy successful");
+              
+              setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
+              Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
+              
+              await loadUploadedImages();
+            } catch (directCopyError) {
+              console.log("Direct copy error:", directCopyError);
+              Alert.alert("Error", "Failed to save image file. Please try again.");
+            }
           }
         }
-
-        setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
-        Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
-        console.log("Image saved to:", destinationUri);
-        
-        await loadUploadedImages();
       } else {
         console.log("Image selection was cancelled or no assets found");
       }
