@@ -121,6 +121,10 @@ const MAPPING = {
   "bag.fill": "shopping-bag",
   "bag": "shopping-bag",
 
+  // Jewelry & Accessories
+  "pearl": "brightness-1",
+  "oyster": "brightness-1",
+
   // Location & Maps
   "location.fill": "location-on",
   "location": "location-on",

@@ -42,15 +42,30 @@ export default function ImageGalleryScreen() {
       }
 
       const imagesDir = `${documentsDir}uploaded_images/`;
+      console.log('Loading images from:', imagesDir);
 
       try {
+        const dirInfo = await FileSystem.getInfoAsync(imagesDir);
+        console.log('Directory exists:', dirInfo.exists);
+        
+        if (!dirInfo.exists) {
+          console.log('Images directory does not exist yet');
+          setUploadedImages([]);
+          setLoading(false);
+          return;
+        }
+
         const files = await FileSystem.readDirectoryAsync(imagesDir);
+        console.log('Files in directory:', files);
+        
         const imageFiles = files.filter(
           (file) =>
             file.endsWith('.png') ||
             file.endsWith('.jpg') ||
             file.endsWith('.jpeg')
         );
+
+        console.log('Image files found:', imageFiles);
 
         const imagePaths = imageFiles.map((file) => ({
           uri: `${imagesDir}${file}`,
@@ -59,10 +74,12 @@ export default function ImageGalleryScreen() {
         setUploadedImages(imagePaths);
         console.log('Loaded images:', imagePaths);
       } catch (error) {
-        console.log('Images directory does not exist yet');
+        console.log('Error reading directory:', error);
+        setUploadedImages([]);
       }
     } catch (error) {
       console.log('Error loading images:', error);
+      setUploadedImages([]);
     } finally {
       setLoading(false);
     }
