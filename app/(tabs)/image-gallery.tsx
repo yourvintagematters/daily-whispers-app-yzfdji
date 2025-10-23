@@ -35,7 +35,7 @@ export default function ImageGalleryScreen() {
   const loadUploadedImages = async () => {
     try {
       console.log('Loading uploaded images...');
-      const documentsDir = FileSystem.documentDirectory;
+      const documentsDir = FileSystem.documentDirectory || '';
       
       if (!documentsDir) {
         console.log('Documents directory not available');
