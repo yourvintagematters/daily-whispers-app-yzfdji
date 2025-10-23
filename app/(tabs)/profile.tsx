@@ -7,7 +7,7 @@ import { IconSymbol } from "@/components/IconSymbol";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
-import { File, Directory, Paths } from "expo-file-system";
+import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import * as ImagePicker from "expo-image-picker";
 import { captureRef } from "react-native-view-shot";
@@ -105,7 +105,7 @@ export default function ProfileScreen() {
         });
 
         const fileName = `DailyWhispers_${Date.now()}.png`;
-        const cacheDir = Paths.cache;
+        const cacheDir = FileSystem.cacheDirectory;
         
         if (!cacheDir) {
           console.log("Cache directory not available");
@@ -113,14 +113,16 @@ export default function ProfileScreen() {
           return;
         }
         
-        const newFile = new File(cacheDir, fileName);
+        const destinationUri = `${cacheDir}${fileName}`;
         
-        const sourceFile = new File(uri);
-        await sourceFile.copy(newFile);
+        await FileSystem.copyAsync({
+          from: uri,
+          to: destinationUri,
+        });
 
         const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\nExplore Daily Whispers and discover more inspiring quotes: https://dailywhispers.app`;
 
-        await Sharing.shareAsync(newFile.uri, {
+        await Sharing.shareAsync(destinationUri, {
           mimeType: "image/png",
           dialogTitle: "Share Your Daily Whispers Quote",
           UTI: "com.apple.share",
@@ -165,36 +167,38 @@ export default function ProfileScreen() {
 
   const loadUploadedImages = async () => {
     try {
-      const documentsDir = Paths.document;
+      const documentsDir = FileSystem.documentDirectory;
       if (!documentsDir) {
         console.log("Documents directory not available");
         return;
       }
 
-      const imagesDir = new Directory(documentsDir, 'uploaded_images');
-      console.log("Loading images from:", imagesDir.uri);
+      const imagesDirPath = `${documentsDir}uploaded_images/`;
+      console.log("Loading images from:", imagesDirPath);
       
       try {
-        if (!imagesDir.exists) {
+        const dirInfo = await FileSystem.getInfoAsync(imagesDirPath);
+        
+        if (!dirInfo.exists) {
           console.log("Images directory does not exist yet");
           setUploadedImages([]);
           return;
         }
 
-        const contents = imagesDir.list();
-        const imageFiles = contents.filter(item => 
-          item instanceof File && (
-            item.name.endsWith('.png') || 
-            item.name.endsWith('.jpg') || 
-            item.name.endsWith('.jpeg')
-          )
-        ) as File[];
+        const files = await FileSystem.readDirectoryAsync(imagesDirPath);
+        console.log("Files in directory:", files);
+        
+        const imageFiles = files.filter(file => 
+          file.endsWith('.png') || 
+          file.endsWith('.jpg') || 
+          file.endsWith('.jpeg')
+        );
         
         console.log("Image files found:", imageFiles.length);
         
-        const imagePaths = imageFiles.map(file => ({
-          uri: file.uri,
-          name: file.name
+        const imagePaths = imageFiles.map(fileName => ({
+          uri: `${imagesDirPath}${fileName}`,
+          name: fileName
         }));
         setUploadedImages(imagePaths);
         console.log("Loaded images:", imagePaths);
@@ -219,28 +223,29 @@ export default function ProfileScreen() {
         quality: 0.8,
       });
 
-      console.log("Image picker result:", result.canceled);
+      console.log("Image picker result - cancelled:", result.canceled);
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const imageUri = result.assets[0].uri;
         console.log("Selected image URI:", imageUri);
         
-        const documentsDir = Paths.document;
+        const documentsDir = FileSystem.documentDirectory;
         if (!documentsDir) {
           console.log("ERROR: Documents directory is null");
           Alert.alert("Error", "Could not access file system. Please try again.");
           return;
         }
 
-        console.log("Documents directory:", documentsDir.uri);
+        console.log("Documents directory:", documentsDir);
 
-        const imagesDir = new Directory(documentsDir, 'uploaded_images');
-        console.log("Images directory path:", imagesDir.uri);
+        const imagesDirPath = `${documentsDir}uploaded_images/`;
+        console.log("Images directory path:", imagesDirPath);
         
         try {
-          if (!imagesDir.exists) {
+          const dirInfo = await FileSystem.getInfoAsync(imagesDirPath);
+          if (!dirInfo.exists) {
             console.log("Creating directory...");
-            imagesDir.create({ intermediates: true });
+            await FileSystem.makeDirectoryAsync(imagesDirPath, { intermediates: true });
             console.log("Directory created successfully");
           } else {
             console.log("Directory already exists");
@@ -251,13 +256,15 @@ export default function ProfileScreen() {
           return;
         }
 
-        const fileName = `image_${Date.now()}.png`;
-        const newFile = new File(imagesDir, fileName);
-        console.log("Attempting to save to:", newFile.uri);
+        const fileName = `image_${Date.now()}.jpg`;
+        const destinationUri = `${imagesDirPath}${fileName}`;
+        console.log("Attempting to save to:", destinationUri);
 
         try {
-          const sourceFile = new File(imageUri);
-          await sourceFile.copy(newFile);
+          await FileSystem.copyAsync({
+            from: imageUri,
+            to: destinationUri,
+          });
           console.log("File copied successfully");
         } catch (copyError) {
           console.log("Copy error details:", copyError);
@@ -265,9 +272,9 @@ export default function ProfileScreen() {
           return;
         }
 
-        setUploadedImages([...uploadedImages, { uri: newFile.uri, name: fileName }]);
+        setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
         Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
-        console.log("Image saved to:", newFile.uri);
+        console.log("Image saved to:", destinationUri);
         
         await loadUploadedImages();
       } else {
@@ -276,15 +283,14 @@ export default function ProfileScreen() {
     } catch (error) {
       console.log("Error uploading image:", error);
       console.log("Error type:", typeof error);
-      console.log("Error keys:", error instanceof Error ? Object.keys(error) : "Not an Error object");
+      console.log("Error message:", error instanceof Error ? error.message : "Unknown error");
       Alert.alert("Error", "Failed to upload image. Please try again.");
     }
   };
 
   const deleteImage = async (imagePath: string) => {
     try {
-      const fileToDelete = new File(imagePath);
-      await fileToDelete.delete();
+      await FileSystem.deleteAsync(imagePath);
       const newImages = uploadedImages.filter(img => img.uri !== imagePath);
       setUploadedImages(newImages);
       Alert.alert("Success", "Image deleted successfully.");
