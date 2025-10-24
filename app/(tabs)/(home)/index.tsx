@@ -30,12 +30,10 @@ function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: Them
   };
 
   const handlePressIn = () => {
-    scaleValue.value = withSpring(1.05, { damping: 10, mass: 1 });
     onHover(item.id);
   };
 
   const handlePressOut = () => {
-    scaleValue.value = withSpring(1, { damping: 10, mass: 1 });
     onHover(null);
   };
 

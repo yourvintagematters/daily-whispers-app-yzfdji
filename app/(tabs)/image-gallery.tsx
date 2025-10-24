@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
-import { File, Directory, Paths } from 'expo-file-system';
+import FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { IconSymbol } from '@/components/IconSymbol';
 
@@ -34,41 +34,42 @@ export default function ImageGalleryScreen() {
 
   const loadUploadedImages = async () => {
     try {
-      const documentsDir = Paths.document;
+      const documentsDir = FileSystem.documentDirectory;
       if (!documentsDir) {
         console.log('Documents directory not available');
         setLoading(false);
         return;
       }
 
-      const imagesDir = new Directory(documentsDir, 'uploaded_images');
-      console.log('Loading images from:', imagesDir.uri);
+      const imagesDir = `${documentsDir}uploaded_images/`;
+      console.log('Loading images from:', imagesDir);
 
       try {
-        if (!imagesDir.exists) {
+        const dirInfo = await FileSystem.getInfoAsync(imagesDir);
+        console.log('Directory exists:', dirInfo.exists);
+        
+        if (!dirInfo.exists) {
           console.log('Images directory does not exist yet');
           setUploadedImages([]);
           setLoading(false);
           return;
         }
 
-        const contents = imagesDir.list();
-        console.log('Files in directory:', contents.length);
+        const files = await FileSystem.readDirectoryAsync(imagesDir);
+        console.log('Files in directory:', files);
         
-        const imageFiles = contents.filter(
-          (item) =>
-            item instanceof File && (
-              item.name.endsWith('.png') ||
-              item.name.endsWith('.jpg') ||
-              item.name.endsWith('.jpeg')
-            )
-        ) as File[];
+        const imageFiles = files.filter(
+          (file) =>
+            file.endsWith('.png') ||
+            file.endsWith('.jpg') ||
+            file.endsWith('.jpeg')
+        );
 
-        console.log('Image files found:', imageFiles.length);
+        console.log('Image files found:', imageFiles);
 
         const imagePaths = imageFiles.map((file) => ({
-          uri: file.uri,
-          name: file.name,
+          uri: `${imagesDir}${file}`,
+          name: file,
         }));
         setUploadedImages(imagePaths);
         console.log('Loaded images:', imagePaths);
@@ -86,8 +87,7 @@ export default function ImageGalleryScreen() {
 
   const deleteImage = async (imagePath: string) => {
     try {
-      const fileToDelete = new File(imagePath);
-      await fileToDelete.delete();
+      await FileSystem.deleteAsync(imagePath);
       const newImages = uploadedImages.filter((img) => img.uri !== imagePath);
       setUploadedImages(newImages);
       Alert.alert('Success', 'Image deleted successfully.');

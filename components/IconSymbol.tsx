@@ -38,7 +38,6 @@ const MAPPING = {
   "phone": "phone-outlined",
   "message.fill": "chat",
   "message": "chat-bubble-outline",
-  "quote.bubble.fill": "format-quote",
   "bell.fill": "notifications",
   "bell": "notifications-none",
   "heart.fill": "favorite",
@@ -56,7 +55,6 @@ const MAPPING = {
   "multiply": "clear",
   "trash.fill": "delete",
   "trash": "delete-outline",
-  "ellipsis": "more-vert",
 
   // Editing & Creation
   "pencil": "edit",
@@ -72,8 +70,6 @@ const MAPPING = {
   // Media & Content
   "photo.fill": "image",
   "photo": "image-outlined",
-  "photo.badge.plus": "add-a-photo",
-  "photo.stack": "collections",
   "camera.fill": "camera-alt",
   "camera": "camera-alt",
   "video.fill": "videocam",
@@ -126,8 +122,8 @@ const MAPPING = {
   "bag": "shopping-bag",
 
   // Jewelry & Accessories
-  "pearl": "circle",
-  "oyster": "circle",
+  "pearl": "brightness-1",
+  "oyster": "brightness-1",
 
   // Location & Maps
   "location.fill": "location-on",
