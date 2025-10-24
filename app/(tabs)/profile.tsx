@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Share, Alert, ImageBackground, Image, FlatList } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Share, Alert, ImageBackground, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
@@ -359,100 +359,68 @@ export default function ProfileScreen() {
               </Text>
             </Pressable>
 
-            <View style={styles.uploadSection}>
-              <Pressable
-                style={[
-                  styles.uploadButton,
-                  { backgroundColor: theme.colors.primary },
-                ]}
-                onPress={handleImageUpload}
-              >
-                <IconSymbol name="photo.badge.plus" color="#FFFFFF" size={20} />
-                <Text style={[styles.uploadButtonText, { color: '#FFFFFF' }]}>
-                  Upload Image
-                </Text>
-              </Pressable>
-
-              {uploadedImages.length > 0 && (
-                <Pressable
-                  style={[
-                    styles.galleryButton,
-                    { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' },
-                  ]}
-                  onPress={() => router.push('/(tabs)/image-gallery')}
-                >
-                  <IconSymbol name="photo.stack" color={theme.colors.primary} size={20} />
-                  <Text style={[styles.galleryButtonText, { color: theme.colors.primary }]}>
-                    View Gallery ({uploadedImages.length})
-                  </Text>
-                </Pressable>
-              )}
-            </View>
-
-            {uploadedImages.length > 0 && (
-              <GlassView style={[
-                styles.quickAccessSection,
-                Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-              ]} glassEffectStyle="regular">
-                <View style={styles.quickAccessHeader}>
-                  <IconSymbol name="star.fill" color={theme.colors.primary} size={18} />
-                  <Text style={[styles.quickAccessTitle, { color: theme.colors.text }]}>
-                    Quick Access
-                  </Text>
-                </View>
-                <Text style={[styles.quickAccessSubtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
-                  Your most recent uploads
-                </Text>
-                <View style={styles.quickAccessGrid}>
-                  {uploadedImages.slice(-4).reverse().map((imageData, index) => (
-                    <Pressable
-                      key={index}
-                      style={styles.quickAccessItem}
-                      onPress={() => {
-                        Alert.alert(imageData.name, '', [
-                          {
-                            text: 'Share',
-                            onPress: () => Sharing.shareAsync(imageData.uri),
-                          },
-                          {
-                            text: 'Delete',
-                            onPress: () => deleteImage(imageData.uri),
-                            style: 'destructive',
-                          },
-                          {
-                            text: 'Cancel',
-                            style: 'cancel',
-                          },
-                        ]);
-                      }}
-                    >
-                      <Image
-                        source={{ uri: imageData.uri }}
-                        style={styles.quickAccessImage}
-                      />
-                    </Pressable>
-                  ))}
-                </View>
-              </GlassView>
-            )}
+            <Pressable
+              style={[
+                styles.uploadButton,
+                { backgroundColor: theme.colors.primary },
+              ]}
+              onPress={handleImageUpload}
+            >
+              <IconSymbol name="photo.badge.plus" color="#FFFFFF" size={20} />
+              <Text style={[styles.uploadButtonText, { color: '#FFFFFF' }]}>
+                Upload Image
+              </Text>
+            </Pressable>
 
             <GlassView style={[
               styles.folderInfoSection,
               Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
             ]} glassEffectStyle="regular">
               <View style={styles.folderInfoHeader}>
-                <IconSymbol name="info.circle.fill" color={theme.colors.primary} size={20} />
+                <IconSymbol name="folder.fill" color={theme.colors.primary} size={20} />
                 <Text style={[styles.folderInfoTitle, { color: theme.colors.text }]}>
-                  About Your Images
+                  Uploaded Images Folder
                 </Text>
               </View>
+              <Text style={[styles.folderPath, { color: theme.dark ? '#98989D' : '#666' }]}>
+                {FileSystem.documentDirectory}uploaded_images/
+              </Text>
               <Text style={[styles.folderInfoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
-                Your uploaded images are securely stored in the app's internal storage. Use the Gallery view to manage, share, or delete your images. All images are stored locally on your device.
+                This is where your uploaded images are stored. This folder is part of the app's internal storage and is not visible in your device's file explorer.
               </Text>
               <Text style={[styles.folderInfoCount, { color: theme.colors.primary }]}>
                 {uploadedImages.length} image{uploadedImages.length !== 1 ? 's' : ''} stored
               </Text>
             </GlassView>
+
+            {uploadedImages.length > 0 && (
+              <View style={styles.imagesSection}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+                  Uploaded Images ({uploadedImages.length})
+                </Text>
+                <View style={styles.imagesGrid}>
+                  {uploadedImages.map((imageData, index) => (
+                    <View key={index} style={styles.imageCard}>
+                      <View style={styles.imageWrapper}>
+                        <Image
+                          source={{ uri: imageData.uri }}
+                          style={styles.uploadedImage}
+                        />
+                        <Pressable
+                          style={styles.deleteImageButton}
+                          onPress={() => deleteImage(imageData.uri)}
+                        >
+                          <IconSymbol name="xmark.circle.fill" color="#FF3B30" size={24} />
+                        </Pressable>
+                      </View>
+                      <Text style={[styles.fileName, { color: theme.colors.text }]} numberOfLines={2}>
+                        {imageData.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
 
             <GlassView style={[
               styles.settingsSection,
@@ -659,13 +627,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  uploadSection: {
-    marginBottom: 24,
-    gap: 12,
-  },
   uploadButton: {
     borderRadius: 12,
     padding: 16,
+    marginBottom: 24,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -680,54 +645,43 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  galleryButton: {
-    borderRadius: 12,
-    padding: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
-  },
-  galleryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  quickAccessSection: {
-    borderRadius: 12,
-    padding: 16,
+  imagesSection: {
     marginBottom: 24,
   },
-  quickAccessHeader: {
+  imagesGrid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  quickAccessTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  quickAccessSubtitle: {
-    fontSize: 12,
-    marginBottom: 12,
-  },
-  quickAccessGrid: {
-    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
     marginTop: 12,
   },
-  quickAccessItem: {
-    flex: 1,
-    borderRadius: 8,
+  imageCard: {
+    width: '48%',
+    borderRadius: 12,
     overflow: 'hidden',
-    aspectRatio: 1,
   },
-  quickAccessImage: {
+  imageWrapper: {
+    position: 'relative',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  uploadedImage: {
     width: '100%',
-    height: '100%',
-    borderRadius: 8,
+    height: 140,
+    borderRadius: 12,
+  },
+  deleteImageButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: 12,
+    padding: 2,
+  },
+  fileName: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 8,
+    textAlign: 'center',
   },
   folderInfoSection: {
     borderRadius: 12,
