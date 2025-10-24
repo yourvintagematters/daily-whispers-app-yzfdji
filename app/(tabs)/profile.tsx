@@ -106,7 +106,7 @@ export default function ProfileScreen() {
         });
 
         const fileName = `DailyWhispers_${Date.now()}.png`;
-        const cacheDir = FileSystem.cacheDirectory || '';
+        const cacheDir = FileSystem.cacheDirectory;
         
         if (!cacheDir) {
           console.log("Cache directory not available");
@@ -169,7 +169,7 @@ export default function ProfileScreen() {
   const loadUploadedImages = async () => {
     try {
       console.log("Loading uploaded images...");
-      const documentsDir = FileSystem.documentDirectory || '';
+      const documentsDir = FileSystem.documentDirectory;
       
       if (!documentsDir) {
         console.log("Documents directory not available");
@@ -235,7 +235,7 @@ export default function ProfileScreen() {
       const sourceUri = selectedAsset.uri;
       console.log("Selected image URI:", sourceUri);
 
-      const documentsDir = FileSystem.documentDirectory || '';
+      const documentsDir = FileSystem.documentDirectory;
       if (!documentsDir) {
         console.log("ERROR: Documents directory is null");
         Alert.alert("Error", "Could not access file system.");
