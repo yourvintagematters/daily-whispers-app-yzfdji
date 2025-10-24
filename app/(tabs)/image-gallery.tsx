@@ -35,7 +35,7 @@ export default function ImageGalleryScreen() {
   const loadUploadedImages = async () => {
     try {
       console.log('Loading uploaded images...');
-      const documentsDir = FileSystem.documentDirectory || '';
+      const documentsDir = FileSystem.documentDirectory;
       
       if (!documentsDir) {
         console.log('Documents directory not available');
@@ -45,7 +45,10 @@ export default function ImageGalleryScreen() {
       }
 
       const uploadDir = `${documentsDir}uploaded_images/`;
+      console.log('Checking upload directory:', uploadDir);
+      
       const dirInfo = await FileSystem.getInfoAsync(uploadDir);
+      console.log('Directory info:', dirInfo);
       
       if (!dirInfo.exists) {
         console.log('Upload directory does not exist');
@@ -55,7 +58,7 @@ export default function ImageGalleryScreen() {
       }
 
       const files = await FileSystem.readDirectoryAsync(uploadDir);
-      console.log('Files found:', files.length);
+      console.log('Files found:', files.length, files);
 
       const imageFiles = files.filter((file) =>
         file.toLowerCase().endsWith('.jpg') ||
@@ -74,6 +77,10 @@ export default function ImageGalleryScreen() {
       console.log('Images loaded successfully:', images.length);
     } catch (error) {
       console.log('Error loading images:', error);
+      if (error instanceof Error) {
+        console.log('Error message:', error.message);
+        console.log('Error stack:', error.stack);
+      }
       setUploadedImages([]);
     } finally {
       setLoading(false);
