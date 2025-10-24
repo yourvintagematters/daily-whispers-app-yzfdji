@@ -37,7 +37,6 @@ export default function ImageGalleryScreen() {
       const documentsDir = FileSystem.documentDirectory;
       if (!documentsDir) {
         console.log('Documents directory not available');
-        setUploadedImages([]);
         setLoading(false);
         return;
       }
@@ -47,7 +46,6 @@ export default function ImageGalleryScreen() {
 
       try {
         const dirInfo = await FileSystem.getInfoAsync(imagesDirPath);
-        console.log('Directory info:', dirInfo);
         
         if (!dirInfo.exists) {
           console.log('Images directory does not exist yet');
@@ -58,37 +56,28 @@ export default function ImageGalleryScreen() {
 
         const files = await FileSystem.readDirectoryAsync(imagesDirPath);
         console.log('Files in directory:', files.length);
-        console.log('Files:', files);
         
-        const imageFiles = files.filter((file) => {
-          const isImage = file.endsWith('.png') ||
-                         file.endsWith('.jpg') ||
-                         file.endsWith('.jpeg');
-          console.log(`File: ${file}, is image: ${isImage}`);
-          return isImage;
-        });
+        const imageFiles = files.filter(
+          (file) =>
+            file.endsWith('.png') ||
+            file.endsWith('.jpg') ||
+            file.endsWith('.jpeg')
+        );
 
         console.log('Image files found:', imageFiles.length);
 
-        const imagePaths = imageFiles.map((fileName) => {
-          const uri = `${imagesDirPath}${fileName}`;
-          console.log(`Mapping image: ${fileName} -> ${uri}`);
-          return {
-            uri,
-            name: fileName,
-          };
-        });
-        
+        const imagePaths = imageFiles.map((fileName) => ({
+          uri: `${imagesDirPath}${fileName}`,
+          name: fileName,
+        }));
         setUploadedImages(imagePaths);
-        console.log('Loaded images successfully:', imagePaths.length);
+        console.log('Loaded images:', imagePaths);
       } catch (error) {
         console.log('Error reading directory:', error);
-        console.log('Error type:', typeof error);
         setUploadedImages([]);
       }
     } catch (error) {
       console.log('Error loading images:', error);
-      console.log('Error type:', typeof error);
       setUploadedImages([]);
     } finally {
       setLoading(false);
