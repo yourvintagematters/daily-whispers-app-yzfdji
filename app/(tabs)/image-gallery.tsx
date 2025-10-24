@@ -34,9 +34,7 @@ export default function ImageGalleryScreen() {
 
   const loadUploadedImages = async () => {
     try {
-      console.log('Loading uploaded images...');
       const documentsDir = FileSystem.documentDirectory;
-      
       if (!documentsDir) {
         console.log('Documents directory not available');
         setUploadedImages([]);
@@ -44,36 +42,53 @@ export default function ImageGalleryScreen() {
         return;
       }
 
-      const uploadDir = `${documentsDir}uploaded_images/`;
-      const dirInfo = await FileSystem.getInfoAsync(uploadDir);
-      
-      if (!dirInfo.exists) {
-        console.log('Upload directory does not exist');
+      const imagesDirPath = `${documentsDir}uploaded_images/`;
+      console.log('Loading images from:', imagesDirPath);
+
+      try {
+        const dirInfo = await FileSystem.getInfoAsync(imagesDirPath);
+        console.log('Directory info:', dirInfo);
+        
+        if (!dirInfo.exists) {
+          console.log('Images directory does not exist yet');
+          setUploadedImages([]);
+          setLoading(false);
+          return;
+        }
+
+        const files = await FileSystem.readDirectoryAsync(imagesDirPath);
+        console.log('Files in directory:', files.length);
+        console.log('Files:', files);
+        
+        const imageFiles = files.filter((file) => {
+          const isImage = file.endsWith('.png') ||
+                         file.endsWith('.jpg') ||
+                         file.endsWith('.jpeg');
+          console.log(`File: ${file}, is image: ${isImage}`);
+          return isImage;
+        });
+
+        console.log('Image files found:', imageFiles.length);
+
+        const imagePaths = imageFiles.map((fileName) => {
+          const uri = `${imagesDirPath}${fileName}`;
+          console.log(`Mapping image: ${fileName} -> ${uri}`);
+          return {
+            uri,
+            name: fileName,
+          };
+        });
+        
+        setUploadedImages(imagePaths);
+        console.log('Loaded images successfully:', imagePaths.length);
+      } catch (error) {
+        console.log('Error reading directory:', error);
+        console.log('Error type:', typeof error);
         setUploadedImages([]);
-        setLoading(false);
-        return;
       }
-
-      const files = await FileSystem.readDirectoryAsync(uploadDir);
-      console.log('Files found:', files.length);
-
-      const imageFiles = files.filter((file) =>
-        file.toLowerCase().endsWith('.jpg') ||
-        file.toLowerCase().endsWith('.jpeg') ||
-        file.toLowerCase().endsWith('.png')
-      );
-
-      console.log('Image files:', imageFiles.length);
-
-      const images = imageFiles.map((fileName) => ({
-        uri: `${uploadDir}${fileName}`,
-        name: fileName,
-      }));
-
-      setUploadedImages(images);
-      console.log('Images loaded successfully:', images.length);
     } catch (error) {
       console.log('Error loading images:', error);
+      console.log('Error type:', typeof error);
       setUploadedImages([]);
     } finally {
       setLoading(false);
