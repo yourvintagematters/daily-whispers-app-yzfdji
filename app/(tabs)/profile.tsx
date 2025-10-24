@@ -169,7 +169,7 @@ export default function ProfileScreen() {
   const loadUploadedImages = async () => {
     try {
       console.log("Loading uploaded images...");
-      const documentsDir = FileSystem.documentDirectory;
+      const documentsDir = FileSystem.documentDirectory || '';
       
       if (!documentsDir) {
         console.log("Documents directory not available");
@@ -178,20 +178,16 @@ export default function ProfileScreen() {
       }
 
       const uploadDir = `${documentsDir}uploaded_images/`;
-      console.log("Checking upload directory:", uploadDir);
-      
       const dirInfo = await FileSystem.getInfoAsync(uploadDir);
-      console.log("Directory info:", dirInfo);
       
       if (!dirInfo.exists) {
-        console.log("Upload directory does not exist, creating it...");
-        await FileSystem.makeDirectoryAsync(uploadDir, { intermediates: true });
+        console.log("Upload directory does not exist");
         setUploadedImages([]);
         return;
       }
 
       const files = await FileSystem.readDirectoryAsync(uploadDir);
-      console.log("Files found:", files.length, files);
+      console.log("Files found:", files.length);
 
       const imageFiles = files.filter(file => 
         file.toLowerCase().endsWith('.jpg') || 
@@ -210,10 +206,6 @@ export default function ProfileScreen() {
       console.log("Images loaded successfully:", images.length);
     } catch (error) {
       console.log("Error loading images:", error);
-      if (error instanceof Error) {
-        console.log("Error message:", error.message);
-        console.log("Error stack:", error.stack);
-      }
       setUploadedImages([]);
     }
   };
@@ -225,7 +217,7 @@ export default function ProfileScreen() {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: false,
-        quality: 0.8,
+        quality: 0.7,
       });
 
       if (result.canceled) {
@@ -242,9 +234,8 @@ export default function ProfileScreen() {
       const selectedAsset = result.assets[0];
       const sourceUri = selectedAsset.uri;
       console.log("Selected image URI:", sourceUri);
-      console.log("Selected asset:", selectedAsset);
 
-      const documentsDir = FileSystem.documentDirectory;
+      const documentsDir = FileSystem.documentDirectory || '';
       if (!documentsDir) {
         console.log("ERROR: Documents directory is null");
         Alert.alert("Error", "Could not access file system.");
@@ -259,9 +250,7 @@ export default function ProfileScreen() {
       if (!dirInfo.exists) {
         console.log("Creating upload directory...");
         await FileSystem.makeDirectoryAsync(uploadDir, { intermediates: true });
-        console.log("Directory created successfully");
-      } else {
-        console.log("Upload directory already exists");
+        console.log("Directory created");
       }
 
       const fileName = `img_${Date.now()}.jpg`;
@@ -278,7 +267,7 @@ export default function ProfileScreen() {
       console.log("Compressed image URI:", compressed.uri);
 
       // Copy to destination
-      console.log("Copying file from", compressed.uri, "to", destinationUri);
+      console.log("Copying file...");
       await FileSystem.copyAsync({
         from: compressed.uri,
         to: destinationUri,
@@ -290,15 +279,11 @@ export default function ProfileScreen() {
       console.log("File verification - exists:", fileCheck.exists, "size:", fileCheck.size);
 
       if (!fileCheck.exists) {
-        throw new Error("File verification failed - file does not exist after copy");
+        throw new Error("File verification failed - file does not exist");
       }
 
-      console.log("File successfully saved to:", destinationUri);
-      
-      // Update state with new image
-      const newImage = { uri: destinationUri, name: fileName };
-      setUploadedImages([...uploadedImages, newImage]);
-      
+      // Update state and reload
+      setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
       Alert.alert("Success", "Image uploaded successfully!");
       console.log("=== Image upload complete ===");
       
