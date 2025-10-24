@@ -10,7 +10,6 @@ import * as Notifications from "expo-notifications";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import * as ImagePicker from "expo-image-picker";
-import * as ImageManipulator from "expo-image-manipulator";
 import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 
@@ -262,38 +261,15 @@ export default function ProfileScreen() {
         console.log("Attempting to save to:", destinationUri);
 
         try {
-          // Use ImageManipulator to properly save the image
-          const manipulatedImage = await ImageManipulator.manipulateAsync(
-            imageUri,
-            [],
-            { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
-          );
-          
-          console.log("Image manipulated, URI:", manipulatedImage.uri);
-          
-          // Now copy the manipulated image to our destination
           await FileSystem.copyAsync({
-            from: manipulatedImage.uri,
+            from: imageUri,
             to: destinationUri,
           });
           console.log("File copied successfully");
         } catch (copyError) {
           console.log("Copy error details:", copyError);
-          console.log("Copy error type:", typeof copyError);
-          
-          // Fallback: try using moveAsync instead
-          try {
-            console.log("Attempting fallback with moveAsync...");
-            await FileSystem.moveAsync({
-              from: imageUri,
-              to: destinationUri,
-            });
-            console.log("File moved successfully with fallback");
-          } catch (moveError) {
-            console.log("Move error details:", moveError);
-            Alert.alert("Error", "Failed to save image file. Please try again.");
-            return;
-          }
+          Alert.alert("Error", "Failed to save image file. Please try again.");
+          return;
         }
 
         setUploadedImages([...uploadedImages, { uri: destinationUri, name: fileName }]);
