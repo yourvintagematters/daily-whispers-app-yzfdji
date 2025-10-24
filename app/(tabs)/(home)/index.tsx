@@ -29,21 +29,11 @@ function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: Them
     onPress(item.id);
   };
 
-  const handlePressIn = () => {
-    onHover(item.id);
-  };
-
-  const handlePressOut = () => {
-    onHover(null);
-  };
-
   return (
     <View style={styles.themeButtonContainer}>
       <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
         <Pressable
           onPress={handlePress}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
           onMouseEnter={() => onHover(item.id)}
           onMouseLeave={() => onHover(null)}
           style={[
