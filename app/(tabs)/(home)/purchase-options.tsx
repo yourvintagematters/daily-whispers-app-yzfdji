@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { APP_CUSTOMIZATION } from "@/constants/Colors";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 interface PurchaseOption {
   id: string;
@@ -46,6 +47,7 @@ export default function PurchaseOptionsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { selectedTheme } = useLocalSearchParams();
+  const [hoveredOptionId, setHoveredOptionId] = useState<string | null>(null);
 
   const handleOptionSelect = (option: PurchaseOption) => {
     console.log(`Selected option: ${option.id}`);
@@ -61,30 +63,86 @@ export default function PurchaseOptionsScreen() {
     });
   };
 
-  const renderOptionButton = (option: PurchaseOption) => (
-    <Pressable
-      key={option.id}
-      style={[
-        styles.optionButton,
-        { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' },
-      ]}
-      onPress={() => handleOptionSelect(option)}
-    >
-      <View style={styles.optionContent}>
-        <View style={styles.optionTextContainer}>
-          <Text style={[styles.optionName, { color: theme.colors.text }]}>
-            {option.name}
-          </Text>
-          <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
-            {option.description}
-          </Text>
-          <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
-            ${option.price.toFixed(2)}
-          </Text>
-        </View>
-      </View>
-    </Pressable>
-  );
+  const renderOptionButton = (option: PurchaseOption) => {
+    const isHovered = hoveredOptionId === option.id;
+    const scaleValue = useSharedValue(1);
+    const shadowOpacityValue = useSharedValue(0.1);
+
+    const animatedStyle = useAnimatedStyle(() => {
+      return {
+        transform: [{ scale: scaleValue.value }],
+      };
+    });
+
+    const handleHoverIn = () => {
+      setHoveredOptionId(option.id);
+      scaleValue.value = withSpring(1.02, {
+        damping: 10,
+        mass: 1,
+        overshootClamping: false,
+      });
+      shadowOpacityValue.value = withSpring(0.2, {
+        damping: 10,
+        mass: 1,
+        overshootClamping: false,
+      });
+    };
+
+    const handleHoverOut = () => {
+      setHoveredOptionId(null);
+      scaleValue.value = withSpring(1, {
+        damping: 10,
+        mass: 1,
+        overshootClamping: false,
+      });
+      shadowOpacityValue.value = withSpring(0.1, {
+        damping: 10,
+        mass: 1,
+        overshootClamping: false,
+      });
+    };
+
+    return (
+      <Animated.View
+        key={option.id}
+        style={[
+          animatedStyle,
+          {
+            shadowOpacity: isHovered ? 0.2 : 0.1,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: isHovered ? 6 : 2 },
+            shadowRadius: isHovered ? 8 : 4,
+            elevation: isHovered ? 8 : 3,
+          },
+        ]}
+      >
+        <Pressable
+          style={[
+            styles.optionButton,
+            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' },
+            isHovered && styles.optionButtonHovered,
+          ]}
+          onPress={() => handleOptionSelect(option)}
+          onMouseEnter={handleHoverIn}
+          onMouseLeave={handleHoverOut}
+        >
+          <View style={styles.optionContent}>
+            <View style={styles.optionTextContainer}>
+              <Text style={[styles.optionName, { color: theme.colors.text }]}>
+                {option.name}
+              </Text>
+              <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
+                {option.description}
+              </Text>
+              <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
+                ${option.price.toFixed(2)}
+              </Text>
+            </View>
+          </View>
+        </Pressable>
+      </Animated.View>
+    );
+  };
 
   const renderHeaderLeft = () => (
     <Pressable
@@ -197,6 +255,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    transition: 'all 0.3s ease-in-out',
+  },
+  optionButtonHovered: {
+    opacity: 0.95,
   },
   optionContent: {
     flex: 1,
