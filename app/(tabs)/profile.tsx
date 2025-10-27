@@ -529,8 +529,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 16,
     right: 16,
-    width: 28,
-    height: 28,
+    width: 56,
+    height: 56,
   },
   cardInner: {
     padding: 24,

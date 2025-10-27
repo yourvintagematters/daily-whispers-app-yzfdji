@@ -302,8 +302,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 12,
     right: 12,
-    width: 24,
-    height: 24,
+    width: 48,
+    height: 48,
   },
   titleWithImage: {
     flexDirection: 'row',
@@ -312,8 +312,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   titleDecorativeImage: {
-    width: 28,
-    height: 28,
+    width: 56,
+    height: 56,
   },
   infoSection: {
     borderRadius: 12,
