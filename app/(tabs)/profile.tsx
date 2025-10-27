@@ -12,6 +12,7 @@ import * as Sharing from "expo-sharing";
 import * as ImagePicker from "expo-image-picker";
 import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
+import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -320,7 +321,7 @@ export default function ProfileScreen() {
                   </Text>
                 </View>
                 <Image
-                  source={require('@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png')}
+                  source={LogoImage}
                   style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
                 />
               </View>

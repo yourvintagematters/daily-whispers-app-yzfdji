@@ -6,6 +6,7 @@ import { IconSymbol } from "@/components/IconSymbol";
 import { useTheme } from "@react-navigation/native";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES, APP_CUSTOMIZATION } from "@/constants/Colors";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
 
 interface ThemeButtonProps {
   item: typeof DAILY_WHISPERS_THEMES[keyof typeof DAILY_WHISPERS_THEMES];
@@ -73,7 +74,7 @@ function QuoteCardPreview({ themeId, themeColors }: { themeId: string; themeColo
         "{randomQuote}"
       </Text>
       <Image
-        source={require('@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png')}
+        source={LogoImage}
         style={[styles.cardDecorativeImage, { tintColor: '#FFFFFF' }]}
       />
     </View>
@@ -136,7 +137,7 @@ export default function HomeScreen() {
                   Daily Whispers
                 </Text>
                 <Image
-                  source={require('@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png')}
+                  source={LogoImage}
                   style={[styles.titleDecorativeImage, { tintColor: '#000000' }]}
                 />
               </View>

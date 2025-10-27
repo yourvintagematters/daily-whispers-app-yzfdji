@@ -249,6 +249,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerButtonContainer: {
-    padding: 6,
+  padding: 6,
   },
 });
