@@ -310,11 +310,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 12,
+    flexWrap: 'wrap',
   },
   titleDecorativeImage: {
-    width: 56,
-    height: 56,
+    width: 48,
+    height: 48,
+    resizeMode: 'contain',
   },
   infoSection: {
     borderRadius: 12,

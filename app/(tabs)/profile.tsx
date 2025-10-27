@@ -9,7 +9,7 @@ import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import * as ImagePicker from "expo-image-picker";
+
 import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
@@ -23,7 +23,6 @@ export default function ProfileScreen() {
   const [recipientName, setRecipientName] = useState<string>("Friend");
   const [quoteHistory, setQuoteHistory] = useState<string[]>([]);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState<number>(0);
-  const [uploadedImages, setUploadedImages] = useState<{ uri: string; name: string }[]>([]);
   const quoteCardRef = useRef<View>(null);
 
   useEffect(() => {
@@ -37,7 +36,6 @@ export default function ProfileScreen() {
 
     checkNotificationPermissions();
     loadSampleQuote();
-    loadUploadedImages();
   }, []);
 
   const checkNotificationPermissions = async () => {
@@ -166,98 +164,7 @@ export default function ProfileScreen() {
     );
   };
 
-  const loadUploadedImages = async () => {
-    try {
-      const documentsDir = FileSystem.documentDirectory || '';
-      if (!documentsDir) {
-        console.log("Documents directory not available");
-        return;
-      }
 
-      const imagesDir = `${documentsDir}uploaded_images/`;
-      
-      try {
-        const files = await FileSystem.readDirectoryAsync(imagesDir);
-        const imageFiles = files.filter(file => 
-          file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.jpeg')
-        );
-        
-        const imagePaths = imageFiles.map(file => ({
-          uri: `${imagesDir}${file}`,
-          name: file
-        }));
-        setUploadedImages(imagePaths);
-        console.log("Loaded images:", imagePaths);
-      } catch (error) {
-        console.log("Images directory does not exist yet, will create on first upload");
-      }
-    } catch (error) {
-      console.log("Error loading images:", error);
-    }
-  };
-
-  const handleImageUpload = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const imageUri = result.assets[0].uri;
-        
-        // Create the uploaded_images directory if it doesn't exist
-        const documentsDir = FileSystem.documentDirectory || '';
-        if (!documentsDir) {
-          Alert.alert("Error", "Could not access file system.");
-          return;
-        }
-
-        const imagesDir = `${documentsDir}uploaded_images/`;
-        
-        try {
-          await FileSystem.makeDirectoryAsync(imagesDir, { intermediates: true });
-        } catch (error) {
-          console.log("Directory already exists or error creating:", error);
-        }
-
-        // Generate a unique filename
-        const fileName = `image_${Date.now()}.png`;
-        const savedPath = `${imagesDir}${fileName}`;
-
-        // Copy the image to the uploaded_images folder
-        await FileSystem.copyAsync({
-          from: imageUri,
-          to: savedPath,
-        });
-
-        setUploadedImages([...uploadedImages, { uri: savedPath, name: fileName }]);
-        Alert.alert("Success", `Image uploaded!\n\nFile: ${fileName}`);
-        console.log("Image saved to:", savedPath);
-        
-        // Reload images to ensure they're displayed
-        await loadUploadedImages();
-      }
-    } catch (error) {
-      console.log("Error uploading image:", error);
-      Alert.alert("Error", "Failed to upload image. Please try again.");
-    }
-  };
-
-  const deleteImage = async (imagePath: string) => {
-    try {
-      await FileSystem.deleteAsync(imagePath);
-      const newImages = uploadedImages.filter(img => img.uri !== imagePath);
-      setUploadedImages(newImages);
-      Alert.alert("Success", "Image deleted successfully.");
-      console.log("Image deleted:", imagePath);
-    } catch (error) {
-      console.log("Error deleting image:", error);
-      Alert.alert("Error", "Failed to delete image.");
-    }
-  };
 
   const themeData = currentTheme ? DAILY_WHISPERS_THEMES[currentTheme as keyof typeof DAILY_WHISPERS_THEMES] : null;
 
@@ -364,68 +271,7 @@ export default function ProfileScreen() {
               </Text>
             </Pressable>
 
-            <Pressable
-              style={[
-                styles.uploadButton,
-                { backgroundColor: theme.colors.primary },
-              ]}
-              onPress={handleImageUpload}
-            >
-              <IconSymbol name="photo.badge.plus" color="#FFFFFF" size={20} />
-              <Text style={[styles.uploadButtonText, { color: '#FFFFFF' }]}>
-                Upload Image
-              </Text>
-            </Pressable>
 
-            <GlassView style={[
-              styles.folderInfoSection,
-              Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-            ]} glassEffectStyle="regular">
-              <View style={styles.folderInfoHeader}>
-                <IconSymbol name="folder.fill" color={theme.colors.primary} size={20} />
-                <Text style={[styles.folderInfoTitle, { color: theme.colors.text }]}>
-                  Uploaded Images Folder
-                </Text>
-              </View>
-              <Text style={[styles.folderPath, { color: theme.dark ? '#98989D' : '#666' }]}>
-                {FileSystem.documentDirectory}uploaded_images/
-              </Text>
-              <Text style={[styles.folderInfoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
-                This is where your uploaded images are stored. This folder is part of the app's internal storage and is not visible in your device's file explorer.
-              </Text>
-              <Text style={[styles.folderInfoCount, { color: theme.colors.primary }]}>
-                {uploadedImages.length} image{uploadedImages.length !== 1 ? 's' : ''} stored
-              </Text>
-            </GlassView>
-
-            {uploadedImages.length > 0 && (
-              <View style={styles.imagesSection}>
-                <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                  Uploaded Images ({uploadedImages.length})
-                </Text>
-                <View style={styles.imagesGrid}>
-                  {uploadedImages.map((imageData, index) => (
-                    <View key={index} style={styles.imageCard}>
-                      <View style={styles.imageWrapper}>
-                        <Image
-                          source={{ uri: imageData.uri }}
-                          style={styles.uploadedImage}
-                        />
-                        <Pressable
-                          style={styles.deleteImageButton}
-                          onPress={() => deleteImage(imageData.uri)}
-                        >
-                          <IconSymbol name="xmark.circle.fill" color="#FF3B30" size={24} />
-                        </Pressable>
-                      </View>
-                      <Text style={[styles.fileName, { color: theme.colors.text }]} numberOfLines={2}>
-                        {imageData.name}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            )}
 
             <GlassView style={[
               styles.settingsSection,
@@ -640,93 +486,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  uploadButton: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  uploadButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  imagesSection: {
-    marginBottom: 24,
-  },
-  imagesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginTop: 12,
-  },
-  imageCard: {
-    width: '48%',
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  imageWrapper: {
-    position: 'relative',
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  uploadedImage: {
-    width: '100%',
-    height: 140,
-    borderRadius: 12,
-  },
-  deleteImageButton: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    borderRadius: 12,
-    padding: 2,
-  },
-  fileName: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  folderInfoSection: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-  },
-  folderInfoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
-  },
-  folderInfoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  folderPath: {
-    fontSize: 12,
-    fontFamily: 'monospace',
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    padding: 8,
-    borderRadius: 6,
-    marginBottom: 12,
-    overflow: 'hidden',
-  },
-  folderInfoDescription: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 12,
-  },
-  folderInfoCount: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
+
 });
