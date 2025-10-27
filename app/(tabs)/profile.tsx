@@ -319,6 +319,10 @@ export default function ProfileScreen() {
                     })}
                   </Text>
                 </View>
+                <Image
+                  source={require('@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png')}
+                  style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
+                />
               </View>
             )}
 
@@ -519,6 +523,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 8,
+    position: 'relative' as const,
+  },
+  quoteCardDecorativeImage: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    width: 28,
+    height: 28,
   },
   cardInner: {
     padding: 24,

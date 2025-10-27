@@ -35,8 +35,8 @@ const PURCHASE_OPTIONS: PurchaseOption[] = [
   {
     id: 'shareTheLoveBigTime',
     name: 'Share the Love Big Time!',
-    description: 'Share 10x the Love, and feel the love back with a bonus selection for yourself',
-    price: 49.99,
+    description: 'Share 10x the Love, and feel the love back with a bonus selection for yourself'. 
+    price: 49.99, 
     count: 10,
     icon: '',
   },

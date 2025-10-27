@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Stack, useRouter } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground } from "react-native";
+import { FlatList, Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground, Image } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { useTheme } from "@react-navigation/native";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES, APP_CUSTOMIZATION } from "@/constants/Colors";
@@ -72,6 +72,10 @@ function QuoteCardPreview({ themeId, themeColors }: { themeId: string; themeColo
       <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
         "{randomQuote}"
       </Text>
+      <Image
+        source={require('@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png')}
+        style={[styles.cardDecorativeImage, { tintColor: '#FFFFFF' }]}
+      />
     </View>
   );
 }
@@ -127,9 +131,15 @@ export default function HomeScreen() {
           >
             {/* Title Section */}
             <View style={styles.titleSection}>
-              <Text style={[styles.mainTitle, { color: theme.colors.text }]}>
-                Daily Whispers
-              </Text>
+              <View style={styles.titleWithImage}>
+                <Text style={[styles.mainTitle, { color: theme.colors.text }]}>
+                  Daily Whispers
+                </Text>
+                <Image
+                  source={require('@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png')}
+                  style={[styles.titleDecorativeImage, { tintColor: '#000000' }]}
+                />
+              </View>
               <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
                 Gift someone a year of daily quotes to show them you care.
               </Text>
@@ -279,6 +289,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
     transform: [{ perspective: 1000 }, { rotateY: '-5deg' }],
+    position: 'relative' as const,
   },
   quoteCardText: {
     fontSize: 16,
@@ -286,6 +297,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
     fontWeight: '500',
+  },
+  cardDecorativeImage: {
+    position: 'absolute',
+    bottom: 12,
+    right: 12,
+    width: 24,
+    height: 24,
+  },
+  titleWithImage: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  titleDecorativeImage: {
+    width: 28,
+    height: 28,
   },
   infoSection: {
     borderRadius: 12,
