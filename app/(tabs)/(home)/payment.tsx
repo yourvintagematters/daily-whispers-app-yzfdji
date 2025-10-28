@@ -4,6 +4,8 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ImageBackground } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
+import { createPaymentIntent, validateCardNumber, createTestToken } from "@/utils/stripePayment";
+import { isTestMode } from "@/utils/paymentConfig";
 
 interface PaymentFormData {
   cardNumber: string;
@@ -45,8 +47,10 @@ export default function PaymentScreen() {
   };
 
   const validatePaymentData = () => {
-    if (!paymentData.cardNumber.replace(/\s/g, '').match(/^\d{16}$/)) {
-      Alert.alert('Error', 'Please enter a valid 16-digit card number');
+    const cardNumberCleaned = paymentData.cardNumber.replace(/\s/g, '');
+    
+    if (!validateCardNumber(cardNumberCleaned)) {
+      Alert.alert('Error', 'Please enter a valid card number');
       return false;
     }
     if (!paymentData.expiryDate.match(/^\d{2}\/\d{2}$/)) {
@@ -72,12 +76,40 @@ export default function PaymentScreen() {
     setIsProcessing(true);
     
     try {
-      console.log('Processing payment...');
-      console.log('Payment data:', paymentData);
-      console.log('Recipients:', recipientsData);
-      console.log('Buyer theme:', buyerTheme);
+      console.log('Processing payment with Stripe...');
+      console.log('Test mode:', isTestMode());
+      console.log('Payment amount:', optionPrice);
 
+      // Create payment intent with Stripe
+      const paymentIntentResult = await createPaymentIntent({
+        amount: parseFloat(optionPrice as string),
+        currency: 'usd',
+        description: `Daily Whispers - ${optionName}`,
+        metadata: {
+          optionName: optionName as string,
+          buyerTheme: buyerTheme as string,
+          recipientCount: recipientsData ? JSON.parse(recipientsData as string).length.toString() : '0',
+        },
+      });
+
+      if (!paymentIntentResult.success) {
+        Alert.alert('Payment Error', paymentIntentResult.error || 'Failed to create payment intent');
+        setIsProcessing(false);
+        return;
+      }
+
+      console.log('Payment intent created:', paymentIntentResult.paymentIntentId);
+
+      // Create a test token for the card
+      const cardToken = createTestToken(paymentData.cardNumber);
+      console.log('Card token created:', cardToken);
+
+      // Simulate payment processing delay
       await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // In a real implementation, you would confirm the payment with Stripe
+      // For now, we'll simulate a successful payment
+      console.log('Payment processed successfully');
 
       Alert.alert(
         'Payment Successful!',
@@ -139,6 +171,14 @@ export default function PaymentScreen() {
             <Text style={[styles.subtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
               Secure payment for your gift
             </Text>
+            {isTestMode() && (
+              <View style={[styles.testModeIndicator, { backgroundColor: theme.dark ? '#3C3C3E' : '#FFF3CD' }]}>
+                <IconSymbol name="info.circle.fill" color={theme.dark ? '#FFB81C' : '#FF9500'} />
+                <Text style={[styles.testModeText, { color: theme.dark ? '#FFB81C' : '#FF9500' }]}>
+                  Test Mode - Use test card numbers
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Order Summary */}
@@ -341,6 +381,19 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
+    marginBottom: 12,
+  },
+  testModeIndicator: {
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  testModeText: {
+    fontSize: 13,
+    fontWeight: '500',
+    flex: 1,
   },
   summaryCard: {
     borderRadius: 12,

@@ -563,16 +563,16 @@ export const DAILY_WHISPERS_QUOTES = {
     "Your value is not determined by others' opinions.",
   ],
   funnySideOfLife: [
-    "Life is too short to be serious all the time.",
+    "Life is too short to take life too seriously.",
     "Laughter is the best medicine, and it's free.",
     "I'm not weird, I'm just limited edition.",
-    "Adulting is like folding a fitted sheet - nobody really knows how.",
+    "Adulting is like folding a fitted sheet - nobody really knows how to do it.",
     "Coffee: because adulting is hard.",
   ],
   gratitudePearls: [
     "Gratitude turns what we have into enough.",
     "Every moment is a gift; that's why it's called the present.",
-    "Appreciate the little things; they are the big things.",
+    "Appreciate the little things; they are actually the big things.",
     "A grateful heart is a magnet for miracles.",
     "Thank you for the lessons, the growth, and the journey.",
   ],
@@ -580,7 +580,7 @@ export const DAILY_WHISPERS_QUOTES = {
     "In nature, we find peace and perspective.",
     "The forest whispers secrets to those who listen.",
     "Nature doesn't hurry, yet everything is accomplished.",
-    "Every flower is a soul blossoming in nature.",
+    "Every flower is a tiny soul blossoming in nature.",
     "The earth has music for those who listen.",
   ],
   aCatsLife: [
@@ -595,7 +595,7 @@ export const DAILY_WHISPERS_QUOTES = {
     "Live in the moment; yesterday is gone, tomorrow hasn't come.",
     "Loyalty is a choice, and it's beautiful.",
     "A dog's joy is pure and infectious.",
-    "Greet each day with enthusiasm and an open heart.",
+    "Greet each day with enthusiasm, an open heart and a wagging tail.",
   ],
   threadsOfConnection: [
     "We are all connected by invisible threads of compassion.",
