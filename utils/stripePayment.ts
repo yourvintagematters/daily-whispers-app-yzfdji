@@ -1,13 +1,7 @@
 
-import Stripe from 'stripe';
-
-// Initialize Stripe with the secret key
-// In a production app, this should be stored securely in environment variables
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder';
-
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: '2024-04-10',
-});
+// Client-side Stripe payment utilities for React Native
+// Note: This is a simplified implementation for testing purposes
+// In production, you should use a proper backend service to handle payments
 
 export interface PaymentIntentData {
   amount: number;
@@ -25,7 +19,7 @@ export interface PaymentResult {
 
 /**
  * Create a payment intent for Stripe payment processing
- * This should be called from your backend
+ * In a real app, this would call your backend API
  */
 export async function createPaymentIntent(
   data: PaymentIntentData
@@ -41,33 +35,17 @@ export async function createPaymentIntent(
       };
     }
 
-    if (!STRIPE_SECRET_KEY || STRIPE_SECRET_KEY === 'sk_test_placeholder') {
-      console.warn('Stripe secret key not configured. Using test mode.');
-      // For testing purposes, return a mock response
-      return {
-        success: true,
-        paymentIntentId: `pi_test_${Date.now()}`,
-        clientSecret: `pi_test_${Date.now()}_secret_test`,
-      };
-    }
+    // For testing purposes, return a mock response
+    // In production, call your backend API to create a real payment intent
+    const mockPaymentIntentId = `pi_test_${Date.now()}`;
+    const mockClientSecret = `${mockPaymentIntentId}_secret_test`;
 
-    // Create payment intent with Stripe
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(data.amount * 100), // Convert to cents
-      currency: data.currency || 'usd',
-      description: data.description,
-      metadata: data.metadata || {},
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
-
-    console.log('Payment intent created:', paymentIntent.id);
+    console.log('Payment intent created (test mode):', mockPaymentIntentId);
 
     return {
       success: true,
-      paymentIntentId: paymentIntent.id,
-      clientSecret: paymentIntent.client_secret || '',
+      paymentIntentId: mockPaymentIntentId,
+      clientSecret: mockClientSecret,
     };
   } catch (error) {
     console.error('Error creating payment intent:', error);
@@ -80,7 +58,7 @@ export async function createPaymentIntent(
 
 /**
  * Confirm a payment with card details
- * This is a simplified version - in production, use Stripe.js or a payment library
+ * This is a simplified version - in production, use a proper backend service
  */
 export async function confirmPayment(
   paymentIntentId: string,
@@ -89,28 +67,11 @@ export async function confirmPayment(
   try {
     console.log('Confirming payment for intent:', paymentIntentId);
 
-    if (!STRIPE_SECRET_KEY || STRIPE_SECRET_KEY === 'sk_test_placeholder') {
-      // For testing purposes, return a mock response
-      return {
-        success: true,
-        paymentIntentId,
-      };
-    }
-
-    // In a real implementation, you would confirm the payment intent
-    // with the card token from the client
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-    if (paymentIntent.status === 'succeeded') {
-      return {
-        success: true,
-        paymentIntentId,
-      };
-    }
-
+    // For testing purposes, return a mock response
+    // In production, call your backend API to confirm the payment
     return {
-      success: false,
-      error: `Payment status: ${paymentIntent.status}`,
+      success: true,
+      paymentIntentId,
     };
   } catch (error) {
     console.error('Error confirming payment:', error);
@@ -126,12 +87,10 @@ export async function confirmPayment(
  */
 export async function getPaymentIntentStatus(paymentIntentId: string): Promise<string> {
   try {
-    if (!STRIPE_SECRET_KEY || STRIPE_SECRET_KEY === 'sk_test_placeholder') {
-      return 'succeeded';
-    }
-
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    return paymentIntent.status;
+    console.log('Retrieving payment intent status:', paymentIntentId);
+    // For testing purposes, return succeeded
+    // In production, call your backend API to get the real status
+    return 'succeeded';
   } catch (error) {
     console.error('Error retrieving payment intent:', error);
     return 'error';
