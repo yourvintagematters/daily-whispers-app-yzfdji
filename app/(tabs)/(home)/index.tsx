@@ -24,10 +24,21 @@ function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: Them
   }));
 
   const handlePress = () => {
+    console.log('Theme button pressed:', item.id);
     scaleValue.value = withSpring(1.1, { damping: 10, mass: 1 }, () => {
       scaleValue.value = withSpring(1, { damping: 10, mass: 1 });
     });
     onPress(item.id);
+  };
+
+  const handleMouseEnter = () => {
+    console.log('Mouse enter on theme:', item.id);
+    onHover(item.id);
+  };
+
+  const handleMouseLeave = () => {
+    console.log('Mouse leave on theme:', item.id);
+    onHover(null);
   };
 
   return (
@@ -35,8 +46,8 @@ function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: Them
       <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
         <Pressable
           onPress={handlePress}
-          onMouseEnter={() => onHover(item.id)}
-          onMouseLeave={() => onHover(null)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           style={[
             styles.themeButton,
             {
@@ -68,6 +79,8 @@ function QuoteCardPreview({ themeId, themeColors }: { themeId: string; themeColo
   // Show only quotes from the selected theme (purchased collection)
   const randomQuote = quotes.length > 0 ? quotes[Math.floor(Math.random() * quotes.length)] : "No quotes available";
 
+  console.log('Rendering QuoteCardPreview for theme:', themeId, 'Quote:', randomQuote);
+
   return (
     <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
       <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
@@ -87,6 +100,8 @@ export default function HomeScreen() {
   const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
 
   const themes = Object.values(DAILY_WHISPERS_THEMES);
+
+  console.log('HomeScreen rendered, hoveredTheme:', hoveredTheme);
 
   const handleThemePress = (themeId: string) => {
     console.log("Theme selected:", themeId);
@@ -162,9 +177,7 @@ export default function HomeScreen() {
                       hoveredTheme={hoveredTheme}
                       themeColors={theme.colors}
                     />
-                    {hoveredTheme === item.id && (
-                      <QuoteCardPreview themeId={item.id} themeColors={theme.colors} />
-                    )}
+                    <QuoteCardPreview themeId={item.id} themeColors={theme.colors} />
                   </View>
                 )}
                 keyExtractor={(item) => item.id}
