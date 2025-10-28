@@ -177,7 +177,9 @@ export default function HomeScreen() {
                       hoveredTheme={hoveredTheme}
                       themeColors={theme.colors}
                     />
-                    <QuoteCardPreview themeId={item.id} themeColors={theme.colors} />
+                    {hoveredTheme === item.id && (
+                      <QuoteCardPreview themeId={item.id} themeColors={theme.colors} />
+                    )}
                   </View>
                 )}
                 keyExtractor={(item) => item.id}
