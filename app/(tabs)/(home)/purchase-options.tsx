@@ -43,6 +43,99 @@ const PURCHASE_OPTIONS: PurchaseOption[] = [
   },
 ];
 
+function OptionButton({ 
+  option, 
+  isHovered, 
+  onPress, 
+  onHoverIn, 
+  onHoverOut,
+  theme 
+}: { 
+  option: PurchaseOption; 
+  isHovered: boolean; 
+  onPress: () => void; 
+  onHoverIn: () => void; 
+  onHoverOut: () => void;
+  theme: any;
+}) {
+  const scaleValue = useSharedValue(1);
+  const shadowOpacityValue = useSharedValue(0.1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scaleValue.value }],
+    };
+  });
+
+  const handleHoverIn = () => {
+    onHoverIn();
+    scaleValue.value = withSpring(1.02, {
+      damping: 10,
+      mass: 1,
+      overshootClamping: false,
+    });
+    shadowOpacityValue.value = withSpring(0.2, {
+      damping: 10,
+      mass: 1,
+      overshootClamping: false,
+    });
+  };
+
+  const handleHoverOut = () => {
+    onHoverOut();
+    scaleValue.value = withSpring(1, {
+      damping: 10,
+      mass: 1,
+      overshootClamping: false,
+    });
+    shadowOpacityValue.value = withSpring(0.1, {
+      damping: 10,
+      mass: 1,
+      overshootClamping: false,
+    });
+  };
+
+  return (
+    <Animated.View
+      style={[
+        animatedStyle,
+        {
+          shadowOpacity: isHovered ? 0.2 : 0.1,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: isHovered ? 6 : 2 },
+          shadowRadius: isHovered ? 8 : 4,
+          elevation: isHovered ? 8 : 3,
+        },
+      ]}
+    >
+      <Pressable
+        style={[
+          styles.optionButton,
+          { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' },
+          isHovered && styles.optionButtonHovered,
+        ]}
+        onPress={onPress}
+        onMouseEnter={handleHoverIn}
+        onMouseLeave={handleHoverOut}
+      >
+        <View style={styles.optionContent}>
+          <View style={styles.optionTextContainer}>
+            <Text style={[styles.optionName, { color: theme.colors.text }]}>
+              {option.name}
+            </Text>
+            <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
+              {option.description}
+            </Text>
+            <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
+              ${option.price.toFixed(2)}
+            </Text>
+          </View>
+        </View>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
 export default function PurchaseOptionsScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -61,87 +154,6 @@ export default function PurchaseOptionsScreen() {
         optionCount: option.count.toString(),
       }
     });
-  };
-
-  const renderOptionButton = (option: PurchaseOption) => {
-    const isHovered = hoveredOptionId === option.id;
-    const scaleValue = useSharedValue(1);
-    const shadowOpacityValue = useSharedValue(0.1);
-
-    const animatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: scaleValue.value }],
-      };
-    });
-
-    const handleHoverIn = () => {
-      setHoveredOptionId(option.id);
-      scaleValue.value = withSpring(1.02, {
-        damping: 10,
-        mass: 1,
-        overshootClamping: false,
-      });
-      shadowOpacityValue.value = withSpring(0.2, {
-        damping: 10,
-        mass: 1,
-        overshootClamping: false,
-      });
-    };
-
-    const handleHoverOut = () => {
-      setHoveredOptionId(null);
-      scaleValue.value = withSpring(1, {
-        damping: 10,
-        mass: 1,
-        overshootClamping: false,
-      });
-      shadowOpacityValue.value = withSpring(0.1, {
-        damping: 10,
-        mass: 1,
-        overshootClamping: false,
-      });
-    };
-
-    return (
-      <Animated.View
-        key={option.id}
-        style={[
-          animatedStyle,
-          {
-            shadowOpacity: isHovered ? 0.2 : 0.1,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: isHovered ? 6 : 2 },
-            shadowRadius: isHovered ? 8 : 4,
-            elevation: isHovered ? 8 : 3,
-          },
-        ]}
-      >
-        <Pressable
-          style={[
-            styles.optionButton,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' },
-            isHovered && styles.optionButtonHovered,
-          ]}
-          onPress={() => handleOptionSelect(option)}
-          onMouseEnter={handleHoverIn}
-          onMouseLeave={handleHoverOut}
-        >
-          <View style={styles.optionContent}>
-            <View style={styles.optionTextContainer}>
-              <Text style={[styles.optionName, { color: theme.colors.text }]}>
-                {option.name}
-              </Text>
-              <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
-                {option.description}
-              </Text>
-              <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
-                ${option.price.toFixed(2)}
-              </Text>
-            </View>
-          </View>
-        </Pressable>
-      </Animated.View>
-    );
   };
 
   const renderHeaderLeft = () => (
@@ -188,7 +200,17 @@ export default function PurchaseOptionsScreen() {
 
             {/* Purchase Options */}
             <View style={styles.optionsContainer}>
-              {PURCHASE_OPTIONS.map(option => renderOptionButton(option))}
+              {PURCHASE_OPTIONS.map(option => (
+                <OptionButton
+                  key={option.id}
+                  option={option}
+                  isHovered={hoveredOptionId === option.id}
+                  onPress={() => handleOptionSelect(option)}
+                  onHoverIn={() => setHoveredOptionId(option.id)}
+                  onHoverOut={() => setHoveredOptionId(null)}
+                  theme={theme}
+                />
+              ))}
             </View>
 
             {/* Info Section */}

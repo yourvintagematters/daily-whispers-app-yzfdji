@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { IconSymbol } from '@/components/IconSymbol';
 
@@ -249,6 +249,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerButtonContainer: {
-  padding: 6,
+    padding: 6,
   },
 });
