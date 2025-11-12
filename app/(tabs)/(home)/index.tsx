@@ -11,13 +11,13 @@ import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png'
 interface ThemeButtonProps {
   item: typeof DAILY_WHISPERS_THEMES[keyof typeof DAILY_WHISPERS_THEMES];
   onPress: (themeId: string) => void;
-  onHover: (themeId: string | null) => void;
-  hoveredTheme: string | null;
+  selectedTheme: string | null;
   themeColors: any;
 }
 
-function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: ThemeButtonProps) {
+function ThemeButton({ item, onPress, selectedTheme, themeColors }: ThemeButtonProps) {
   const scaleValue = useSharedValue(1);
+  const isSelected = selectedTheme === item.id;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scaleValue.value }],
@@ -31,28 +31,18 @@ function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: Them
     onPress(item.id);
   };
 
-  const handleMouseEnter = () => {
-    console.log('Mouse enter on theme:', item.id);
-    onHover(item.id);
-  };
-
-  const handleMouseLeave = () => {
-    console.log('Mouse leave on theme:', item.id);
-    onHover(null);
-  };
-
   return (
     <View style={styles.themeButtonContainer}>
       <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
         <Pressable
           onPress={handlePress}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
           style={[
             styles.themeButton,
             {
               backgroundColor: item.buttonColor,
-              shadowOpacity: hoveredTheme === item.id ? 0.3 : 0.15,
+              shadowOpacity: isSelected ? 0.3 : 0.15,
+              borderWidth: isSelected ? 3 : 0,
+              borderColor: isSelected ? themeColors.primary : 'transparent',
             },
           ]}
         >
@@ -72,7 +62,7 @@ function ThemeButton({ item, onPress, onHover, hoveredTheme, themeColors }: Them
   );
 }
 
-function QuoteCardPreview({ themeId, themeColors }: { themeId: string; themeColors: any }) {
+function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; themeColors: any; onPress: () => void }) {
   const theme_data = DAILY_WHISPERS_THEMES[themeId as keyof typeof DAILY_WHISPERS_THEMES];
   const quotes = DAILY_WHISPERS_QUOTES[themeId as keyof typeof DAILY_WHISPERS_QUOTES] || [];
   
@@ -82,29 +72,53 @@ function QuoteCardPreview({ themeId, themeColors }: { themeId: string; themeColo
   console.log('Rendering QuoteCardPreview for theme:', themeId, 'Quote:', randomQuote);
 
   return (
-    <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
-      <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
-        "{randomQuote}"
-      </Text>
-      <Image
-        source={LogoImage}
-        style={[styles.cardDecorativeImage, { tintColor: '#FFFFFF' }]}
-      />
-    </View>
+    <Pressable onPress={onPress} style={styles.quoteCardPressable}>
+      <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
+        <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
+          "{randomQuote}"
+        </Text>
+        <Image
+          source={LogoImage}
+          style={[styles.cardDecorativeImage, { tintColor: '#FFFFFF' }]}
+        />
+        <View style={styles.tapHintContainer}>
+          <Text style={[styles.tapHintText, { color: themeColors.text, opacity: 0.6 }]}>
+            Tap to continue
+          </Text>
+        </View>
+      </View>
+    </Pressable>
   );
 }
 
 export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
 
   const themes = Object.values(DAILY_WHISPERS_THEMES);
 
-  console.log('HomeScreen rendered, hoveredTheme:', hoveredTheme);
+  console.log('HomeScreen rendered, selectedTheme:', selectedTheme);
 
   const handleThemePress = (themeId: string) => {
     console.log("Theme selected:", themeId);
+    
+    // If this theme is already selected, navigate to purchase options
+    if (selectedTheme === themeId) {
+      console.log("Second tap - navigating to purchase options");
+      router.push({
+        pathname: '/(tabs)/(home)/purchase-options',
+        params: { selectedTheme: themeId }
+      });
+    } else {
+      // First tap - show the preview card
+      console.log("First tap - showing preview card");
+      setSelectedTheme(themeId);
+    }
+  };
+
+  const handleCardPress = (themeId: string) => {
+    console.log("Card pressed - navigating to purchase options");
     router.push({
       pathname: '/(tabs)/(home)/purchase-options',
       params: { selectedTheme: themeId }
@@ -173,12 +187,15 @@ export default function HomeScreen() {
                     <ThemeButton
                       item={item}
                       onPress={handleThemePress}
-                      onHover={setHoveredTheme}
-                      hoveredTheme={hoveredTheme}
+                      selectedTheme={selectedTheme}
                       themeColors={theme.colors}
                     />
-                    {hoveredTheme === item.id && (
-                      <QuoteCardPreview themeId={item.id} themeColors={theme.colors} />
+                    {selectedTheme === item.id && (
+                      <QuoteCardPreview 
+                        themeId={item.id} 
+                        themeColors={theme.colors}
+                        onPress={() => handleCardPress(item.id)}
+                      />
                     )}
                   </View>
                 )}
@@ -291,11 +308,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
+  quoteCardPressable: {
+    marginBottom: 16,
+    marginLeft: 92,
+  },
   quoteCardPreview: {
     borderRadius: 16,
     padding: 20,
-    marginBottom: 16,
-    marginLeft: 92,
     minHeight: 140,
     justifyContent: 'center',
     alignItems: 'center',
@@ -320,6 +339,18 @@ const styles = StyleSheet.create({
     right: 12,
     width: 48,
     height: 48,
+  },
+  tapHintContainer: {
+    position: 'absolute',
+    bottom: 8,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  tapHintText: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontStyle: 'italic',
   },
   titleWithImage: {
     flexDirection: 'row',
