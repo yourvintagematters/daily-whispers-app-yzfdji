@@ -96,10 +96,24 @@ export default function HomeScreen() {
   const router = useRouter();
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
 
-  const themes = Object.values(DAILY_WHISPERS_THEMES);
+  // Define theme order with categories
+  const universalThemes = [
+    DAILY_WHISPERS_THEMES.youAreLoved,
+    DAILY_WHISPERS_THEMES.funnySideOfLife,
+    DAILY_WHISPERS_THEMES.gratitudePearls,
+    DAILY_WHISPERS_THEMES.threadsOfConnection,
+  ];
 
-  console.log('HomeScreen rendered, total themes:', themes.length);
-  console.log('Theme IDs:', themes.map(t => t.id));
+  const specialThemes = [
+    DAILY_WHISPERS_THEMES.motherhood,
+    DAILY_WHISPERS_THEMES.whispersFromNature,
+    DAILY_WHISPERS_THEMES.aDogsLife,
+    DAILY_WHISPERS_THEMES.aCatsLife,
+  ];
+
+  console.log('HomeScreen rendered');
+  console.log('Universal themes:', universalThemes.map(t => t.id));
+  console.log('Special themes:', specialThemes.map(t => t.id));
   console.log('Selected theme:', selectedTheme);
 
   const handleThemePress = (themeId: string) => {
@@ -182,7 +196,34 @@ export default function HomeScreen() {
               <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
                 Choose a Theme
               </Text>
-              {themes.map((item, index) => (
+
+              {/* Universal Themes */}
+              <Text style={[styles.subSectionTitle, { color: theme.colors.text }]}>
+                Universal
+              </Text>
+              {universalThemes.map((item, index) => (
+                <View key={index}>
+                  <ThemeButton
+                    item={item}
+                    onPress={handleThemePress}
+                    selectedTheme={selectedTheme}
+                    themeColors={theme.colors}
+                  />
+                  {selectedTheme === item.id && (
+                    <QuoteCardPreview 
+                      themeId={item.id} 
+                      themeColors={theme.colors}
+                      onPress={() => handleCardPress(item.id)}
+                    />
+                  )}
+                </View>
+              ))}
+
+              {/* Special Themes */}
+              <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 24 }]}>
+                Special
+              </Text>
+              {specialThemes.map((item, index) => (
                 <View key={index}>
                   <ThemeButton
                     item={item}
@@ -258,7 +299,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
+    marginBottom: 16,
+  },
+  subSectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: 12,
+    marginTop: 8,
+    opacity: 0.8,
   },
   themeButtonContainer: {
     flexDirection: 'row',
