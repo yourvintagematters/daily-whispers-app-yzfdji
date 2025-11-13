@@ -98,7 +98,9 @@ export default function HomeScreen() {
 
   const themes = Object.values(DAILY_WHISPERS_THEMES);
 
-  console.log('HomeScreen rendered, selectedTheme:', selectedTheme);
+  console.log('HomeScreen rendered, total themes:', themes.length);
+  console.log('Theme IDs:', themes.map(t => t.id));
+  console.log('Selected theme:', selectedTheme);
 
   const handleThemePress = (themeId: string) => {
     console.log("Theme selected:", themeId);
@@ -180,29 +182,23 @@ export default function HomeScreen() {
               <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
                 Choose a Theme
               </Text>
-              <FlatList
-                data={themes}
-                renderItem={({ item }) => (
-                  <View>
-                    <ThemeButton
-                      item={item}
-                      onPress={handleThemePress}
-                      selectedTheme={selectedTheme}
+              {themes.map((item, index) => (
+                <View key={index}>
+                  <ThemeButton
+                    item={item}
+                    onPress={handleThemePress}
+                    selectedTheme={selectedTheme}
+                    themeColors={theme.colors}
+                  />
+                  {selectedTheme === item.id && (
+                    <QuoteCardPreview 
+                      themeId={item.id} 
                       themeColors={theme.colors}
+                      onPress={() => handleCardPress(item.id)}
                     />
-                    {selectedTheme === item.id && (
-                      <QuoteCardPreview 
-                        themeId={item.id} 
-                        themeColors={theme.colors}
-                        onPress={() => handleCardPress(item.id)}
-                      />
-                    )}
-                  </View>
-                )}
-                keyExtractor={(item) => item.id}
-                scrollEnabled={false}
-                nestedScrollEnabled={false}
-              />
+                  )}
+                </View>
+              ))}
             </View>
 
             {/* Info Section */}
@@ -337,8 +333,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 12,
     right: 12,
-    width: 48,
-    height: 48,
+    width: 43,
+    height: 43,
   },
   tapHintContainer: {
     position: 'absolute',
