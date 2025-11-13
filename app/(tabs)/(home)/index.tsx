@@ -80,6 +80,7 @@ function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; 
         <Image
           source={LogoImage}
           style={[styles.cardDecorativeImage, { tintColor: '#FFFFFF' }]}
+          resizeMode="contain"
         />
         <View style={styles.tapHintContainer}>
           <Text style={[styles.tapHintText, { color: themeColors.text, opacity: 0.6 }]}>
@@ -184,6 +185,7 @@ export default function HomeScreen() {
                 <Image
                   source={LogoImage}
                   style={[styles.titleDecorativeImage, { tintColor: '#000000' }]}
+                  resizeMode="contain"
                 />
               </View>
               <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
@@ -369,6 +371,7 @@ const styles = StyleSheet.create({
     elevation: 8,
     transform: [{ perspective: 1000 }, { rotateY: '-5deg' }],
     position: 'relative' as const,
+    overflow: 'hidden',
   },
   quoteCardText: {
     fontSize: 16,
@@ -379,8 +382,8 @@ const styles = StyleSheet.create({
   },
   cardDecorativeImage: {
     position: 'absolute',
-    bottom: 12,
-    right: 12,
+    bottom: 16,
+    right: 16,
     width: 43,
     height: 43,
   },
@@ -406,7 +409,6 @@ const styles = StyleSheet.create({
   titleDecorativeImage: {
     width: 48,
     height: 48,
-    resizeMode: 'contain',
   },
   infoSection: {
     borderRadius: 12,

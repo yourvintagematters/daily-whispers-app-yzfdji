@@ -230,6 +230,7 @@ export default function ProfileScreen() {
                 <Image
                   source={LogoImage}
                   style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
+                  resizeMode="contain"
                 />
               </View>
             )}
@@ -371,11 +372,12 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
     position: 'relative' as const,
+    overflow: 'hidden',
   },
   quoteCardDecorativeImage: {
     position: 'absolute',
-    bottom: 16,
-    right: 16,
+    bottom: 20,
+    right: 20,
     width: 56,
     height: 56,
   },
