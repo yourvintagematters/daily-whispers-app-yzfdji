@@ -107,9 +107,9 @@ export default function HomeScreen() {
 
   const specialThemes = [
     DAILY_WHISPERS_THEMES.motherhood,
-    DAILY_WHISPERS_THEMES.whispersFromNature,
     DAILY_WHISPERS_THEMES.aDogsLife,
     DAILY_WHISPERS_THEMES.aCatsLife,
+    DAILY_WHISPERS_THEMES.whispersFromNature,
   ];
 
   console.log('HomeScreen rendered');
@@ -163,7 +163,7 @@ export default function HomeScreen() {
           }}
         />
       )}
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
         <ScrollView
           contentContainerStyle={[
             styles.scrollContainer,
@@ -217,7 +217,7 @@ export default function HomeScreen() {
             ))}
 
             {/* Special Themes */}
-            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 24 }]}>
+            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 12 }]}>
               Special
             </Text>
             {specialThemes.map((item, index) => (
@@ -289,13 +289,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   subSectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 12,
-    marginTop: 8,
+    marginTop: 4,
     opacity: 0.8,
   },
   themeButtonContainer: {
