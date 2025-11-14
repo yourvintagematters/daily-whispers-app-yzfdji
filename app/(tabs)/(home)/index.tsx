@@ -1,10 +1,10 @@
 
 import React, { useState } from "react";
 import { Stack, useRouter } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground, Image } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView, Image } from "react-native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { useTheme } from "@react-navigation/native";
-import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES, APP_CUSTOMIZATION } from "@/constants/Colors";
+import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
 
@@ -163,114 +163,102 @@ export default function HomeScreen() {
           }}
         />
       )}
-      <ImageBackground
-        source={{ uri: APP_CUSTOMIZATION.backgroundImages.home }}
-        style={styles.backgroundImage}
-        imageStyle={styles.backgroundImageStyle}
-      >
-        <View style={[styles.container, { backgroundColor: theme.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)' }]}>
-          <ScrollView
-            contentContainerStyle={[
-              styles.scrollContainer,
-              Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
-            ]}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Title Section */}
-            <View style={styles.titleSection}>
-              <View style={styles.titleWithImage}>
-                <Text style={[styles.mainTitle, { color: theme.colors.text }]}>
-                  Daily Whispers
-                </Text>
-                <Image
-                  source={LogoImage}
-                  style={[styles.titleDecorativeImage, { tintColor: '#000000' }]}
-                  resizeMode="contain"
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Title Section */}
+          <View style={styles.titleSection}>
+            <View style={styles.titleWithImage}>
+              <Text style={[styles.mainTitle, { color: theme.colors.text }]}>
+                Daily Whispers
+              </Text>
+              <Image
+                source={LogoImage}
+                style={[styles.titleDecorativeImage, { tintColor: theme.colors.text }]}
+                resizeMode="contain"
+              />
+            </View>
+            <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+              Gift someone a year of daily quotes to show them you care.
+            </Text>
+          </View>
+
+          {/* Themes Section */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+              Choose a Theme
+            </Text>
+
+            {/* Universal Themes */}
+            <Text style={[styles.subSectionTitle, { color: theme.colors.text }]}>
+              Universal
+            </Text>
+            {universalThemes.map((item, index) => (
+              <View key={index}>
+                <ThemeButton
+                  item={item}
+                  onPress={handleThemePress}
+                  selectedTheme={selectedTheme}
+                  themeColors={theme.colors}
                 />
+                {selectedTheme === item.id && (
+                  <QuoteCardPreview 
+                    themeId={item.id} 
+                    themeColors={theme.colors}
+                    onPress={() => handleCardPress(item.id)}
+                  />
+                )}
               </View>
-              <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
-                Gift someone a year of daily quotes to show them you care.
-              </Text>
-            </View>
+            ))}
 
-            {/* Themes Section */}
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                Choose a Theme
-              </Text>
-
-              {/* Universal Themes */}
-              <Text style={[styles.subSectionTitle, { color: theme.colors.text }]}>
-                Universal
-              </Text>
-              {universalThemes.map((item, index) => (
-                <View key={index}>
-                  <ThemeButton
-                    item={item}
-                    onPress={handleThemePress}
-                    selectedTheme={selectedTheme}
+            {/* Special Themes */}
+            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 24 }]}>
+              Special
+            </Text>
+            {specialThemes.map((item, index) => (
+              <View key={index}>
+                <ThemeButton
+                  item={item}
+                  onPress={handleThemePress}
+                  selectedTheme={selectedTheme}
+                  themeColors={theme.colors}
+                />
+                {selectedTheme === item.id && (
+                  <QuoteCardPreview 
+                    themeId={item.id} 
                     themeColors={theme.colors}
+                    onPress={() => handleCardPress(item.id)}
                   />
-                  {selectedTheme === item.id && (
-                    <QuoteCardPreview 
-                      themeId={item.id} 
-                      themeColors={theme.colors}
-                      onPress={() => handleCardPress(item.id)}
-                    />
-                  )}
-                </View>
-              ))}
+                )}
+              </View>
+            ))}
+          </View>
 
-              {/* Special Themes */}
-              <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 24 }]}>
-                Special
-              </Text>
-              {specialThemes.map((item, index) => (
-                <View key={index}>
-                  <ThemeButton
-                    item={item}
-                    onPress={handleThemePress}
-                    selectedTheme={selectedTheme}
-                    themeColors={theme.colors}
-                  />
-                  {selectedTheme === item.id && (
-                    <QuoteCardPreview 
-                      themeId={item.id} 
-                      themeColors={theme.colors}
-                      onPress={() => handleCardPress(item.id)}
-                    />
-                  )}
-                </View>
-              ))}
-            </View>
-
-            {/* Info Section */}
-            <View style={[styles.infoSection, { backgroundColor: '#E3DAC9' }]}>
-              <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
-                How It Works
-              </Text>
-              <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
-                1. Choose a theme{'\n'}
-                2. Select your purchase option{'\n'}
-                3. Enter recipient details{'\n'}
-                4. Complete payment{'\n'}
-                5. They receive daily quotes for a year!
-              </Text>
-            </View>
-          </ScrollView>
-        </View>
-      </ImageBackground>
+          {/* Info Section */}
+          <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#E3DAC9' }]}>
+            <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+              How It Works
+            </Text>
+            <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+              1. Choose a theme{'\n'}
+              2. Select your purchase option{'\n'}
+              3. Enter recipient details{'\n'}
+              4. Complete payment{'\n'}
+              5. They receive daily quotes for a year!
+            </Text>
+          </View>
+        </ScrollView>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-  },
-  backgroundImageStyle: {
-    opacity: 0.3,
-  },
   container: {
     flex: 1,
   },

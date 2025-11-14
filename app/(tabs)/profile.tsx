@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Share, Alert, ImageBackground, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
@@ -9,7 +9,6 @@ import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
-
 import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
@@ -23,6 +22,7 @@ export default function ProfileScreen() {
   const [recipientName, setRecipientName] = useState<string>("Friend");
   const [quoteHistory, setQuoteHistory] = useState<string[]>([]);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState<number>(0);
+  const [viewAsRecipient, setViewAsRecipient] = useState<boolean>(false);
   const quoteCardRef = useRef<View>(null);
 
   useEffect(() => {
@@ -119,7 +119,8 @@ export default function ProfileScreen() {
           to: newPath,
         });
 
-        const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\nExplore Daily Whispers and discover more inspiring quotes: https://dailywhispers.app`;
+        const appLink = "https://dailywhispers.app";
+        const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\n✨ Discover Daily Whispers - A year of daily inspiration ✨\n\nExplore themes and gift quotes to someone special:\n${appLink}\n\n💝 Purchase Daily Whispers for a friend and brighten their year!`;
 
         await Sharing.shareAsync(newPath, {
           mimeType: "image/png",
@@ -164,7 +165,16 @@ export default function ProfileScreen() {
     );
   };
 
-
+  const toggleRecipientView = () => {
+    setViewAsRecipient(!viewAsRecipient);
+    if (!viewAsRecipient) {
+      Alert.alert(
+        "Recipient View",
+        "You are now viewing the app as a recipient would see it. This is what your gift recipient will experience when they receive their daily quotes.",
+        [{ text: "Got it!" }]
+      );
+    }
+  };
 
   const themeData = currentTheme ? DAILY_WHISPERS_THEMES[currentTheme as keyof typeof DAILY_WHISPERS_THEMES] : null;
 
@@ -182,166 +192,264 @@ export default function ProfileScreen() {
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: "Today's Quote",
+            title: viewAsRecipient ? "Recipient View" : "Today's Quote",
             headerLeft: renderHeaderLeft,
           }}
         />
       )}
-      <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop' }}
-        style={styles.backgroundImage}
-        imageStyle={styles.backgroundImageStyle}
-      >
-        <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)' }]} edges={['top']}>
-          <ScrollView
-            style={styles.container}
-            contentContainerStyle={[
-              styles.contentContainer,
-              Platform.OS !== 'ios' && styles.contentContainerWithTabBar
-            ]}
-            showsVerticalScrollIndicator={false}
-          >
-            <Text style={[styles.title, { color: theme.colors.text }]}>Today's Quote</Text>
-
-            {themeData && (
-              <View
-                ref={quoteCardRef}
-                style={[
-                  styles.quoteCard,
-                  { backgroundColor: themeData.pastelColor },
-                ]}
-              >
-                <View style={styles.cardInner}>
-                  <Text style={[styles.recipientName, { color: theme.colors.text }]}>
-                    {recipientName}
-                  </Text>
-                  <Text style={[styles.quoteText, { color: theme.colors.text }]}>
-                    {currentQuote}
-                  </Text>
-                  <Text style={[styles.quoteDate, { color: theme.colors.text }]}>
-                    {new Date().toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                  </Text>
-                </View>
-                <Image
-                  source={LogoImage}
-                  style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
-                  resizeMode="contain"
-                />
-              </View>
-            )}
-
-            <View style={styles.buttonRow}>
-              <Pressable
-                style={[
-                  styles.button,
-                  { backgroundColor: theme.colors.primary },
-                ]}
-                onPress={handleShare}
-              >
-                <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                  Share
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.button,
-                  { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(227,218,201,0.9)' },
-                ]}
-                onPress={loadPreviousQuote}
-              >
-                <Text style={[styles.buttonText, { color: theme.colors.text }]}>
-                  Previous Quote
-                </Text>
-              </Pressable>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]} edges={['top']}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={[
+            styles.contentContainer,
+            Platform.OS !== 'ios' && styles.contentContainerWithTabBar
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {viewAsRecipient && (
+            <View style={[styles.recipientBanner, { backgroundColor: theme.colors.primary }]}>
+              <IconSymbol name="eye.fill" color="#FFFFFF" size={20} />
+              <Text style={styles.recipientBannerText}>
+                Viewing as Recipient
+              </Text>
             </View>
+          )}
 
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            {viewAsRecipient ? "Your Daily Quote" : "Today's Quote"}
+          </Text>
+
+          {themeData && (
+            <View
+              ref={quoteCardRef}
+              style={[
+                styles.quoteCard,
+                { backgroundColor: themeData.pastelColor },
+              ]}
+            >
+              <View style={styles.cardInner}>
+                <Text style={[styles.recipientName, { color: theme.colors.text }]}>
+                  {viewAsRecipient ? "Dear " + recipientName : recipientName}
+                </Text>
+                <Text style={[styles.quoteText, { color: theme.colors.text }]}>
+                  "{currentQuote}"
+                </Text>
+                <Text style={[styles.quoteDate, { color: theme.colors.text }]}>
+                  {new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </Text>
+              </View>
+              <Image
+                source={LogoImage}
+                style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
+                resizeMode="contain"
+              />
+            </View>
+          )}
+
+          <View style={styles.buttonRow}>
             <Pressable
               style={[
-                styles.testButton,
-                { backgroundColor: theme.dark ? 'rgba(76,175,80,0.2)' : 'rgba(76,175,80,0.15)' },
+                styles.button,
+                { backgroundColor: theme.colors.primary },
               ]}
-              onPress={simulateFakePurchase}
+              onPress={handleShare}
             >
-              <Text style={[styles.testButtonText, { color: '#4CAF50' }]}>
-                Test: Simulate Receiving a Gift
+              <IconSymbol name="square.and.arrow.up" color="#FFFFFF" size={18} />
+              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
+                Share
               </Text>
             </Pressable>
-
-
-
-            <GlassView style={[
-              styles.settingsSection,
-              Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-            ]} glassEffectStyle="regular">
-              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                Notifications
+            <Pressable
+              style={[
+                styles.button,
+                { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(227,218,201,0.9)' },
+              ]}
+              onPress={loadPreviousQuote}
+            >
+              <IconSymbol name="arrow.left" color={theme.colors.text} size={18} />
+              <Text style={[styles.buttonText, { color: theme.colors.text }]}>
+                Previous
               </Text>
-              <Pressable
-                style={styles.settingItem}
-                onPress={() => {
-                  if (!notificationsEnabled) {
-                    requestNotificationPermissions();
-                  } else {
-                    setNotificationsEnabled(false);
-                  }
-                }}
+            </Pressable>
+          </View>
+
+          <Pressable
+            style={[
+              styles.viewToggleButton,
+              { 
+                backgroundColor: viewAsRecipient 
+                  ? theme.colors.primary 
+                  : theme.dark ? 'rgba(76,175,80,0.2)' : 'rgba(76,175,80,0.15)',
+                borderColor: viewAsRecipient ? theme.colors.primary : '#4CAF50',
+              },
+            ]}
+            onPress={toggleRecipientView}
+          >
+            <IconSymbol 
+              name={viewAsRecipient ? "eye.slash.fill" : "eye.fill"} 
+              color={viewAsRecipient ? '#FFFFFF' : '#4CAF50'} 
+              size={20} 
+            />
+            <Text style={[
+              styles.viewToggleButtonText, 
+              { color: viewAsRecipient ? '#FFFFFF' : '#4CAF50' }
+            ]}>
+              {viewAsRecipient ? "Exit Recipient View" : "View as Recipient"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[
+              styles.testButton,
+              { backgroundColor: theme.dark ? 'rgba(76,175,80,0.2)' : 'rgba(76,175,80,0.15)' },
+            ]}
+            onPress={simulateFakePurchase}
+          >
+            <Text style={[styles.testButtonText, { color: '#4CAF50' }]}>
+              Test: Simulate Receiving a Gift
+            </Text>
+          </Pressable>
+
+          <GlassView style={[
+            styles.settingsSection,
+            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+          ]} glassEffectStyle="regular">
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+              Notifications
+            </Text>
+            <Pressable
+              style={styles.settingItem}
+              onPress={() => {
+                if (!notificationsEnabled) {
+                  requestNotificationPermissions();
+                } else {
+                  setNotificationsEnabled(false);
+                }
+              }}
+            >
+              <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
+                Daily Quotes
+              </Text>
+              <View
+                style={[
+                  styles.toggle,
+                  {
+                    backgroundColor: notificationsEnabled ? '#34C759' : '#E5E5EA',
+                  },
+                ]}
               >
-                <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
-                  Daily Quotes
-                </Text>
                 <View
                   style={[
-                    styles.toggle,
+                    styles.toggleInner,
                     {
-                      backgroundColor: notificationsEnabled ? '#34C759' : '#E5E5EA',
+                      alignSelf: notificationsEnabled ? 'flex-end' : 'flex-start',
                     },
                   ]}
-                >
-                  <View
-                    style={[
-                      styles.toggleInner,
-                      {
-                        alignSelf: notificationsEnabled ? 'flex-end' : 'flex-start',
-                      },
-                    ]}
-                  />
-                </View>
-              </Pressable>
-            </GlassView>
+                />
+              </View>
+            </Pressable>
+          </GlassView>
 
-            <GlassView style={[
-              styles.section,
-              Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-            ]} glassEffectStyle="regular">
-              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                About Daily Whispers
-              </Text>
-              <Text style={[styles.infoText, { color: theme.colors.text }]}>
-                Daily Whispers is a gift-based app that delivers daily inspiration through carefully curated quotes. Gift a quote set to someone special and they'll receive a unique quote every day for a year.
-              </Text>
-              <Text style={[styles.infoText, { color: theme.dark ? '#98989D' : '#666' }]}>
-                Version 1.0.0
-              </Text>
-            </GlassView>
-          </ScrollView>
-        </SafeAreaView>
-      </ImageBackground>
+          <GlassView style={[
+            styles.section,
+            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+          ]} glassEffectStyle="regular">
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+              About Daily Whispers
+            </Text>
+            <Text style={[styles.infoText, { color: theme.colors.text }]}>
+              Daily Whispers is a gift-based app that delivers daily inspiration through carefully curated quotes. Gift a quote set to someone special and they'll receive a unique quote every day for a year.
+            </Text>
+            <Text style={[styles.infoText, { color: theme.dark ? '#98989D' : '#666' }]}>
+              Version 1.0.0
+            </Text>
+          </GlassView>
+
+          {/* Purchasing Guide Section */}
+          <GlassView style={[
+            styles.section,
+            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+          ]} glassEffectStyle="regular">
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+              📖 How to Purchase & Gift
+            </Text>
+            <View style={styles.guideContainer}>
+              <View style={styles.guideStep}>
+                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.stepNumberText}>1</Text>
+                </View>
+                <Text style={[styles.guideText, { color: theme.colors.text }]}>
+                  Browse the available quote themes on the home screen
+                </Text>
+              </View>
+              
+              <View style={styles.guideStep}>
+                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.stepNumberText}>2</Text>
+                </View>
+                <Text style={[styles.guideText, { color: theme.colors.text }]}>
+                  Tap a theme to preview sample quotes
+                </Text>
+              </View>
+              
+              <View style={styles.guideStep}>
+                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.stepNumberText}>3</Text>
+                </View>
+                <Text style={[styles.guideText, { color: theme.colors.text }]}>
+                  Tap the preview card to see purchase options
+                </Text>
+              </View>
+              
+              <View style={styles.guideStep}>
+                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.stepNumberText}>4</Text>
+                </View>
+                <Text style={[styles.guideText, { color: theme.colors.text }]}>
+                  Choose: Single theme ($9.99), Besties Bundle - 3 themes ($18.99), or Share the Love - 10 themes ($49.99)
+                </Text>
+              </View>
+              
+              <View style={styles.guideStep}>
+                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.stepNumberText}>5</Text>
+                </View>
+                <Text style={[styles.guideText, { color: theme.colors.text }]}>
+                  Enter recipient details (name, email, and theme selection)
+                </Text>
+              </View>
+              
+              <View style={styles.guideStep}>
+                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.stepNumberText}>6</Text>
+                </View>
+                <Text style={[styles.guideText, { color: theme.colors.text }]}>
+                  Complete payment with your card details
+                </Text>
+              </View>
+              
+              <View style={styles.guideStep}>
+                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                  <Text style={styles.stepNumberText}>7</Text>
+                </View>
+                <Text style={[styles.guideText, { color: theme.colors.text }]}>
+                  Your recipient receives a notification and starts getting daily quotes! 🎉
+                </Text>
+              </View>
+            </View>
+          </GlassView>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-  },
-  backgroundImageStyle: {
-    opacity: 0.3,
-  },
   safeArea: {
     flex: 1,
   },
@@ -353,6 +461,20 @@ const styles = StyleSheet.create({
   },
   contentContainerWithTabBar: {
     paddingBottom: 100,
+  },
+  recipientBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    gap: 8,
+  },
+  recipientBannerText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   title: {
     fontSize: 24,
@@ -408,7 +530,7 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   button: {
     flex: 1,
@@ -416,6 +538,8 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -425,6 +549,21 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  viewToggleButton: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+  },
+  viewToggleButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   settingsSection: {
     borderRadius: 12,
@@ -460,6 +599,7 @@ const styles = StyleSheet.create({
   section: {
     borderRadius: 12,
     padding: 20,
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 16,
@@ -477,7 +617,7 @@ const styles = StyleSheet.create({
   testButton: {
     borderRadius: 12,
     padding: 16,
-    marginBottom: 24,
+    marginBottom: 16,
     borderWidth: 2,
     borderColor: '#4CAF50',
     alignItems: 'center',
@@ -488,5 +628,32 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-
+  guideContainer: {
+    marginTop: 8,
+  },
+  guideStep: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+    gap: 12,
+  },
+  stepNumber: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  stepNumberText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  guideText: {
+    flex: 1,
+    fontSize: 14,
+    lineHeight: 20,
+    paddingTop: 4,
+  },
 });
