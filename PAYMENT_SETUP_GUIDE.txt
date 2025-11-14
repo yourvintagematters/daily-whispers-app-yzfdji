@@ -1,0 +1,321 @@
+
+================================================================================
+DAILY WHISPERS - PAYMENT SYSTEM SETUP GUIDE
+================================================================================
+
+This guide will walk you through setting up real payment processing for your app.
+
+IMPORTANT: The current implementation uses MOCK payment functions for testing.
+You need to integrate with a real backend service to process actual payments.
+
+================================================================================
+STEP 1: UNDERSTAND THE CURRENT SETUP
+================================================================================
+
+Your app currently has:
+- Payment UI in: app/(tabs)/(home)/payment.tsx
+- Mock Stripe functions in: utils/stripePayment.ts
+- Test configuration in: utils/paymentConfig.ts
+
+The mock functions simulate payment processing but DON'T actually charge cards.
+
+================================================================================
+STEP 2: CHOOSE YOUR PAYMENT PROCESSING APPROACH
+================================================================================
+
+You have two main options:
+
+OPTION A: Use a Backend Service (RECOMMENDED)
+   - More secure (keeps API keys secret)
+   - Required for production apps
+   - Can use: Supabase Edge Functions, Firebase Cloud Functions, or your own server
+
+OPTION B: Use Stripe's Mobile SDKs (Simpler but less flexible)
+   - Use @stripe/stripe-react-native package
+   - Some limitations but handles security
+   - Good for simple implementations
+
+We'll cover OPTION A (Backend + Stripe) as it's the most secure and flexible.
+
+================================================================================
+STEP 3: SET UP YOUR STRIPE ACCOUNT
+================================================================================
+
+1. Go to https://stripe.com and create an account
+2. Complete your business information
+3. Go to Developers → API Keys section
+4. Find your keys:
+   - Publishable Key (starts with pk_test_ or pk_live_)
+   - Secret Key (starts with sk_test_ or sk_live_) - NEVER expose this in your app!
+
+5. Update utils/paymentConfig.ts with your PUBLISHABLE key:
+   export const STRIPE_PUBLISHABLE_KEY = 'pk_test_YOUR_KEY_HERE';
+
+6. Keep your SECRET key safe - you'll use it in your backend (Step 5)
+
+================================================================================
+STEP 4: SET UP YOUR BACKEND (SUPABASE RECOMMENDED)
+================================================================================
+
+For this app, we recommend using Supabase Edge Functions:
+
+1. In Natively, click the "Supabase" button and connect to your project
+   (Create a new Supabase project at https://supabase.com if needed)
+
+2. Once connected, you'll need to create Supabase Edge Functions for:
+   - Creating payment intents
+   - Confirming payments
+   - Checking payment status
+   - Recording purchases in your database
+
+3. The Edge Functions will use your Stripe SECRET key to communicate with Stripe
+
+Alternative: If you already have a backend, you can create REST API endpoints
+instead of using Supabase Edge Functions.
+
+================================================================================
+STEP 5: CREATE STRIPE PAYMENT ENDPOINTS (BACKEND)
+================================================================================
+
+You need to create these backend endpoints:
+
+ENDPOINT 1: Create Payment Intent
+URL: POST /api/create-payment-intent
+Body: { amount, currency, metadata }
+Returns: { clientSecret, paymentIntentId }
+
+This endpoint uses your Stripe SECRET key to create a payment intent.
+
+ENDPOINT 2: Confirm Payment
+URL: POST /api/confirm-payment
+Body: { paymentIntentId, paymentMethodId }
+Returns: { status, paymentIntent }
+
+This endpoint confirms the payment with Stripe.
+
+ENDPOINT 3: Get Payment Status
+URL: GET /api/payment-status/:paymentIntentId
+Returns: { status, paymentIntent }
+
+This endpoint checks if a payment was successful.
+
+ENDPOINT 4: Record Purchase
+URL: POST /api/record-purchase
+Body: { paymentIntentId, recipients, themeId, purchaseOption }
+Returns: { success, purchaseId }
+
+This endpoint saves the purchase details and schedules quote notifications.
+
+Sample backend code structure is at the end of this guide.
+
+================================================================================
+STEP 6: UPDATE YOUR APP CODE
+================================================================================
+
+Replace the mock functions in utils/stripePayment.ts with real API calls:
+
+1. Install axios or use fetch to call your backend endpoints
+2. Replace createPaymentIntent() to call: POST /api/create-payment-intent
+3. Replace confirmPayment() to call: POST /api/confirm-payment
+4. Replace getPaymentIntentStatus() to call: GET /api/payment-status/:id
+
+Example structure:
+```
+export async function createPaymentIntent(data: PaymentIntentData) {
+  const response = await fetch('YOUR_BACKEND_URL/api/create-payment-intent', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+}
+```
+
+================================================================================
+STEP 7: SET UP YOUR DATABASE
+================================================================================
+
+Create tables in Supabase (or your database) to store:
+
+TABLE: purchases
+- id (uuid)
+- user_id (uuid or text)
+- payment_intent_id (text)
+- amount (decimal)
+- currency (text)
+- status (text)
+- theme_id (text)
+- purchase_option (text)
+- created_at (timestamp)
+
+TABLE: recipients
+- id (uuid)
+- purchase_id (uuid, foreign key)
+- name (text)
+- email (text)
+- theme_id (text)
+- current_day (integer, default 1)
+- last_notification_sent (timestamp)
+
+TABLE: quote_schedule
+- id (uuid)
+- recipient_id (uuid, foreign key)
+- day_number (integer)
+- quote_text (text)
+- scheduled_for (timestamp)
+- sent_at (timestamp, nullable)
+
+================================================================================
+STEP 8: SET UP NOTIFICATION SCHEDULING
+================================================================================
+
+You need to schedule daily notifications for recipients:
+
+1. Create a scheduled job (Supabase Cron Job or similar) that runs daily
+2. This job checks the quote_schedule table for quotes to send today
+3. Sends push notifications using Expo's push notification service
+4. Updates the sent_at timestamp
+
+You'll need to:
+- Store recipient push tokens in your database
+- Use Expo's push notification API to send notifications
+- Handle notification scheduling logic
+
+================================================================================
+STEP 9: TEST YOUR PAYMENT FLOW
+================================================================================
+
+Stripe provides test card numbers:
+
+SUCCESS: 4242 4242 4242 4242
+DECLINE: 4000 0000 0000 0002
+REQUIRES AUTHENTICATION: 4000 0025 0000 3155
+
+Use any future expiry date and any 3-digit CVC.
+
+Test the complete flow:
+1. Select a theme
+2. Choose purchase option
+3. Enter recipient details
+4. Enter test card details
+5. Complete payment
+6. Verify purchase is saved in database
+7. Verify notifications are scheduled
+
+================================================================================
+STEP 10: GO LIVE
+================================================================================
+
+When ready for production:
+
+1. Complete Stripe account verification
+2. Switch from test keys to live keys in your backend
+3. Update STRIPE_PUBLISHABLE_KEY in paymentConfig.ts
+4. Test again with real cards (small amounts)
+5. Set up proper error handling and logging
+6. Submit your app to App Store / Play Store
+
+================================================================================
+IMPORTANT SECURITY NOTES
+================================================================================
+
+NEVER:
+- Store Stripe Secret Keys in your mobile app code
+- Process payments directly from the mobile app
+- Store credit card details in your database
+
+ALWAYS:
+- Use your backend to communicate with Stripe's API
+- Use HTTPS for all API calls
+- Validate payments on the backend before fulfilling orders
+- Follow PCI compliance guidelines
+
+================================================================================
+SAMPLE BACKEND CODE (SUPABASE EDGE FUNCTION)
+================================================================================
+
+Here's a sample structure for your backend endpoint:
+
+```typescript
+// supabase/functions/create-payment-intent/index.ts
+
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import Stripe from 'https://esm.sh/stripe@12.0.0?target=deno'
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+  apiVersion: '2023-10-16',
+})
+
+serve(async (req) => {
+  try {
+    const { amount, currency, metadata } = await req.json()
+    
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency: currency || 'usd',
+      metadata,
+    })
+    
+    return new Response(
+      JSON.stringify({
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id,
+      }),
+      { headers: { 'Content-Type': 'application/json' } }
+    )
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+})
+```
+
+================================================================================
+NEED HELP?
+================================================================================
+
+Common issues:
+
+1. "Payment fails immediately"
+   - Check that you're using test cards correctly
+   - Verify your Stripe keys are correct
+   - Check backend logs for errors
+
+2. "Can't create payment intent"
+   - Verify your backend endpoint is accessible
+   - Check that Stripe secret key is set in backend
+   - Ensure amount is greater than minimum (usually $0.50)
+
+3. "Notifications not sending"
+   - Verify push token is being saved
+   - Check Expo push notification credentials
+   - Test notification permissions on device
+
+4. "Database not updating"
+   - Check your database connection
+   - Verify table structures match
+   - Check backend logs for errors
+
+For more help:
+- Stripe documentation: https://stripe.com/docs
+- Supabase documentation: https://supabase.com/docs
+- Expo push notifications: https://docs.expo.dev/push-notifications/overview/
+
+================================================================================
+SUMMARY CHECKLIST
+================================================================================
+
+□ Created Stripe account and got API keys
+□ Set up backend (Supabase or custom server)
+□ Created payment endpoints in backend
+□ Set up database tables
+□ Updated app code to call real backend endpoints
+□ Set up notification scheduling system
+□ Tested with Stripe test cards
+□ Verified purchases are recorded correctly
+□ Verified notifications are scheduled
+□ Ready to switch to live mode when approved
+
+================================================================================
