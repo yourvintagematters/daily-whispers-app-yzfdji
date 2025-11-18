@@ -325,8 +325,8 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   themeButton: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     borderRadius: 12,
     padding: 0,
     alignItems: 'center',
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   themeEmoji: {
-    fontSize: 40,
+    fontSize: 36,
   },
   themeTextContainer: {
     flex: 1,
@@ -346,22 +346,22 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   themeName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     marginBottom: 4,
   },
   themeDescription: {
-    fontSize: 12,
-    lineHeight: 16,
+    fontSize: 11,
+    lineHeight: 14,
     marginBottom: 6,
   },
   themePrice: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
   },
   quoteCardPressable: {
     marginBottom: 16,
-    marginLeft: 92,
+    marginLeft: 82,
   },
   quoteCardPreview: {
     borderRadius: 16,

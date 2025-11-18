@@ -57,7 +57,7 @@ export const commonStyles = StyleSheet.create({
     fontWeight: '500',
     color: colors.text,
     marginBottom: 8,
-    lineHeight: 24,
+    lineHeight: 26,
     textAlign: 'center',
   },
   section: {
