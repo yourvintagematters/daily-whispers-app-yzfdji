@@ -10,7 +10,7 @@ export const PAYMENT_CONFIG = {
     // Use test mode by default
     testMode: true,
     // Test API keys (replace with your actual keys)
-    testPublishableKey: 'pk_test_51234567890abcdefghijklmnop',
+    testPublishableKey: 'pk_test_51SN0VCD17kmTdMDJe4HOvt0h9XSdRMqtui4g4jgbMgKd4mmAEvKuW4NGVUdwyRCbIatOj6X75fE6x98lmABoTstG00tg3PE9L4',
     testSecretKey: process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder',
     // Production keys (only use in production)
     livePublishableKey: process.env.STRIPE_LIVE_PUBLISHABLE_KEY || '',
