@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   themeButton: {
     width: 70,
     height: 70,
-    borderRadius: 12,
+    borderRadius: 35,
     padding: 0,
     alignItems: 'center',
     justifyContent: 'center',
@@ -346,17 +346,17 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   themeName: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     marginBottom: 4,
   },
   themeDescription: {
-    fontSize: 11,
-    lineHeight: 14,
+    fontSize: 12,
+    lineHeight: 16,
     marginBottom: 6,
   },
   themePrice: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
   },
   quoteCardPressable: {
