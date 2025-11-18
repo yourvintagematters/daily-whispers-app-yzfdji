@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ImageBackground } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { createPaymentIntent, validateCardNumber, createTestToken } from "@/utils/stripePayment";
@@ -150,19 +150,14 @@ export default function PaymentScreen() {
           }}
         />
       )}
-      <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop' }}
-        style={styles.backgroundImage}
-        imageStyle={styles.backgroundImageStyle}
-      >
-        <View style={[styles.container, { backgroundColor: theme.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)' }]}>
-          <ScrollView
-            contentContainerStyle={[
-              styles.scrollContainer,
-              Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
-            ]}
-            showsVerticalScrollIndicator={false}
-          >
+      <View style={[styles.container, { backgroundColor: '#E6F2F8' }]}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header Section */}
           <View style={styles.headerSection}>
             <Text style={[styles.title, { color: theme.colors.text }]}>
@@ -184,7 +179,7 @@ export default function PaymentScreen() {
           {/* Order Summary */}
           <View style={[
             styles.summaryCard,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' }
+            { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
           ]}>
             <Text style={[styles.summaryTitle, { color: theme.colors.text }]}>
               Order Summary
@@ -211,7 +206,7 @@ export default function PaymentScreen() {
           {/* Payment Form */}
           <View style={[
             styles.formCard,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' }
+            { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
           ]}>
             <Text style={[styles.formTitle, { color: theme.colors.text }]}>
               Card Details
@@ -225,9 +220,9 @@ export default function PaymentScreen() {
                 style={[
                   styles.input,
                   {
-                    backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
+                    backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
                     color: theme.colors.text,
-                    borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
+                    borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
                   }
                 ]}
                 placeholder="John Doe"
@@ -245,9 +240,9 @@ export default function PaymentScreen() {
                 style={[
                   styles.input,
                   {
-                    backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
+                    backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
                     color: theme.colors.text,
-                    borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
+                    borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
                   }
                 ]}
                 placeholder="1234 5678 9012 3456"
@@ -268,9 +263,9 @@ export default function PaymentScreen() {
                   style={[
                     styles.input,
                     {
-                      backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
+                      backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
                       color: theme.colors.text,
-                      borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
+                      borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
                     }
                   ]}
                   placeholder="MM/YY"
@@ -290,9 +285,9 @@ export default function PaymentScreen() {
                   style={[
                     styles.input,
                     {
-                      backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
+                      backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
                       color: theme.colors.text,
-                      borderColor: theme.dark ? '#5C5C5E' : '#d4cfc0',
+                      borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
                     }
                   ]}
                   placeholder="123"
@@ -310,7 +305,7 @@ export default function PaymentScreen() {
           {/* Security Notice */}
           <View style={[
             styles.securityNotice,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' }
+            { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
           ]}>
             <IconSymbol name="lock.fill" color={theme.colors.primary} />
             <Text style={[styles.securityText, { color: theme.dark ? '#98989D' : '#666' }]}>
@@ -345,21 +340,14 @@ export default function PaymentScreen() {
               Cancel
             </Text>
           </Pressable>
-          </ScrollView>
-        </View>
-      </ImageBackground>
+        </ScrollView>
+      </View>
     </>
   );
 }
 
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-  },
-  backgroundImageStyle: {
-    opacity: 0.3,
-  },
   container: {
     flex: 1,
   },

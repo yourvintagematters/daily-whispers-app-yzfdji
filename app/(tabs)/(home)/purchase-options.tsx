@@ -1,10 +1,9 @@
 
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View, Text, Platform, ScrollView, ImageBackground } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
-import { APP_CUSTOMIZATION } from "@/constants/Colors";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 interface PurchaseOption {
@@ -111,7 +110,7 @@ function OptionButton({
       <Pressable
         style={[
           styles.optionButton,
-          { backgroundColor: theme.dark ? '#2C2C2E' : '#e3dac9' },
+          { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' },
           isHovered && styles.optionButtonHovered,
         ]}
         onPress={onPress}
@@ -175,71 +174,59 @@ export default function PurchaseOptionsScreen() {
           }}
         />
       )}
-      <ImageBackground
-        source={{ uri: APP_CUSTOMIZATION.backgroundImages.purchaseOptions }}
-        style={styles.backgroundImage}
-        imageStyle={styles.backgroundImageStyle}
-      >
-        <View style={[styles.container, { backgroundColor: theme.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)' }]}>
-          <ScrollView
-            contentContainerStyle={[
-              styles.scrollContainer,
-              Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
-            ]}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Header Section */}
-            <View style={styles.headerSection}>
-              <Text style={[styles.title, { color: theme.colors.text }]}>
-                How Many People?
-              </Text>
-              <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
-                Choose how many people you want to gift to
-              </Text>
-            </View>
+      <View style={[styles.container, { backgroundColor: '#E6F2F8' }]}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header Section */}
+          <View style={styles.headerSection}>
+            <Text style={[styles.title, { color: theme.colors.text }]}>
+              How Many People?
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+              Choose how many people you want to gift to
+            </Text>
+          </View>
 
-            {/* Purchase Options */}
-            <View style={styles.optionsContainer}>
-              {PURCHASE_OPTIONS.map(option => (
-                <OptionButton
-                  key={option.id}
-                  option={option}
-                  isHovered={hoveredOptionId === option.id}
-                  onPress={() => handleOptionSelect(option)}
-                  onHoverIn={() => setHoveredOptionId(option.id)}
-                  onHoverOut={() => setHoveredOptionId(null)}
-                  theme={theme}
-                />
-              ))}
-            </View>
+          {/* Purchase Options */}
+          <View style={styles.optionsContainer}>
+            {PURCHASE_OPTIONS.map(option => (
+              <OptionButton
+                key={option.id}
+                option={option}
+                isHovered={hoveredOptionId === option.id}
+                onPress={() => handleOptionSelect(option)}
+                onHoverIn={() => setHoveredOptionId(option.id)}
+                onHoverOut={() => setHoveredOptionId(null)}
+                theme={theme}
+              />
+            ))}
+          </View>
 
-            {/* Info Section */}
-            <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(227,218,201,0.9)' }]}>
-              <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
-                What Happens Next?
-              </Text>
-              <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
-                1. Choose your option above{'\n'}
-                2. Enter recipient details{'\n'}
-                3. Select themes for each recipient{'\n'}
-                4. Complete payment{'\n'}
-                5. Recipients get daily quotes for a year!
-              </Text>
-            </View>
-          </ScrollView>
-        </View>
-      </ImageBackground>
+          {/* Info Section */}
+          <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#FFFFFF' }]}>
+            <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+              What Happens Next?
+            </Text>
+            <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+              1. Choose your option above{'\n'}
+              2. Enter recipient details{'\n'}
+              3. Select themes for each recipient{'\n'}
+              4. Complete payment{'\n'}
+              5. Recipients get daily quotes for a year!
+            </Text>
+          </View>
+        </ScrollView>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-  },
-  backgroundImageStyle: {
-    opacity: 0.3,
-  },
   container: {
     flex: 1,
   },

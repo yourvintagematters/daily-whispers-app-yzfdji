@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
@@ -95,45 +95,79 @@ export default function ProfileScreen() {
 
   const handleShare = async () => {
     try {
-      Alert.alert("Sharing Quote", "Preparing your quote card to share...");
-      
-      if (quoteCardRef.current) {
-        const uri = await captureRef(quoteCardRef, {
-          format: "png",
-          quality: 0.95,
-        });
+      const appLink = "https://dailywhispers.app";
+      const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\n✨ Discover Daily Whispers - A year of daily inspiration ✨\n\nExplore themes and gift quotes to someone special:\n${appLink}\n\n💝 Purchase Daily Whispers for a friend and brighten their year!`;
 
-        const fileName = `DailyWhispers_${Date.now()}.png`;
-        const cacheDir = FileSystem.cacheDirectory || '';
-        
-        if (!cacheDir) {
-          console.log("Cache directory not available");
-          Alert.alert("Share Error", "Could not access file system. Please try again.");
-          return;
+      if (Platform.OS === 'web') {
+        // For web, use the Web Share API or fallback to copying to clipboard
+        if (navigator.share) {
+          await navigator.share({
+            title: 'Daily Whispers Quote',
+            text: shareMessage,
+          });
+        } else {
+          // Fallback: copy to clipboard
+          await navigator.clipboard.writeText(shareMessage);
+          Alert.alert("Copied!", "Quote and app link copied to clipboard!");
         }
+      } else {
+        // For mobile, capture the quote card as an image and share
+        Alert.alert("Sharing Quote", "Preparing your quote card to share...");
         
-        const newPath = `${cacheDir}${fileName}`;
-        
-        await FileSystem.copyAsync({
-          from: uri,
-          to: newPath,
-        });
+        if (quoteCardRef.current) {
+          const uri = await captureRef(quoteCardRef, {
+            format: "png",
+            quality: 0.95,
+          });
 
-        const appLink = "https://dailywhispers.app";
-        const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\n✨ Discover Daily Whispers - A year of daily inspiration ✨\n\nExplore themes and gift quotes to someone special:\n${appLink}\n\n💝 Purchase Daily Whispers for a friend and brighten their year!`;
+          const fileName = `DailyWhispers_${Date.now()}.png`;
+          const cacheDir = FileSystem.cacheDirectory || '';
+          
+          if (!cacheDir) {
+            console.log("Cache directory not available");
+            Alert.alert("Share Error", "Could not access file system. Please try again.");
+            return;
+          }
+          
+          const newPath = `${cacheDir}${fileName}`;
+          
+          await FileSystem.copyAsync({
+            from: uri,
+            to: newPath,
+          });
 
-        await Sharing.shareAsync(newPath, {
-          mimeType: "image/png",
-          dialogTitle: "Share Your Daily Whispers Quote",
-          UTI: "com.apple.share",
-        });
+          await Sharing.shareAsync(newPath, {
+            mimeType: "image/png",
+            dialogTitle: "Share Your Daily Whispers Quote",
+            UTI: "com.apple.share",
+          });
 
-        console.log("Quote shared successfully!");
+          console.log("Quote shared successfully!");
+        }
       }
     } catch (error) {
       console.log("Error sharing:", error);
       Alert.alert("Share Error", "Could not share the quote. Please try again.");
     }
+  };
+
+  const handlePurchaseForFriend = () => {
+    Alert.alert(
+      "Gift Daily Whispers",
+      "Would you like to purchase Daily Whispers for a friend?",
+      [
+        {
+          text: "Yes, Let's Go!",
+          onPress: () => {
+            router.push('/(tabs)/(home)');
+          }
+        },
+        {
+          text: "Not Now",
+          style: "cancel"
+        }
+      ]
+    );
   };
 
   const simulateFakePurchase = () => {
@@ -197,7 +231,7 @@ export default function ProfileScreen() {
           }}
         />
       )}
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]} edges={['top']}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: '#E6F2F8' }]} edges={['top']}>
         <ScrollView
           style={styles.container}
           contentContainerStyle={[
@@ -267,7 +301,7 @@ export default function ProfileScreen() {
             <Pressable
               style={[
                 styles.button,
-                { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : 'rgba(227,218,201,0.9)' },
+                { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#FFFFFF' },
               ]}
               onPress={loadPreviousQuote}
             >
@@ -277,6 +311,22 @@ export default function ProfileScreen() {
               </Text>
             </Pressable>
           </View>
+
+          {/* Purchase for Friend Button */}
+          <Pressable
+            style={[
+              styles.purchaseButton,
+              { 
+                backgroundColor: '#4CAF50',
+              },
+            ]}
+            onPress={handlePurchaseForFriend}
+          >
+            <IconSymbol name="gift.fill" color="#FFFFFF" size={20} />
+            <Text style={[styles.purchaseButtonText, { color: '#FFFFFF' }]}>
+              Gift Daily Whispers to a Friend
+            </Text>
+          </Pressable>
 
           <Pressable
             style={[
@@ -317,7 +367,7 @@ export default function ProfileScreen() {
 
           <GlassView style={[
             styles.settingsSection,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }
           ]} glassEffectStyle="regular">
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
               Notifications
@@ -357,7 +407,7 @@ export default function ProfileScreen() {
 
           <GlassView style={[
             styles.section,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }
           ]} glassEffectStyle="regular">
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
               About Daily Whispers
@@ -373,7 +423,7 @@ export default function ProfileScreen() {
           {/* Purchasing Guide Section */}
           <GlassView style={[
             styles.section,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }
           ]} glassEffectStyle="regular">
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
               📖 How to Purchase & Gift
@@ -393,7 +443,7 @@ export default function ProfileScreen() {
                   <Text style={styles.stepNumberText}>2</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
-                  Tap a theme to preview sample quotes
+                  Hover over a theme to preview sample quotes
                 </Text>
               </View>
               
@@ -402,7 +452,7 @@ export default function ProfileScreen() {
                   <Text style={styles.stepNumberText}>3</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
-                  Tap the preview card to see purchase options
+                  Tap the theme or preview card to see purchase options
                 </Text>
               </View>
               
@@ -549,6 +599,25 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  purchaseButton: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  purchaseButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   viewToggleButton: {
     borderRadius: 12,

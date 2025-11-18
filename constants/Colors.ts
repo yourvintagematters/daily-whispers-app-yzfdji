@@ -509,7 +509,7 @@ export const DAILY_WHISPERS_THEMES = {
     emoji: '🤱',
     buttonColor: '#d4a5a5',
     pastelColor: '#f5e6e6',
-    description: 'Daily reminders to support the journey of motherhood.',
+    description: 'Daily reminders to support the wonderful yet complex journey of motherhood.',
     price: 9.99,
     textColor: '#000000',
   },

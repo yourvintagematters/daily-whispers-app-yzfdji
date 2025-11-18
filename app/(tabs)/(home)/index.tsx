@@ -11,13 +11,15 @@ import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png'
 interface ThemeButtonProps {
   item: typeof DAILY_WHISPERS_THEMES[keyof typeof DAILY_WHISPERS_THEMES];
   onPress: (themeId: string) => void;
-  selectedTheme: string | null;
+  onHoverIn: (themeId: string) => void;
+  onHoverOut: () => void;
+  hoveredTheme: string | null;
   themeColors: any;
 }
 
-function ThemeButton({ item, onPress, selectedTheme, themeColors }: ThemeButtonProps) {
+function ThemeButton({ item, onPress, onHoverIn, onHoverOut, hoveredTheme, themeColors }: ThemeButtonProps) {
   const scaleValue = useSharedValue(1);
-  const isSelected = selectedTheme === item.id;
+  const isHovered = hoveredTheme === item.id;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scaleValue.value }],
@@ -31,18 +33,28 @@ function ThemeButton({ item, onPress, selectedTheme, themeColors }: ThemeButtonP
     onPress(item.id);
   };
 
+  const handleHoverIn = () => {
+    scaleValue.value = withSpring(1.05, { damping: 10, mass: 1 });
+    onHoverIn(item.id);
+  };
+
+  const handleHoverOut = () => {
+    scaleValue.value = withSpring(1, { damping: 10, mass: 1 });
+    onHoverOut();
+  };
+
   return (
     <View style={styles.themeButtonContainer}>
       <Animated.View style={[animatedStyle, styles.themeButtonWrapper]}>
         <Pressable
           onPress={handlePress}
+          onMouseEnter={handleHoverIn}
+          onMouseLeave={handleHoverOut}
           style={[
             styles.themeButton,
             {
               backgroundColor: item.buttonColor,
-              shadowOpacity: isSelected ? 0.3 : 0.15,
-              borderWidth: isSelected ? 3 : 0,
-              borderColor: isSelected ? themeColors.primary : 'transparent',
+              shadowOpacity: isHovered ? 0.3 : 0.15,
             },
           ]}
         >
@@ -95,7 +107,7 @@ function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; 
 export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
 
   // Define theme order with categories
   const universalThemes = [
@@ -115,23 +127,14 @@ export default function HomeScreen() {
   console.log('HomeScreen rendered');
   console.log('Universal themes:', universalThemes.map(t => t.id));
   console.log('Special themes:', specialThemes.map(t => t.id));
-  console.log('Selected theme:', selectedTheme);
+  console.log('Hovered theme:', hoveredTheme);
 
   const handleThemePress = (themeId: string) => {
-    console.log("Theme selected:", themeId);
-    
-    // If this theme is already selected, navigate to purchase options
-    if (selectedTheme === themeId) {
-      console.log("Second tap - navigating to purchase options");
-      router.push({
-        pathname: '/(tabs)/(home)/purchase-options',
-        params: { selectedTheme: themeId }
-      });
-    } else {
-      // First tap - show the preview card
-      console.log("First tap - showing preview card");
-      setSelectedTheme(themeId);
-    }
+    console.log("Theme pressed - navigating to purchase options:", themeId);
+    router.push({
+      pathname: '/(tabs)/(home)/purchase-options',
+      params: { selectedTheme: themeId }
+    });
   };
 
   const handleCardPress = (themeId: string) => {
@@ -140,6 +143,16 @@ export default function HomeScreen() {
       pathname: '/(tabs)/(home)/purchase-options',
       params: { selectedTheme: themeId }
     });
+  };
+
+  const handleHoverIn = (themeId: string) => {
+    console.log("Hovering over theme:", themeId);
+    setHoveredTheme(themeId);
+  };
+
+  const handleHoverOut = () => {
+    console.log("Hover ended");
+    setHoveredTheme(null);
   };
 
   const renderHeaderRight = () => (
@@ -163,7 +176,7 @@ export default function HomeScreen() {
           }}
         />
       )}
-      <View style={[styles.container, { backgroundColor: '#FFFFFF' }]}>
+      <View style={[styles.container, { backgroundColor: '#E6F2F8' }]}>
         <ScrollView
           contentContainerStyle={[
             styles.scrollContainer,
@@ -203,10 +216,12 @@ export default function HomeScreen() {
                 <ThemeButton
                   item={item}
                   onPress={handleThemePress}
-                  selectedTheme={selectedTheme}
+                  onHoverIn={handleHoverIn}
+                  onHoverOut={handleHoverOut}
+                  hoveredTheme={hoveredTheme}
                   themeColors={theme.colors}
                 />
-                {selectedTheme === item.id && (
+                {hoveredTheme === item.id && (
                   <QuoteCardPreview 
                     themeId={item.id} 
                     themeColors={theme.colors}
@@ -217,7 +232,7 @@ export default function HomeScreen() {
             ))}
 
             {/* Special Themes */}
-            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 12 }]}>
+            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 4 }]}>
               Special
             </Text>
             {specialThemes.map((item, index) => (
@@ -225,10 +240,12 @@ export default function HomeScreen() {
                 <ThemeButton
                   item={item}
                   onPress={handleThemePress}
-                  selectedTheme={selectedTheme}
+                  onHoverIn={handleHoverIn}
+                  onHoverOut={handleHoverOut}
+                  hoveredTheme={hoveredTheme}
                   themeColors={theme.colors}
                 />
-                {selectedTheme === item.id && (
+                {hoveredTheme === item.id && (
                   <QuoteCardPreview 
                     themeId={item.id} 
                     themeColors={theme.colors}
@@ -240,7 +257,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Info Section */}
-          <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#E3DAC9' }]}>
+          <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#FFFFFF' }]}>
             <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
               How It Works
             </Text>
@@ -289,7 +306,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   subSectionTitle: {
     fontSize: 18,

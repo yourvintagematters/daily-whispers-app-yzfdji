@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ImageBackground } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { DAILY_WHISPERS_THEMES } from "@/constants/Colors";
 import { IconSymbol } from "@/components/IconSymbol";
@@ -127,19 +127,14 @@ export default function RecipientDetailsScreen() {
           }}
         />
       )}
-      <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=1600&fit=crop' }}
-        style={styles.backgroundImage}
-        imageStyle={styles.backgroundImageStyle}
-      >
-        <View style={[styles.container, { backgroundColor: theme.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)' }]}>
-          <ScrollView
-            contentContainerStyle={[
-              styles.scrollContainer,
-              Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
-            ]}
-            showsVerticalScrollIndicator={false}
-          >
+      <View style={[styles.container, { backgroundColor: '#E6F2F8' }]}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header Section */}
           <View style={styles.headerSection}>
             <Text style={[styles.title, { color: theme.colors.text }]}>
@@ -157,7 +152,7 @@ export default function RecipientDetailsScreen() {
                 key={recipient.id}
                 style={[
                   styles.recipientCard,
-                  { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }
+                  { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
                 ]}
               >
                 <Text style={[styles.recipientNumber, { color: theme.colors.text }]}>
@@ -172,7 +167,7 @@ export default function RecipientDetailsScreen() {
                     style={[
                       styles.input,
                       {
-                        backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
+                        backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
                         color: theme.colors.text,
                         borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
                       }
@@ -192,7 +187,7 @@ export default function RecipientDetailsScreen() {
                     style={[
                       styles.input,
                       {
-                        backgroundColor: theme.dark ? '#3C3C3E' : '#FFFFFF',
+                        backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
                         color: theme.colors.text,
                         borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
                       }
@@ -214,7 +209,7 @@ export default function RecipientDetailsScreen() {
           {optionId === 'shareTheLoveBigTime' && (
             <View style={[
               styles.buyerThemeCard,
-              { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }
+              { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
             ]}>
               <Text style={[styles.buyerThemeTitle, { color: theme.colors.text }]}>
                 🎁 Your Bonus Theme
@@ -256,20 +251,13 @@ export default function RecipientDetailsScreen() {
               Continue to Payment
             </Text>
           </Pressable>
-          </ScrollView>
-        </View>
-      </ImageBackground>
+        </ScrollView>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-  },
-  backgroundImageStyle: {
-    opacity: 0.3,
-  },
   container: {
     flex: 1,
   },
