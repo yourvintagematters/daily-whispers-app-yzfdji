@@ -194,6 +194,26 @@ export default function DemoScreen() {
     }
   };
 
+  const renderStepTitle = () => {
+    if (currentStep === 0) {
+      return (
+        <View style={styles.titleContainer}>
+          <Text style={[styles.stepTitleSmall, { color: theme.colors.text, opacity: 0.7 }]}>
+            Welcome to
+          </Text>
+          <Text style={[styles.stepTitleLarge, { color: '#5d8aa8' }]}>
+            Daily Whispers
+          </Text>
+        </View>
+      );
+    }
+    return (
+      <Text style={[styles.stepTitle, { color: '#5d8aa8' }]}>
+        {steps[currentStep].title}
+      </Text>
+    );
+  };
+
   return (
     <>
       {Platform.OS === 'ios' && (
@@ -237,9 +257,7 @@ export default function DemoScreen() {
           </View>
 
           {/* Step Title */}
-          <Text style={[styles.stepTitle, { color: '#5d8aa8' }]}>
-            {steps[currentStep].title}
-          </Text>
+          {renderStepTitle()}
           <Text style={[styles.stepSubtitle, { color: theme.colors.text, opacity: 0.7 }]}>
             {steps[currentStep].description}
           </Text>
@@ -302,6 +320,21 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  stepTitleSmall: {
+    fontSize: 18,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  stepTitleLarge: {
+    fontSize: 28,
+    fontWeight: '700',
+    textAlign: 'center',
   },
   stepTitle: {
     fontSize: 28,

@@ -486,7 +486,7 @@ export const DAILY_WHISPERS_THEMES = {
   gratitudePearls: {
     id: 'gratitudePearls',
     name: 'Gratitude Pearls',
-    emoji: '🦪💎',
+    emoji: '🦪',
     buttonColor: '#ed872d',
     pastelColor: '#fad6a5',
     description: 'Daily reminders to appreciate life\'s simplicity and nurture  gratitude.',
