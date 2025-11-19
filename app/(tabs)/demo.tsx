@@ -72,18 +72,6 @@ export default function DemoScreen() {
     setCurrentQuoteIndex(Math.floor(Math.random() * currentQuotes.length));
   };
 
-  const handleNextQuote = () => {
-    console.log('Next quote in demo - current index:', currentQuoteIndex, 'total quotes:', currentQuotes.length);
-    // Generate a new random index to ensure we get a different quote
-    let newIndex = Math.floor(Math.random() * currentQuotes.length);
-    // If we happen to get the same index, increment it
-    if (newIndex === currentQuoteIndex && currentQuotes.length > 1) {
-      newIndex = (currentQuoteIndex + 1) % currentQuotes.length;
-    }
-    console.log('Setting new quote index:', newIndex);
-    setCurrentQuoteIndex(newIndex);
-  };
-
   const handleShare = () => {
     console.log('Share button pressed in demo');
     // Share functionality would go here
@@ -194,12 +182,6 @@ export default function DemoScreen() {
                     />
                   </Pressable>
                 </View>
-
-                <Pressable onPress={handleNextQuote} style={styles.nextQuoteButton}>
-                  <Text style={[styles.nextQuoteText, { color: theme.colors.text, opacity: 0.7 }]}>
-                    Tap for another sample →
-                  </Text>
-                </Pressable>
               </View>
             )}
           </View>
@@ -437,8 +419,8 @@ const styles = StyleSheet.create({
   },
   quoteCardDecorativeImage: {
     position: 'absolute',
-    bottom: 60,
-    right: 20,
+    bottom: 16,
+    right: 16,
     width: 56,
     height: 56,
   },
@@ -467,14 +449,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
-  },
-  nextQuoteButton: {
-    padding: 8,
-    marginTop: 8,
-  },
-  nextQuoteText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   navigationContainer: {
     flexDirection: 'row',

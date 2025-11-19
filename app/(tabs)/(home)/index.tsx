@@ -332,9 +332,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   chooseThemeHeading: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: '700',
-    marginBottom: 16,
+    marginBottom: 8,
     textAlign: 'center',
   },
   subSectionTitle: {
