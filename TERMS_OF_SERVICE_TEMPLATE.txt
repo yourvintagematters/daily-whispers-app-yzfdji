@@ -1,0 +1,306 @@
+
+# Terms of Service Template for Daily Whispers
+
+**IMPORTANT**: You must host these terms on a public website before submitting to app stores.
+Update the bracketed sections with your actual information.
+
+---
+
+# Terms of Service for Daily Whispers
+
+**Last Updated**: [Current Date]
+
+## 1. Acceptance of Terms
+
+By downloading, installing, or using the Daily Whispers mobile application ("App"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the App.
+
+## 2. Description of Service
+
+Daily Whispers is a mobile application that provides:
+- Curated collections of daily inspirational quotes
+- Daily notification delivery of quotes
+- Ability to purchase quote collections for personal use or as gifts
+- Sharing and saving features for quotes
+- Seven themed quote collections with 365 unique quotes each
+
+## 3. Eligibility
+
+You must be at least 13 years old to use Daily Whispers. By using the App, you represent and warrant that you meet this age requirement.
+
+## 4. Account and Registration
+
+- You may need to create an account to access certain features
+- You are responsible for maintaining the confidentiality of your account credentials
+- You are responsible for all activities that occur under your account
+- You must provide accurate and complete information
+- You must notify us immediately of any unauthorized use of your account
+
+## 5. Purchases and Payments
+
+### 5.1 Pricing
+- Individual quote collections: $9.99 USD
+- Besties Bundle (3 collections): $18.99 USD
+- Share the Love Big Time (10 collections): $49.99 USD
+- Prices are subject to change with notice
+
+### 5.2 Payment Processing
+- All payments are processed securely through Stripe
+- We do not store your credit card information
+- You authorize us to charge your payment method for purchases
+
+### 5.3 One-Time Purchases
+- All purchases are one-time payments, not subscriptions
+- No automatic renewals or recurring charges
+- Purchases provide access to daily quotes for 365 days from purchase date
+
+### 5.4 Refund Policy
+- Refunds may be requested within 7 days of purchase
+- Refunds are granted at our discretion
+- To request a refund, contact [your-support-email@example.com]
+- Refunds are processed through the original payment method
+- Processing time: 5-10 business days
+
+### 5.5 Taxes
+- Prices do not include applicable taxes
+- You are responsible for any taxes associated with your purchase
+
+## 6. Gift Purchases
+
+### 6.1 Sending Gifts
+- You may purchase quote collections as gifts for others
+- You must provide accurate recipient information
+- Gifts are delivered via email and in-app notifications
+- You are responsible for ensuring the recipient wants to receive the gift
+
+### 6.2 Receiving Gifts
+- Gift recipients must have or create a Daily Whispers account
+- Recipients must accept the gift to activate daily notifications
+- Gifts cannot be exchanged for cash or other quote collections
+- Gifts are non-transferable
+
+## 7. Intellectual Property
+
+### 7.1 Our Content
+- All quotes, designs, graphics, and app content are owned by Daily Whispers or licensed to us
+- You may not copy, modify, distribute, or create derivative works from our content
+- You may not use our content for commercial purposes without permission
+
+### 7.2 Limited License
+We grant you a limited, non-exclusive, non-transferable license to:
+- Access and use the App for personal, non-commercial purposes
+- View and share quotes through the App's built-in sharing features
+- Save quotes to your personal device for personal use
+
+### 7.3 Restrictions
+You may not:
+- Remove copyright or trademark notices from any content
+- Reverse engineer, decompile, or disassemble the App
+- Use the App to create a competing product or service
+- Extract or scrape quotes for use outside the App
+- Sell, rent, or sublicense access to the App
+
+## 8. User Conduct
+
+You agree not to:
+- Use the App for any illegal purpose
+- Harass, abuse, or harm others
+- Impersonate any person or entity
+- Interfere with the App's operation
+- Attempt to gain unauthorized access to the App or related systems
+- Use automated systems to access the App
+- Spam or send unsolicited messages through the App
+
+## 9. Notifications
+
+### 9.1 Daily Quote Notifications
+- You will receive daily notifications with quotes from purchased collections
+- Notifications are sent at a consistent time each day
+- You can disable notifications in your device settings
+
+### 9.2 Transactional Notifications
+- We may send notifications about purchases, gifts, and account activity
+- These notifications are essential to the service
+
+### 9.3 Marketing Communications
+- We may send promotional emails with your consent
+- You can opt out of marketing emails at any time
+
+## 10. Privacy
+
+Your use of the App is also governed by our Privacy Policy, available at [your-privacy-policy-url]. By using the App, you consent to our collection and use of your information as described in the Privacy Policy.
+
+## 11. Third-Party Services
+
+The App uses third-party services including:
+- **Stripe**: For payment processing
+- **Supabase**: For data storage and backend services
+- **Expo**: For app development and distribution
+
+Your use of these services is subject to their respective terms and privacy policies.
+
+## 12. Disclaimers
+
+### 12.1 "As Is" Service
+THE APP IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+
+### 12.2 No Guarantee
+We do not guarantee that:
+- The App will be uninterrupted or error-free
+- Defects will be corrected
+- The App is free of viruses or harmful components
+- Results from using the App will meet your expectations
+
+### 12.3 Quote Content
+- Quotes are provided for inspirational purposes only
+- We do not guarantee the accuracy or completeness of quotes
+- Quotes should not be considered professional advice
+- We are not responsible for how you interpret or use quotes
+
+## 13. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, DAILY WHISPERS SHALL NOT BE LIABLE FOR:
+- Any indirect, incidental, special, consequential, or punitive damages
+- Loss of profits, data, or goodwill
+- Service interruptions or data loss
+- Any damages arising from your use of the App
+
+OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT YOU PAID FOR THE APP IN THE 12 MONTHS PRECEDING THE CLAIM.
+
+## 14. Indemnification
+
+You agree to indemnify and hold harmless Daily Whispers, its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising from:
+- Your use of the App
+- Your violation of these Terms
+- Your violation of any rights of another party
+- Your violation of any applicable laws
+
+## 15. Termination
+
+### 15.1 By You
+You may stop using the App at any time. Deleting the App from your device terminates your use.
+
+### 15.2 By Us
+We may suspend or terminate your access to the App:
+- If you violate these Terms
+- If we discontinue the App
+- For any reason with or without notice
+
+### 15.3 Effect of Termination
+Upon termination:
+- Your right to use the App ceases immediately
+- You must delete the App from all devices
+- Purchased quote collections may no longer be accessible
+- No refunds will be provided for unused portions of purchased collections
+
+## 16. Changes to Terms
+
+We may modify these Terms at any time. Changes will be effective:
+- Immediately upon posting in the App
+- After we notify you via email or in-app notification
+
+Your continued use of the App after changes constitutes acceptance of the new Terms.
+
+## 17. Changes to the App
+
+We reserve the right to:
+- Modify or discontinue the App at any time
+- Change pricing with notice
+- Add or remove features
+- Update quote collections
+
+We will provide reasonable notice of significant changes.
+
+## 18. Governing Law
+
+These Terms are governed by the laws of [Your State/Country], without regard to conflict of law principles. Any disputes shall be resolved in the courts of [Your Jurisdiction].
+
+## 19. Dispute Resolution
+
+### 19.1 Informal Resolution
+Before filing a claim, you agree to contact us at [your-support-email@example.com] to attempt to resolve the dispute informally.
+
+### 19.2 Arbitration
+Any disputes not resolved informally shall be resolved through binding arbitration in accordance with the rules of [Arbitration Organization] in [Your Location].
+
+### 19.3 Class Action Waiver
+You agree to resolve disputes individually and waive any right to participate in class actions or class arbitrations.
+
+## 20. Miscellaneous
+
+### 20.1 Entire Agreement
+These Terms, together with our Privacy Policy, constitute the entire agreement between you and Daily Whispers.
+
+### 20.2 Severability
+If any provision of these Terms is found to be unenforceable, the remaining provisions will remain in effect.
+
+### 20.3 Waiver
+Our failure to enforce any right or provision of these Terms does not constitute a waiver of that right or provision.
+
+### 20.4 Assignment
+You may not assign these Terms without our consent. We may assign these Terms without restriction.
+
+### 20.5 No Agency
+These Terms do not create any agency, partnership, or joint venture relationship.
+
+### 20.6 Force Majeure
+We are not liable for any failure to perform due to circumstances beyond our reasonable control.
+
+## 21. Contact Information
+
+For questions about these Terms, contact us:
+
+**Email**: [your-support-email@example.com]
+**Website**: [your-website.com]
+**Address**: [Your Business Address]
+
+## 22. Apple App Store Terms
+
+If you download the App from the Apple App Store, you acknowledge that:
+- These Terms are between you and Daily Whispers, not Apple
+- Apple has no obligation to provide support for the App
+- Apple is not responsible for any claims relating to the App
+- You will comply with Apple's App Store Terms of Service
+
+## 23. Google Play Store Terms
+
+If you download the App from Google Play, you acknowledge that:
+- These Terms are between you and Daily Whispers, not Google
+- Google has no obligation to provide support for the App
+- Google is not responsible for any claims relating to the App
+- You will comply with Google's Play Store Terms of Service
+
+---
+
+**Daily Whispers**
+[Your Company Name]
+[Your Business Address]
+[your-support-email@example.com]
+[your-website.com]
+
+---
+
+## Checklist for Publishing Terms of Service
+
+- [ ] Update all bracketed sections with your actual information
+- [ ] Add your support email address
+- [ ] Add your business address
+- [ ] Add your website URL
+- [ ] Set the "Last Updated" date
+- [ ] Specify governing law jurisdiction
+- [ ] Specify arbitration details if applicable
+- [ ] Host on a public website
+- [ ] Add the URL to app.json
+- [ ] Add the URL to App Store Connect
+- [ ] Add the URL to Google Play Console
+- [ ] Review and ensure compliance with local laws
+- [ ] Consider having a lawyer review (strongly recommended)
+
+## Important Notes
+
+- This is a template and should be reviewed by a legal professional
+- Terms of Service are legally binding contracts
+- Keep terms clear and understandable
+- Update terms when you change app functionality
+- Notify users of significant changes
+- Maintain version history of terms
+- Consider specific requirements for your jurisdiction

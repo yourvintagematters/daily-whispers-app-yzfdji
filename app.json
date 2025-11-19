@@ -1,7 +1,8 @@
+
 {
   "expo": {
     "name": "Daily Whispers",
-    "slug": "Daily Whispers",
+    "slug": "daily-whispers",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
@@ -14,9 +15,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Natively",
+      "bundleIdentifier": "com.dailywhispers.app",
+      "buildNumber": "1.0.0",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Daily Whispers needs access to your photo library to save quotes as images.",
+        "NSPhotoLibraryAddUsageDescription": "Daily Whispers needs permission to save quotes to your photo library.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized notifications to you."
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -25,7 +33,16 @@
         "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.Natively"
+      "package": "com.dailywhispers.app",
+      "versionCode": 1,
+      "permissions": [
+        "NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE"
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/images/final_quest_240x240.png",
@@ -34,15 +51,43 @@
     "plugins": [
       "expo-font",
       "expo-router",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/natively-dark.png",
+          "color": "#000000",
+          "sounds": [],
+          "mode": "production"
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Daily Whispers to save quotes to your photo library.",
+          "savePhotosPermission": "Allow Daily Whispers to save quotes to your photo library.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
     ],
-    "scheme": "natively",
+    "scheme": "dailywhispers",
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "router": {}
-    }
-  },
-  "scheme": "Daily Whispers"
+      "router": {},
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    },
+    "notification": {
+      "icon": "./assets/images/natively-dark.png",
+      "color": "#000000",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Daily Whispers"
+    },
+    "privacy": "public",
+    "description": "Daily Whispers - A gift-based app where you can purchase and send daily inspirational quotes to loved ones. Choose from 7 themed quote collections and brighten someone's day, every day for a year.",
+    "githubUrl": "https://github.com/yourusername/daily-whispers"
+  }
 }

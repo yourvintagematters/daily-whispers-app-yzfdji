@@ -1,0 +1,193 @@
+
+# Daily Whispers - Production Launch Checklist
+
+## Pre-Launch Checklist
+
+### Configuration
+- [x] testMode set to false in utils/paymentConfig.ts
+- [x] Live Stripe publishable key configured
+- [ ] Live Stripe secret key added to Supabase secrets (STRIPE_SECRET_KEY)
+- [ ] Stripe webhook secret added to Supabase secrets (STRIPE_WEBHOOK_SECRET)
+- [x] Bundle identifiers updated (com.dailywhispers.app)
+- [x] App name finalized (Daily Whispers)
+- [x] Version set to 1.0.0
+
+### Stripe Setup
+- [ ] Stripe account activated for live payments
+- [ ] Business information completed in Stripe
+- [ ] Bank account connected for payouts
+- [ ] Webhook endpoint configured: https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/stripe-webhook
+- [ ] Webhook events selected: payment_intent.succeeded, payment_intent.payment_failed
+- [ ] Test payment flow with live test cards
+- [ ] Verify refund process works
+
+### Supabase Setup
+- [x] Edge Functions deployed (create-payment-intent, confirm-payment, get-payment-status, record-payment, stripe-webhook)
+- [ ] Environment variables configured in Supabase
+- [ ] Database tables created with RLS policies
+- [ ] Test database connections
+- [ ] Backup strategy in place
+
+### App Assets
+- [ ] App icon (1024x1024 PNG, no transparency)
+- [ ] Splash screen image
+- [ ] iOS screenshots (6.5", 5.5", 12.9" iPad)
+- [ ] Android screenshots (phone and tablet)
+- [ ] Feature graphic for Google Play (1024x500)
+- [ ] Promotional images (optional but recommended)
+
+### Legal & Compliance
+- [ ] Privacy policy created and hosted
+- [ ] Terms of service created and hosted
+- [ ] Privacy policy URL added to app.json
+- [ ] Support email configured
+- [ ] Support website/page created
+- [ ] Age rating determined (should be "Everyone")
+
+### Testing
+- [ ] Test on physical iOS device
+- [ ] Test on physical Android device
+- [ ] Test all payment scenarios:
+  - [ ] Successful payment
+  - [ ] Declined card
+  - [ ] Insufficient funds
+  - [ ] Network error
+  - [ ] Timeout
+- [ ] Test notifications:
+  - [ ] Permission request
+  - [ ] Daily notification delivery
+  - [ ] Notification tap opens correct quote
+- [ ] Test sharing functionality
+- [ ] Test saving to photo library
+- [ ] Test gift sending flow
+- [ ] Test demo mode
+- [ ] Test all 7 quote themes
+- [ ] Test bundle purchases
+
+### Developer Accounts
+- [ ] Apple Developer Account ($99/year)
+- [ ] Google Play Console Account ($25 one-time)
+- [ ] Expo account created
+- [ ] EAS CLI installed
+
+### App Store Preparation (iOS)
+- [ ] App Store Connect app created
+- [ ] App information completed
+- [ ] Screenshots uploaded
+- [ ] App description written
+- [ ] Keywords selected
+- [ ] Privacy policy URL added
+- [ ] Support URL added
+- [ ] In-app purchases configured:
+  - [ ] You Are Loved ($9.99)
+  - [ ] The Funny Side of Life ($9.99)
+  - [ ] Gratitude Pearls ($9.99)
+  - [ ] Whispers from Nature ($9.99)
+  - [ ] A Cat's Life ($9.99)
+  - [ ] A Dog's Life ($9.99)
+  - [ ] Threads of Connection ($9.99)
+  - [ ] Besties Bundle ($18.99)
+  - [ ] Share the Love Big Time ($49.99)
+- [ ] Age rating completed
+- [ ] Export compliance information provided
+
+### Google Play Preparation (Android)
+- [ ] Google Play Console app created
+- [ ] Store listing completed
+- [ ] Screenshots uploaded
+- [ ] Feature graphic uploaded
+- [ ] App description written
+- [ ] Privacy policy URL added
+- [ ] Contact details added
+- [ ] In-app products configured (same as iOS)
+- [ ] Content rating completed
+- [ ] Target audience selected
+- [ ] Data safety form completed
+
+## Build & Submit
+
+### iOS Build
+- [ ] Run: eas build --platform ios --profile production
+- [ ] Download .ipa file
+- [ ] Test .ipa on TestFlight (optional but recommended)
+- [ ] Submit to App Store: eas submit --platform ios --profile production
+- [ ] Monitor review status
+
+### Android Build
+- [ ] Run: eas build --platform android --profile production-aab
+- [ ] Download .aab file
+- [ ] Upload to Internal Testing track first
+- [ ] Test with internal testers
+- [ ] Promote to Production
+- [ ] Monitor review status
+
+## Post-Launch
+
+### Monitoring
+- [ ] Set up app analytics (optional)
+- [ ] Monitor Stripe dashboard for payments
+- [ ] Monitor Supabase logs for errors
+- [ ] Check app store reviews daily
+- [ ] Monitor crash reports
+
+### Marketing
+- [ ] Prepare launch announcement
+- [ ] Share on social media
+- [ ] Create app website (optional)
+- [ ] Prepare press kit (optional)
+
+### Support
+- [ ] Set up support email monitoring
+- [ ] Prepare FAQ document
+- [ ] Create user guide (optional)
+- [ ] Plan for handling refund requests
+
+### Future Updates
+- [ ] Plan next feature additions
+- [ ] Collect user feedback
+- [ ] Monitor for bugs
+- [ ] Plan new quote sets
+
+## Emergency Procedures
+
+### If App is Rejected
+1. Read rejection reason carefully
+2. Fix the issue
+3. Increment build number
+4. Rebuild and resubmit
+5. Respond to reviewer if needed
+
+### If Payment Issues Occur
+1. Check Stripe dashboard for errors
+2. Review Supabase Edge Function logs
+3. Verify webhook is receiving events
+4. Check database for payment records
+5. Contact Stripe support if needed
+
+### If Critical Bug Found
+1. Assess severity
+2. Fix bug immediately
+3. Test thoroughly
+4. Submit expedited review (if available)
+5. Communicate with users via app store updates
+
+## Key Contacts & Resources
+
+- Expo Dashboard: https://expo.dev
+- Apple App Store Connect: https://appstoreconnect.apple.com
+- Google Play Console: https://play.google.com/console
+- Stripe Dashboard: https://dashboard.stripe.com
+- Supabase Dashboard: https://supabase.com/dashboard/project/rfaqhkbbyvddaxyolxrx
+
+## Notes
+
+- Keep all credentials secure (keystores, certificates, API keys)
+- Back up Android keystore - you cannot update app without it!
+- Save all passwords in a secure password manager
+- Document any custom configurations
+- Keep this checklist updated for future releases
+
+---
+
+Last Updated: [Current Date]
+Status: Ready for Production Deployment

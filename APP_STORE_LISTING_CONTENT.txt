@@ -1,0 +1,327 @@
+
+# Daily Whispers - App Store Listing Content
+
+## App Name
+Daily Whispers
+
+## Subtitle (iOS - 30 characters max)
+Daily Quotes, Gifted with Love
+
+## Short Description (Google Play - 80 characters max)
+Send daily inspirational quotes as gifts. 365 days of love, laughter & wisdom.
+
+## Full Description
+
+### iOS App Store (4000 characters max)
+
+**Give the Gift of Daily Inspiration**
+
+Daily Whispers is a unique gift-based app that lets you send 365 days of inspiration, love, and positivity to the people who matter most. Choose from beautifully curated quote collections, and your recipient will receive a new uplifting message every single day for an entire year.
+
+**7 Beautiful Quote Collections**
+
+🤍 **You Are Loved** - Celebrating self-worth and reminding us we are appreciated
+😂 **The Funny Side of Life** - 365 days of laughter and humor about being human
+💎 **Gratitude Pearls** - Daily reminders to appreciate life's simple joys
+🍃 **Whispers from Nature** - Inspiration from the natural world
+🐱 **A Cat's Life** - Feline philosophy celebrating independence and self-love
+🐕 **A Dog's Life** - Canine wisdom about loyalty, love, and living in the moment
+🤝 **Threads of Connection** - Affirming human connection and community
+
+**Perfect for Every Occasion**
+- Birthdays
+- Anniversaries
+- Thank you gifts
+- Long-distance relationships
+- Self-care and personal growth
+- Supporting a friend through tough times
+- Just because!
+
+**Features**
+✨ 365 unique quotes per collection
+📱 Daily push notifications
+💝 Easy gift sending
+📤 Share quotes with friends
+💾 Save favorite quotes to your photo library
+🎨 Beautiful, themed designs
+🎁 Bundle options available
+
+**Pricing**
+- Individual Collections: $9.99
+- Besties Bundle (3 collections): $18.99
+- Share the Love Big Time (10 collections): $49.99
+
+**Not a Subscription**
+Daily Whispers is a simple, one-time purchase gift that lasts a year. No recurring charges, no automatic renewals - just 365 days of daily inspiration.
+
+**How It Works**
+1. Choose a quote collection that resonates
+2. Preview sample quotes
+3. Purchase for yourself or as a gift
+4. Enter recipient details (if gifting)
+5. They receive a beautiful notification each day with a new quote
+
+**Why Daily Whispers?**
+In our busy lives, we often forget to tell the people we love how much they mean to us. Daily Whispers does it for you - every single day. It's more than just quotes; it's a daily reminder that someone cares.
+
+**Privacy & Security**
+Your privacy matters. We use secure payment processing through Stripe and never store your credit card information. See our privacy policy for details.
+
+**Support**
+Questions? Contact us at [your-support-email@example.com]
+
+Download Daily Whispers today and start spreading joy, one quote at a time! 💫
+
+---
+
+### Google Play Store (4000 characters max)
+
+**Give the Gift of Daily Inspiration**
+
+Daily Whispers is a unique gift-based app that lets you send 365 days of inspiration, love, and positivity to the people who matter most. Choose from beautifully curated quote collections, and your recipient will receive a new uplifting message every single day for an entire year.
+
+**7 Beautiful Quote Collections**
+
+🤍 **You Are Loved** - Celebrating self-worth and reminding us we are appreciated
+😂 **The Funny Side of Life** - 365 days of laughter and humor about being human
+💎 **Gratitude Pearls** - Daily reminders to appreciate life's simple joys
+🍃 **Whispers from Nature** - Inspiration from the natural world
+🐱 **A Cat's Life** - Feline philosophy celebrating independence and self-love
+🐕 **A Dog's Life** - Canine wisdom about loyalty, love, and living in the moment
+🤝 **Threads of Connection** - Affirming human connection and community
+
+**Perfect for Every Occasion**
+• Birthdays
+• Anniversaries
+• Thank you gifts
+• Long-distance relationships
+• Self-care and personal growth
+• Supporting a friend through tough times
+• Just because!
+
+**Features**
+✨ 365 unique quotes per collection
+📱 Daily push notifications
+💝 Easy gift sending
+📤 Share quotes with friends
+💾 Save favorite quotes to your photo library
+🎨 Beautiful, themed designs
+🎁 Bundle options available
+
+**Pricing**
+• Individual Collections: $9.99
+• Besties Bundle (3 collections): $18.99
+• Share the Love Big Time (10 collections): $49.99
+
+**Not a Subscription**
+Daily Whispers is a simple, one-time purchase gift that lasts a year. No recurring charges, no automatic renewals - just 365 days of daily inspiration.
+
+**How It Works**
+1. Choose a quote collection that resonates
+2. Preview sample quotes
+3. Purchase for yourself or as a gift
+4. Enter recipient details (if gifting)
+5. They receive a beautiful notification each day with a new quote
+
+**Why Daily Whispers?**
+In our busy lives, we often forget to tell the people we love how much they mean to us. Daily Whispers does it for you - every single day. It's more than just quotes; it's a daily reminder that someone cares.
+
+**Privacy & Security**
+Your privacy matters. We use secure payment processing through Stripe and never store your credit card information. See our privacy policy for details.
+
+**Permissions**
+• Notifications - To deliver daily quotes
+• Storage - To save quotes to your photo library (optional)
+
+**Support**
+Questions? Contact us at [your-support-email@example.com]
+
+Download Daily Whispers today and start spreading joy, one quote at a time! 💫
+
+---
+
+## Keywords (iOS - 100 characters max, comma-separated)
+
+daily quotes,inspirational,motivational,gift,notifications,positive affirmations,gratitude,love,friendship,self-care
+
+## Keywords (Google Play - separate list)
+
+- daily quotes
+- inspirational quotes
+- motivational quotes
+- gift app
+- daily inspiration
+- positive affirmations
+- gratitude journal
+- self-care
+- friendship gifts
+- love quotes
+- funny quotes
+- nature quotes
+- cat quotes
+- dog quotes
+- daily notifications
+- quote of the day
+- mindfulness
+- wellness
+- mental health
+- personal growth
+
+## Category
+
+**iOS**: Lifestyle (Primary), Health & Fitness (Secondary)
+**Android**: Lifestyle
+
+## Age Rating
+
+**iOS**: 4+ (No objectionable content)
+**Android**: Everyone
+
+## What's New (for updates)
+
+**Version 1.0.0**
+🎉 Welcome to Daily Whispers!
+
+- 7 beautiful quote collections with 365 unique quotes each
+- Daily notifications to brighten your day
+- Easy gift sending to loved ones
+- Share and save your favorite quotes
+- Beautiful, themed designs
+- Bundle options for multiple collections
+
+Thank you for downloading Daily Whispers. We hope it brings joy to you and your loved ones! 💫
+
+## Support Information
+
+**Support Email**: [your-support-email@example.com]
+**Website**: [your-website.com]
+**Privacy Policy**: [your-website.com/privacy-policy]
+**Terms of Service**: [your-website.com/terms-of-service]
+
+## Marketing Copy (for promotional materials)
+
+**Tagline**: "365 Days of Love, One Quote at a Time"
+
+**Short Pitch**: 
+Daily Whispers transforms the simple act of sharing quotes into a year-long gift of inspiration. Perfect for anyone who wants to stay connected and spread positivity.
+
+**Value Propositions**:
+- Unique gift idea that lasts all year
+- No subscription - one-time purchase
+- 7 themed collections to choose from
+- Beautiful, shareable designs
+- Perfect for long-distance relationships
+
+## App Preview Video Script (15-30 seconds)
+
+[Scene 1: App icon and name]
+"Introducing Daily Whispers"
+
+[Scene 2: Browse quote collections]
+"Choose from 7 beautiful quote collections"
+
+[Scene 3: Preview quotes]
+"Preview quotes before you buy"
+
+[Scene 4: Gift sending]
+"Send as a gift to someone special"
+
+[Scene 5: Notification received]
+"They receive a new quote every day"
+
+[Scene 6: Quote display]
+"365 days of inspiration, love, and positivity"
+
+[Scene 7: Share button]
+"Share, save, and spread the joy"
+
+[Scene 8: App name and download CTA]
+"Daily Whispers - Download now"
+
+## Screenshot Captions
+
+**Screenshot 1 (Home Screen)**:
+"Choose from 7 beautifully themed quote collections"
+
+**Screenshot 2 (Quote Preview)**:
+"Preview quotes before you purchase"
+
+**Screenshot 3 (Quote Display)**:
+"Receive a new inspiring quote every day"
+
+**Screenshot 4 (Gift Sending)**:
+"Send as a gift to someone you love"
+
+**Screenshot 5 (Bundles)**:
+"Bundle options available for multiple collections"
+
+**Screenshot 6 (Share Feature)**:
+"Share your favorite quotes with friends"
+
+## App Store Review Notes
+
+**Demo Account** (if required):
+Email: demo@dailywhispers.com
+Password: DemoPassword123!
+
+**Testing Instructions**:
+1. Browse the 7 quote collections on the home screen
+2. Tap any collection to preview 3 sample quotes
+3. Use test card 4242 4242 4242 4242 for payment testing
+4. Enter any future expiry date and any 3-digit CVV
+5. Test notifications by enabling them in settings
+6. Test share and save features on quote display screen
+
+**Special Notes**:
+- This is not a subscription app - all purchases are one-time
+- Payments are processed securely through Stripe
+- Notifications are used only for daily quote delivery
+- No user tracking or advertising
+
+## Promotional Text (iOS - 170 characters, appears above description)
+
+🎁 Give 365 days of inspiration! Choose from 7 quote collections. Daily notifications. Perfect gift for loved ones. Not a subscription - one-time purchase! 💫
+
+## Feature Graphic Text (Google Play)
+
+"365 Days of Inspiration
+One Quote at a Time"
+
+## Tips for Screenshots
+
+**iOS Screenshots Needed**:
+- 6.5" (iPhone 14 Pro Max, 15 Pro Max): 1290 x 2796 pixels
+- 5.5" (iPhone 8 Plus): 1242 x 2208 pixels
+- 12.9" (iPad Pro): 2048 x 2732 pixels
+
+**Android Screenshots Needed**:
+- Phone: 1080 x 1920 pixels (minimum)
+- 7" Tablet: 1200 x 1920 pixels
+- 10" Tablet: 1600 x 2560 pixels
+
+**Screenshot Content Suggestions**:
+1. Home screen with all 7 collections
+2. Quote preview screen
+3. Beautiful quote display
+4. Gift sending interface
+5. Bundle options screen
+6. Share/save functionality
+7. Notification example (mockup)
+8. Demo mode or tutorial
+
+**Design Tips**:
+- Use actual app screenshots
+- Add subtle text overlays to highlight features
+- Keep text minimal and readable
+- Show the app in use, not just static screens
+- Use consistent branding colors
+- Ensure screenshots look good on both light and dark backgrounds
+
+---
+
+Remember to:
+- Update all [bracketed] placeholders with your actual information
+- Proofread all content carefully
+- Test all links before submission
+- Keep content updated with new features
+- Respond to user reviews mentioning features from your description

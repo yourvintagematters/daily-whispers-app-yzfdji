@@ -7,9 +7,9 @@
 export const PAYMENT_CONFIG = {
   // Stripe configuration
   stripe: {
-    // Use test mode by default (set to false for production)
-    testMode: true,
-    // Test API keys
+    // PRODUCTION MODE - Set to false for live deployment
+    testMode: false,
+    // Test API keys (for development only)
     testPublishableKey: 'pk_test_51SN0VCD17kmTdMDJe4HOvt0h9XSdRMqtui4g4jgbMgKd4mmAEvKuW4NGVUdwyRCbIatOj6X75fE6x98lmABoTstG00tg3PE9L4',
     // Production keys - Your live publishable key
     livePublishableKey: 'pk_live_51SN0VCD17kmTdMDJ7hWhbpcjEBmbQXG1qodb58IvAyqukZOWCHDl8Ht1eZ7CJPyq2jiTODJ7qSUWHQYvv8cA46zG00oP7nHikR',
@@ -24,7 +24,7 @@ export const PAYMENT_CONFIG = {
     maxRetries: 3,
   },
 
-  // Test card numbers for development
+  // Test card numbers for development (DO NOT USE IN PRODUCTION)
   testCards: {
     visa: '4242424242424242',
     visaDebit: '4000056655665556',
@@ -54,8 +54,7 @@ export const PAYMENT_CONFIG = {
  * Get the appropriate Stripe publishable key based on environment
  */
 export function getStripePublishableKey(): string {
-  // In production, you would check process.env.NODE_ENV
-  // For now, we'll use testMode flag
+  // In production, we use the live key
   return PAYMENT_CONFIG.stripe.testMode
     ? PAYMENT_CONFIG.stripe.testPublishableKey
     : PAYMENT_CONFIG.stripe.livePublishableKey;
