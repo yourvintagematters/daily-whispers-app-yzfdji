@@ -121,7 +121,7 @@ export default function DemoScreen() {
                 </View>
               </View>
               <Text style={[styles.notificationBody, { color: theme.colors.text }]}>
-                Your daily quote from {currentTheme.name} is here! 💫
+                Your daily quote from "{currentTheme.name}" is here! 💫
               </Text>
               <Pressable
                 onPress={handleShowQuote}
@@ -167,8 +167,9 @@ export default function DemoScreen() {
                       ios_icon_name="square.and.arrow.up.fill"
                       android_material_icon_name="share"
                       size={24}
-                      color={theme.colors.text}
+                      color="#000000"
                     />
+                    <Text style={[styles.buttonLabel, { color: '#000000' }]}>Share</Text>
                   </Pressable>
                   <Pressable 
                     style={[styles.roundButton, { backgroundColor: '#FFFFFF' }]}
@@ -178,8 +179,9 @@ export default function DemoScreen() {
                       ios_icon_name="arrow.down.circle.fill"
                       android_material_icon_name="save"
                       size={24}
-                      color={theme.colors.text}
+                      color="#000000"
                     />
+                    <Text style={[styles.buttonLabel, { color: '#000000' }]}>Save</Text>
                   </Pressable>
                 </View>
               </View>
@@ -439,9 +441,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   roundButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -449,6 +451,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
+  },
+  buttonLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 4,
   },
   navigationContainer: {
     flexDirection: 'row',

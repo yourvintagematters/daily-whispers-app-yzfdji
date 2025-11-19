@@ -188,7 +188,7 @@ export default function PurchaseOptionsScreen() {
           {/* Header Section */}
           <View style={styles.headerSection}>
             <Text style={[styles.title, { color: '#5d8aa8' }]}>
-              How Many People?
+              Share the Love
             </Text>
             <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
               Choose how many people you want to gift to
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
   },

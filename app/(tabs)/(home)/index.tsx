@@ -93,11 +93,6 @@ function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; 
           style={[styles.cardDecorativeImage, { tintColor: '#FFFFFF' }]}
           resizeMode="contain"
         />
-        <View style={styles.tapHintContainer}>
-          <Text style={[styles.tapHintText, { color: themeColors.text, opacity: 0.6 }]}>
-            Tap to continue
-          </Text>
-        </View>
       </View>
     </Pressable>
   );
@@ -276,6 +271,7 @@ export default function HomeScreen() {
               How It Works
             </Text>
             <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+              This is <Text style={styles.underlinedText}>not</Text> an automatic subscription-based app.{'\n\n'}
               1. Choose a theme{'\n'}
               2. Select your purchase option{'\n'}
               3. Enter recipient details{'\n'}
@@ -332,9 +328,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   chooseThemeHeading: {
-    fontSize: 23,
+    fontSize: 22,
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 4,
     textAlign: 'center',
   },
   subSectionTitle: {
@@ -421,18 +417,6 @@ const styles = StyleSheet.create({
     width: 43,
     height: 43,
   },
-  tapHintContainer: {
-    position: 'absolute',
-    bottom: 8,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  tapHintText: {
-    fontSize: 12,
-    fontWeight: '600',
-    fontStyle: 'italic',
-  },
   titleWithImage: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -458,6 +442,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 12,
+  },
+  underlinedText: {
+    textDecorationLine: 'underline',
+    fontWeight: '700',
   },
   demoButton: {
     flexDirection: 'row',

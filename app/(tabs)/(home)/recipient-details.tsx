@@ -29,6 +29,7 @@ export default function RecipientDetailsScreen() {
   );
   
   const [buyerTheme, setBuyerTheme] = useState<string>('');
+  const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
   const themes = Object.values(DAILY_WHISPERS_THEMES);
 
   const updateRecipient = (id: string, field: keyof Recipient, value: string) => {
@@ -87,35 +88,139 @@ export default function RecipientDetailsScreen() {
     </Pressable>
   );
 
-  const renderThemeSelector = (recipientId: string, currentTheme: string) => (
-    <View style={styles.themeSelectorContainer}>
-      <Text style={[styles.themeSelectorLabel, { color: theme.colors.text }]}>
-        Select Theme
-      </Text>
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        style={styles.themeSelectorScroll}
-      >
-        {themes.map(t => (
-          <Pressable
-            key={t.id}
-            style={[
-              styles.themeOption,
-              {
-                backgroundColor: t.buttonColor,
-                borderWidth: currentTheme === t.id ? 3 : 0,
-                borderColor: currentTheme === t.id ? '#000' : 'transparent',
-              }
-            ]}
-            onPress={() => updateRecipient(recipientId, 'selectedTheme', t.id)}
-          >
-            <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
-          </Pressable>
-        ))}
-      </ScrollView>
-    </View>
-  );
+  const renderThemeSelector = (recipientId: string, currentTheme: string) => {
+    // Split themes into two rows of 4
+    const firstRow = themes.slice(0, 4);
+    const secondRow = themes.slice(4, 8);
+
+    return (
+      <View style={styles.themeSelectorContainer}>
+        <Text style={[styles.themeSelectorLabel, { color: theme.colors.text }]}>
+          Select Theme
+        </Text>
+        <View style={styles.themeGrid}>
+          <View style={styles.themeRow}>
+            {firstRow.map(t => (
+              <Pressable
+                key={t.id}
+                style={[
+                  styles.themeOption,
+                  {
+                    backgroundColor: t.buttonColor,
+                    borderWidth: currentTheme === t.id ? 3 : 0,
+                    borderColor: currentTheme === t.id ? '#000' : 'transparent',
+                  }
+                ]}
+                onPress={() => updateRecipient(recipientId, 'selectedTheme', t.id)}
+                onMouseEnter={() => setHoveredTheme(t.id)}
+                onMouseLeave={() => setHoveredTheme(null)}
+              >
+                <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+                {hoveredTheme === t.id && (
+                  <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
+                    <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                      {t.name}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            ))}
+          </View>
+          <View style={styles.themeRow}>
+            {secondRow.map(t => (
+              <Pressable
+                key={t.id}
+                style={[
+                  styles.themeOption,
+                  {
+                    backgroundColor: t.buttonColor,
+                    borderWidth: currentTheme === t.id ? 3 : 0,
+                    borderColor: currentTheme === t.id ? '#000' : 'transparent',
+                  }
+                ]}
+                onPress={() => updateRecipient(recipientId, 'selectedTheme', t.id)}
+                onMouseEnter={() => setHoveredTheme(t.id)}
+                onMouseLeave={() => setHoveredTheme(null)}
+              >
+                <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+                {hoveredTheme === t.id && (
+                  <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
+                    <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                      {t.name}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const renderBuyerThemeSelector = () => {
+    const firstRow = themes.slice(0, 4);
+    const secondRow = themes.slice(4, 8);
+
+    return (
+      <View style={styles.themeGrid}>
+        <View style={styles.themeRow}>
+          {firstRow.map(t => (
+            <Pressable
+              key={t.id}
+              style={[
+                styles.themeOption,
+                {
+                  backgroundColor: t.buttonColor,
+                  borderWidth: buyerTheme === t.id ? 3 : 0,
+                  borderColor: buyerTheme === t.id ? '#000' : 'transparent',
+                }
+              ]}
+              onPress={() => setBuyerTheme(t.id)}
+              onMouseEnter={() => setHoveredTheme(t.id)}
+              onMouseLeave={() => setHoveredTheme(null)}
+            >
+              <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+              {hoveredTheme === t.id && (
+                <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
+                  <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                    {t.name}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+          ))}
+        </View>
+        <View style={styles.themeRow}>
+          {secondRow.map(t => (
+            <Pressable
+              key={t.id}
+              style={[
+                styles.themeOption,
+                {
+                  backgroundColor: t.buttonColor,
+                  borderWidth: buyerTheme === t.id ? 3 : 0,
+                  borderColor: buyerTheme === t.id ? '#000' : 'transparent',
+                }
+              ]}
+              onPress={() => setBuyerTheme(t.id)}
+              onMouseEnter={() => setHoveredTheme(t.id)}
+              onMouseLeave={() => setHoveredTheme(null)}
+            >
+              <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+              {hoveredTheme === t.id && (
+                <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
+                  <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                    {t.name}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    );
+  };
 
   return (
     <>
@@ -217,34 +322,13 @@ export default function RecipientDetailsScreen() {
               <Text style={[styles.buyerThemeSubtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
                 Choose a theme for yourself as a bonus!
               </Text>
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false}
-                style={styles.themeSelectorScroll}
-              >
-                {themes.map(t => (
-                  <Pressable
-                    key={t.id}
-                    style={[
-                      styles.themeOption,
-                      {
-                        backgroundColor: t.buttonColor,
-                        borderWidth: buyerTheme === t.id ? 3 : 0,
-                        borderColor: buyerTheme === t.id ? '#000' : 'transparent',
-                      }
-                    ]}
-                    onPress={() => setBuyerTheme(t.id)}
-                  >
-                    <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
-                  </Pressable>
-                ))}
-              </ScrollView>
+              {renderBuyerThemeSelector()}
             </View>
           )}
 
           {/* Continue Button */}
           <Pressable
-            style={[styles.continueButton, { backgroundColor: theme.colors.primary }]}
+            style={[styles.continueButton, { backgroundColor: '#5d8aa8' }]}
             onPress={handleContinueToPayment}
           >
             <Text style={styles.continueButtonText}>
@@ -321,25 +405,47 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 8,
   },
-  themeSelectorScroll: {
-    marginHorizontal: -16,
-    paddingHorizontal: 16,
+  themeGrid: {
+    gap: 8,
+  },
+  themeRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
   },
   themeOption: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    position: 'relative' as const,
   },
   themeOptionEmoji: {
     fontSize: 28,
+  },
+  themeTooltip: {
+    position: 'absolute',
+    top: -35,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 1000,
+  },
+  themeTooltipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    whiteSpace: 'nowrap',
   },
   buyerThemeCard: {
     borderRadius: 12,
