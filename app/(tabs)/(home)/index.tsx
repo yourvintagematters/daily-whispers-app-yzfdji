@@ -74,7 +74,7 @@ function ThemeButton({ item, onPress, onHoverIn, onHoverOut, hoveredTheme, theme
   );
 }
 
-function QuoteCardPreview({ themeId, themeColors, onPress, recipientName }: { themeId: string; themeColors: any; onPress: () => void; recipientName?: string }) {
+function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; themeColors: any; onPress: () => void }) {
   const theme_data = DAILY_WHISPERS_THEMES[themeId as keyof typeof DAILY_WHISPERS_THEMES];
   const quotes = DAILY_WHISPERS_QUOTES[themeId as keyof typeof DAILY_WHISPERS_QUOTES] || [];
   
@@ -85,11 +85,6 @@ function QuoteCardPreview({ themeId, themeColors, onPress, recipientName }: { th
   return (
     <Pressable onPress={onPress} style={styles.quoteCardPressable}>
       <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
-        {recipientName && (
-          <Text style={[styles.recipientNamePreview, { color: themeColors.text }]}>
-            {recipientName}
-          </Text>
-        )}
         <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
           "{randomQuote}"
         </Text>
@@ -220,8 +215,12 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          {/* Themes Section */}
+          {/* Choose a Theme Section */}
           <View style={styles.section}>
+            <Text style={[styles.chooseThemeHeading, { color: '#5d8aa8' }]}>
+              Choose a Theme
+            </Text>
+            
             {/* Universal Themes */}
             <Text style={[styles.subSectionTitle, { color: theme.colors.text }]}>
               Universal
@@ -241,7 +240,6 @@ export default function HomeScreen() {
                     themeId={item.id} 
                     themeColors={theme.colors}
                     onPress={() => handleCardPress(item.id)}
-                    recipientName="Sarah"
                   />
                 )}
               </View>
@@ -266,7 +264,6 @@ export default function HomeScreen() {
                     themeId={item.id} 
                     themeColors={theme.colors}
                     onPress={() => handleCardPress(item.id)}
-                    recipientName="Sarah"
                   />
                 )}
               </View>
@@ -333,6 +330,12 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
+  },
+  chooseThemeHeading: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 16,
+    textAlign: 'center',
   },
   subSectionTitle: {
     fontSize: 18,
@@ -403,12 +406,6 @@ const styles = StyleSheet.create({
     transform: [{ perspective: 1000 }, { rotateY: '-5deg' }],
     position: 'relative' as const,
     overflow: 'hidden',
-  },
-  recipientNamePreview: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-    textAlign: 'center',
   },
   quoteCardText: {
     fontSize: 16,

@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Animated, Image } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from '@/constants/Colors';
 import { IconSymbol } from '@/components/IconSymbol';
+import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
 
 export default function DemoScreen() {
   const theme = useTheme();
@@ -22,19 +23,9 @@ export default function DemoScreen() {
       icon: 'gift.fill',
     },
     {
-      title: 'Choose a Theme',
-      description: 'Select from 8 beautiful themes, each with 365 unique quotes',
-      icon: 'sparkles',
-    },
-    {
       title: 'Daily Notifications',
       description: 'Recipients get a notification each day with a new inspiring quote',
       icon: 'bell.fill',
-    },
-    {
-      title: 'View & Share',
-      description: 'Open the quote, enjoy it, and share it with others',
-      icon: 'square.and.arrow.up.fill',
     },
   ];
 
@@ -92,11 +83,10 @@ export default function DemoScreen() {
         return (
           <View style={styles.stepContent}>
             <View style={[styles.iconContainer, { backgroundColor: '#5d8aa8' }]}>
-              <IconSymbol
-                ios_icon_name="gift.fill"
-                android_material_icon_name="card_giftcard"
-                size={64}
-                color="#FFFFFF"
+              <Image
+                source={LogoImage}
+                style={[styles.logoImage, { tintColor: '#FFFFFF' }]}
+                resizeMode="contain"
               />
             </View>
             <Text style={[styles.stepDescription, { color: theme.colors.text }]}>
@@ -109,48 +99,6 @@ export default function DemoScreen() {
         );
 
       case 1:
-        return (
-          <View style={styles.stepContent}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-              Select a Theme to Preview
-            </Text>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.themesScrollContainer}
-            >
-              {Object.values(DAILY_WHISPERS_THEMES).map((themeItem, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => handleThemeSelect(themeItem.id)}
-                  style={[
-                    styles.themeCard,
-                    {
-                      backgroundColor: themeItem.buttonColor,
-                      borderWidth: selectedTheme === themeItem.id ? 3 : 0,
-                      borderColor: '#5d8aa8',
-                    },
-                  ]}
-                >
-                  <Text style={styles.themeCardEmoji}>{themeItem.emoji}</Text>
-                  <Text style={[styles.themeCardName, { color: themeItem.textColor }]}>
-                    {themeItem.name}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <View style={[styles.selectedThemeInfo, { backgroundColor: currentTheme.pastelColor }]}>
-              <Text style={[styles.selectedThemeText, { color: theme.colors.text }]}>
-                Selected: {currentTheme.name}
-              </Text>
-              <Text style={[styles.selectedThemeDescription, { color: theme.colors.text, opacity: 0.8 }]}>
-                {currentTheme.description}
-              </Text>
-            </View>
-          </View>
-        );
-
-      case 2:
         return (
           <View style={styles.stepContent}>
             <View style={[styles.notificationDemo, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
@@ -187,9 +135,49 @@ export default function DemoScreen() {
                   { backgroundColor: currentTheme.pastelColor, opacity: fadeAnim },
                 ]}
               >
+                <Text style={[styles.recipientNameTop, { color: theme.colors.text }]}>
+                  Dear Sarah
+                </Text>
                 <Text style={[styles.quoteText, { color: theme.colors.text }]}>
                   "{currentQuotes[currentQuoteIndex]}"
                 </Text>
+                <Image
+                  source={LogoImage}
+                  style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
+                  resizeMode="contain"
+                />
+                <Text style={[styles.purchaserNameBottom, { color: theme.colors.text }]}>
+                  From John
+                </Text>
+                <View style={styles.shareButtonsContainer}>
+                  <Pressable style={[styles.shareButton, { backgroundColor: '#FFFFFF' }]}>
+                    <IconSymbol
+                      ios_icon_name="square.and.arrow.up.fill"
+                      android_material_icon_name="share"
+                      size={20}
+                      color={theme.colors.text}
+                    />
+                    <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Share</Text>
+                  </Pressable>
+                  <Pressable style={[styles.shareButton, { backgroundColor: '#FFFFFF' }]}>
+                    <IconSymbol
+                      ios_icon_name="arrow.down.circle"
+                      android_material_icon_name="save"
+                      size={20}
+                      color={theme.colors.text}
+                    />
+                    <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Save</Text>
+                  </Pressable>
+                  <Pressable style={[styles.shareButton, { backgroundColor: '#FFFFFF' }]}>
+                    <IconSymbol
+                      ios_icon_name="doc.on.doc"
+                      android_material_icon_name="content_copy"
+                      size={20}
+                      color={theme.colors.text}
+                    />
+                    <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Copy</Text>
+                  </Pressable>
+                </View>
                 <Pressable onPress={handleNextQuote} style={styles.nextQuoteButton}>
                   <Text style={[styles.nextQuoteText, { color: theme.colors.text, opacity: 0.7 }]}>
                     Tap for another sample →
@@ -197,61 +185,6 @@ export default function DemoScreen() {
                 </Pressable>
               </Animated.View>
             )}
-          </View>
-        );
-
-      case 3:
-        return (
-          <View style={styles.stepContent}>
-            <View style={[styles.quoteCard, { backgroundColor: currentTheme.pastelColor }]}>
-              <Text style={[styles.quoteCardText, { color: theme.colors.text }]}>
-                "{currentQuotes[currentQuoteIndex]}"
-              </Text>
-              <View style={styles.quoteCardFooter}>
-                <Text style={[styles.quoteCardTheme, { color: theme.colors.text, opacity: 0.7 }]}>
-                  {currentTheme.name}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.shareSection}>
-              <Text style={[styles.shareSectionTitle, { color: theme.colors.text }]}>
-                Share Options
-              </Text>
-              <View style={styles.shareButtons}>
-                <Pressable style={[styles.shareButton, { backgroundColor: theme.dark ? '#2C2C2E' : '#F0F0F0' }]}>
-                  <IconSymbol
-                    ios_icon_name="square.and.arrow.up.fill"
-                    android_material_icon_name="share"
-                    size={24}
-                    color={theme.colors.text}
-                  />
-                  <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Share</Text>
-                </Pressable>
-                <Pressable style={[styles.shareButton, { backgroundColor: theme.dark ? '#2C2C2E' : '#F0F0F0' }]}>
-                  <IconSymbol
-                    ios_icon_name="arrow.down.circle"
-                    android_material_icon_name="save"
-                    size={24}
-                    color={theme.colors.text}
-                  />
-                  <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Save</Text>
-                </Pressable>
-                <Pressable style={[styles.shareButton, { backgroundColor: theme.dark ? '#2C2C2E' : '#F0F0F0' }]}>
-                  <IconSymbol
-                    ios_icon_name="doc.on.doc"
-                    android_material_icon_name="content_copy"
-                    size={24}
-                    color={theme.colors.text}
-                  />
-                  <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Copy</Text>
-                </Pressable>
-              </View>
-            </View>
-
-            <Text style={[styles.finalNote, { color: theme.colors.text, opacity: 0.7 }]}>
-              Recipients can share quotes with friends, who can then discover and purchase Daily Whispers for themselves!
-            </Text>
           </View>
         );
 
@@ -318,7 +251,7 @@ export default function DemoScreen() {
             {currentStep > 0 && (
               <Pressable
                 onPress={handlePrevious}
-                style={[styles.navButton, styles.navButtonSecondary, { backgroundColor: theme.dark ? '#2C2C2E' : '#F0F0F0' }]}
+                style={[styles.navButton, styles.navButtonSecondary, { backgroundColor: '#FFFFFF' }]}
               >
                 <Text style={[styles.navButtonText, { color: theme.colors.text }]}>Previous</Text>
               </Pressable>
@@ -394,6 +327,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 24,
   },
+  logoImage: {
+    width: 80,
+    height: 80,
+  },
   stepDescription: {
     fontSize: 18,
     textAlign: 'center',
@@ -403,48 +340,6 @@ const styles = StyleSheet.create({
   stepSubtext: {
     fontSize: 14,
     textAlign: 'center',
-    lineHeight: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  themesScrollContainer: {
-    paddingHorizontal: 8,
-    gap: 12,
-  },
-  themeCard: {
-    width: 100,
-    height: 120,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 4,
-  },
-  themeCardEmoji: {
-    fontSize: 36,
-    marginBottom: 8,
-  },
-  themeCardName: {
-    fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  selectedThemeInfo: {
-    marginTop: 20,
-    padding: 16,
-    borderRadius: 12,
-  },
-  selectedThemeText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  selectedThemeDescription: {
-    fontSize: 14,
     lineHeight: 20,
   },
   notificationDemo: {
@@ -500,9 +395,16 @@ const styles = StyleSheet.create({
   quoteDisplay: {
     borderRadius: 16,
     padding: 24,
-    minHeight: 150,
+    minHeight: 200,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative' as const,
+  },
+  recipientNameTop: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
+    textAlign: 'center',
   },
   quoteText: {
     fontSize: 18,
@@ -511,64 +413,49 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     marginBottom: 16,
   },
-  nextQuoteButton: {
-    padding: 8,
+  quoteCardDecorativeImage: {
+    position: 'absolute',
+    bottom: 80,
+    right: 20,
+    width: 56,
+    height: 56,
   },
-  nextQuoteText: {
+  purchaserNameBottom: {
     fontSize: 14,
     fontWeight: '600',
-  },
-  quoteCard: {
-    borderRadius: 16,
-    padding: 24,
-    minHeight: 180,
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  quoteCardText: {
-    fontSize: 20,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    lineHeight: 32,
     marginBottom: 16,
-  },
-  quoteCardFooter: {
-    alignItems: 'center',
-  },
-  quoteCardTheme: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  shareSection: {
-    marginBottom: 24,
-  },
-  shareSectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
     textAlign: 'center',
+    opacity: 0.8,
   },
-  shareButtons: {
+  shareButtonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     gap: 12,
+    marginBottom: 16,
+    width: '100%',
+    justifyContent: 'center',
   },
   shareButton: {
-    padding: 16,
-    borderRadius: 12,
+    padding: 12,
+    borderRadius: 8,
     alignItems: 'center',
     minWidth: 80,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   shareButtonText: {
     fontSize: 12,
     fontWeight: '600',
     marginTop: 4,
   },
-  finalNote: {
+  nextQuoteButton: {
+    padding: 8,
+  },
+  nextQuoteText: {
     fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-    fontStyle: 'italic',
+    fontWeight: '600',
   },
   navigationContainer: {
     flexDirection: 'row',
@@ -581,6 +468,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   navButtonFull: {
     flex: 1,
