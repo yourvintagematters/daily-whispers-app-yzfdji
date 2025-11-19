@@ -158,10 +158,26 @@ export default function HomeScreen() {
   const renderHeaderRight = () => (
     <View style={styles.headerRightContainer}>
       <Pressable
+        onPress={() => router.push('/(tabs)/demo')}
+        style={styles.headerButtonContainer}
+      >
+        <IconSymbol 
+          ios_icon_name="play.circle.fill" 
+          android_material_icon_name="play_circle" 
+          size={24}
+          color={theme.colors.primary} 
+        />
+      </Pressable>
+      <Pressable
         onPress={() => router.push('/(tabs)/profile')}
         style={styles.headerButtonContainer}
       >
-        <IconSymbol name="quote.bubble.fill" color={theme.colors.primary} />
+        <IconSymbol 
+          ios_icon_name="quote.bubble.fill" 
+          android_material_icon_name="format_quote" 
+          size={24}
+          color={theme.colors.primary} 
+        />
       </Pressable>
     </View>
   );
@@ -268,6 +284,20 @@ export default function HomeScreen() {
               4. Complete payment{'\n'}
               5. They receive daily quotes for a year!
             </Text>
+            <Pressable
+              onPress={() => router.push('/(tabs)/demo')}
+              style={[styles.demoButton, { backgroundColor: theme.colors.primary }]}
+            >
+              <IconSymbol 
+                ios_icon_name="play.circle.fill" 
+                android_material_icon_name="play_circle" 
+                size={20}
+                color="#FFFFFF" 
+              />
+              <Text style={styles.demoButtonText}>
+                Try Interactive Demo
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </View>
@@ -428,6 +458,20 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     lineHeight: 20,
+    marginBottom: 12,
+  },
+  demoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  demoButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   headerRightContainer: {
     flexDirection: 'row',
