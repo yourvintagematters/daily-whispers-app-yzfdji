@@ -408,10 +408,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   quoteCardText: {
-    fontSize: 16,
+    fontSize: 19,
     fontStyle: 'italic',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 27,
     fontWeight: '500',
   },
   cardDecorativeImage: {

@@ -73,8 +73,25 @@ export default function DemoScreen() {
   };
 
   const handleNextQuote = () => {
-    console.log('Next quote in demo');
-    setCurrentQuoteIndex((currentQuoteIndex + 1) % currentQuotes.length);
+    console.log('Next quote in demo - current index:', currentQuoteIndex, 'total quotes:', currentQuotes.length);
+    // Generate a new random index to ensure we get a different quote
+    let newIndex = Math.floor(Math.random() * currentQuotes.length);
+    // If we happen to get the same index, increment it
+    if (newIndex === currentQuoteIndex && currentQuotes.length > 1) {
+      newIndex = (currentQuoteIndex + 1) % currentQuotes.length;
+    }
+    console.log('Setting new quote index:', newIndex);
+    setCurrentQuoteIndex(newIndex);
+  };
+
+  const handleShare = () => {
+    console.log('Share button pressed in demo');
+    // Share functionality would go here
+  };
+
+  const handleSave = () => {
+    console.log('Save button pressed in demo');
+    // Save functionality would go here
   };
 
   const renderStepContent = () => {
@@ -129,61 +146,61 @@ export default function DemoScreen() {
             </View>
 
             {showQuote && (
-              <Animated.View
-                style={[
-                  styles.quoteDisplay,
-                  { backgroundColor: currentTheme.pastelColor, opacity: fadeAnim },
-                ]}
-              >
-                <Text style={[styles.recipientNameTop, { color: theme.colors.text }]}>
-                  Dear Sarah
-                </Text>
-                <Text style={[styles.quoteText, { color: theme.colors.text }]}>
-                  "{currentQuotes[currentQuoteIndex]}"
-                </Text>
-                <Image
-                  source={LogoImage}
-                  style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
-                  resizeMode="contain"
-                />
-                <Text style={[styles.purchaserNameBottom, { color: theme.colors.text }]}>
-                  From John
-                </Text>
-                <View style={styles.shareButtonsContainer}>
-                  <Pressable style={[styles.shareButton, { backgroundColor: '#FFFFFF' }]}>
+              <View style={styles.quoteContainer}>
+                <Animated.View
+                  style={[
+                    styles.quoteDisplay,
+                    { backgroundColor: currentTheme.pastelColor, opacity: fadeAnim },
+                  ]}
+                >
+                  <Text style={[styles.recipientNameTop, { color: theme.colors.text }]}>
+                    Dear Sarah
+                  </Text>
+                  <Text style={[styles.quoteText, { color: theme.colors.text }]}>
+                    "{currentQuotes[currentQuoteIndex]}"
+                  </Text>
+                  <Image
+                    source={LogoImage}
+                    style={[styles.quoteCardDecorativeImage, { tintColor: '#FFFFFF' }]}
+                    resizeMode="contain"
+                  />
+                  <Text style={[styles.purchaserNameBottom, { color: theme.colors.text }]}>
+                    Love, John
+                  </Text>
+                </Animated.View>
+                
+                {/* Action Buttons - Now outside and below the card */}
+                <View style={styles.actionButtonsContainer}>
+                  <Pressable 
+                    style={[styles.roundButton, { backgroundColor: '#FFFFFF' }]}
+                    onPress={handleShare}
+                  >
                     <IconSymbol
                       ios_icon_name="square.and.arrow.up.fill"
                       android_material_icon_name="share"
-                      size={20}
+                      size={24}
                       color={theme.colors.text}
                     />
-                    <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Share</Text>
                   </Pressable>
-                  <Pressable style={[styles.shareButton, { backgroundColor: '#FFFFFF' }]}>
+                  <Pressable 
+                    style={[styles.roundButton, { backgroundColor: '#FFFFFF' }]}
+                    onPress={handleSave}
+                  >
                     <IconSymbol
-                      ios_icon_name="arrow.down.circle"
+                      ios_icon_name="arrow.down.circle.fill"
                       android_material_icon_name="save"
-                      size={20}
+                      size={24}
                       color={theme.colors.text}
                     />
-                    <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Save</Text>
-                  </Pressable>
-                  <Pressable style={[styles.shareButton, { backgroundColor: '#FFFFFF' }]}>
-                    <IconSymbol
-                      ios_icon_name="doc.on.doc"
-                      android_material_icon_name="content_copy"
-                      size={20}
-                      color={theme.colors.text}
-                    />
-                    <Text style={[styles.shareButtonText, { color: theme.colors.text }]}>Copy</Text>
                   </Pressable>
                 </View>
+
                 <Pressable onPress={handleNextQuote} style={styles.nextQuoteButton}>
                   <Text style={[styles.nextQuoteText, { color: theme.colors.text, opacity: 0.7 }]}>
                     Tap for another sample →
                   </Text>
                 </Pressable>
-              </Animated.View>
+              </View>
             )}
           </View>
         );
@@ -392,6 +409,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  quoteContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
   quoteDisplay: {
     borderRadius: 16,
     padding: 24,
@@ -399,6 +420,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative' as const,
+    width: '100%',
   },
   recipientNameTop: {
     fontSize: 18,
@@ -407,15 +429,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   quoteText: {
-    fontSize: 18,
+    fontSize: 21,
     fontStyle: 'italic',
     textAlign: 'center',
-    lineHeight: 28,
+    lineHeight: 31,
     marginBottom: 16,
   },
   quoteCardDecorativeImage: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 60,
     right: 20,
     width: 56,
     height: 56,
@@ -423,35 +445,32 @@ const styles = StyleSheet.create({
   purchaserNameBottom: {
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 16,
+    marginBottom: 0,
     textAlign: 'center',
     opacity: 0.8,
   },
-  shareButtonsContainer: {
+  actionButtonsContainer: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 20,
+    marginTop: 20,
     marginBottom: 16,
-    width: '100%',
     justifyContent: 'center',
   },
-  shareButton: {
-    padding: 12,
-    borderRadius: 8,
+  roundButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     alignItems: 'center',
-    minWidth: 80,
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
   },
-  shareButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 4,
-  },
   nextQuoteButton: {
     padding: 8,
+    marginTop: 8,
   },
   nextQuoteText: {
     fontSize: 14,

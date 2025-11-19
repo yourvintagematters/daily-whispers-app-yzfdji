@@ -183,7 +183,7 @@ export default function ProfileScreen() {
 
   const handleCopy = async () => {
     try {
-      const copyText = `"${currentQuote}"\n\n- From Daily Whispers`;
+      const copyText = `"${currentQuote}"\n\n- Love Daily Whispers`;
       await Clipboard.setStringAsync(copyText);
       Alert.alert("Copied!", "Quote text copied to clipboard!");
       console.log("Quote copied to clipboard");
@@ -632,10 +632,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   quoteText: {
-    fontSize: 20,
+    fontSize: 23,
     fontStyle: 'italic',
     textAlign: 'center',
-    lineHeight: 28,
+    lineHeight: 31,
     marginBottom: 20,
     fontWeight: '500',
   },
