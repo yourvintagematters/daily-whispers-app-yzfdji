@@ -74,11 +74,10 @@ function ThemeButton({ item, onPress, onHoverIn, onHoverOut, hoveredTheme, theme
   );
 }
 
-function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; themeColors: any; onPress: () => void }) {
+function QuoteCardPreview({ themeId, themeColors, onPress, recipientName }: { themeId: string; themeColors: any; onPress: () => void; recipientName?: string }) {
   const theme_data = DAILY_WHISPERS_THEMES[themeId as keyof typeof DAILY_WHISPERS_THEMES];
   const quotes = DAILY_WHISPERS_QUOTES[themeId as keyof typeof DAILY_WHISPERS_QUOTES] || [];
   
-  // Show only quotes from the selected theme (purchased collection)
   const randomQuote = quotes.length > 0 ? quotes[Math.floor(Math.random() * quotes.length)] : "No quotes available";
 
   console.log('Rendering QuoteCardPreview for theme:', themeId, 'Quote:', randomQuote);
@@ -86,6 +85,11 @@ function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; 
   return (
     <Pressable onPress={onPress} style={styles.quoteCardPressable}>
       <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
+        {recipientName && (
+          <Text style={[styles.recipientNamePreview, { color: themeColors.text }]}>
+            {recipientName}
+          </Text>
+        )}
         <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
           "{randomQuote}"
         </Text>
@@ -109,7 +113,6 @@ export default function HomeScreen() {
   const router = useRouter();
   const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
 
-  // Define theme order with categories
   const universalThemes = [
     DAILY_WHISPERS_THEMES.youAreLoved,
     DAILY_WHISPERS_THEMES.funnySideOfLife,
@@ -165,7 +168,7 @@ export default function HomeScreen() {
           ios_icon_name="play.circle.fill" 
           android_material_icon_name="play_circle" 
           size={24}
-          color={theme.colors.primary} 
+          color="#5d8aa8" 
         />
       </Pressable>
       <Pressable
@@ -176,7 +179,7 @@ export default function HomeScreen() {
           ios_icon_name="quote.bubble.fill" 
           android_material_icon_name="format_quote" 
           size={24}
-          color={theme.colors.primary} 
+          color="#5d8aa8" 
         />
       </Pressable>
     </View>
@@ -203,12 +206,12 @@ export default function HomeScreen() {
           {/* Title Section */}
           <View style={styles.titleSection}>
             <View style={styles.titleWithImage}>
-              <Text style={[styles.mainTitle, { color: theme.colors.text }]}>
+              <Text style={[styles.mainTitle, { color: '#5d8aa8' }]}>
                 Daily Whispers
               </Text>
               <Image
                 source={LogoImage}
-                style={[styles.titleDecorativeImage, { tintColor: theme.colors.text }]}
+                style={[styles.titleDecorativeImage, { tintColor: '#5d8aa8' }]}
                 resizeMode="contain"
               />
             </View>
@@ -219,7 +222,7 @@ export default function HomeScreen() {
 
           {/* Themes Section */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text, textAlign: 'center' }]}>
               Choose a Theme
             </Text>
 
@@ -242,6 +245,7 @@ export default function HomeScreen() {
                     themeId={item.id} 
                     themeColors={theme.colors}
                     onPress={() => handleCardPress(item.id)}
+                    recipientName="Sarah"
                   />
                 )}
               </View>
@@ -266,6 +270,7 @@ export default function HomeScreen() {
                     themeId={item.id} 
                     themeColors={theme.colors}
                     onPress={() => handleCardPress(item.id)}
+                    recipientName="Sarah"
                   />
                 )}
               </View>
@@ -286,7 +291,7 @@ export default function HomeScreen() {
             </Text>
             <Pressable
               onPress={() => router.push('/(tabs)/demo')}
-              style={[styles.demoButton, { backgroundColor: theme.colors.primary }]}
+              style={[styles.demoButton, { backgroundColor: '#5d8aa8' }]}
             >
               <IconSymbol 
                 ios_icon_name="play.circle.fill" 
@@ -381,7 +386,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   themeDescription: {
-    fontSize: 12,
+    fontSize: 13,
     lineHeight: 16,
     marginBottom: 6,
   },
@@ -407,6 +412,12 @@ const styles = StyleSheet.create({
     transform: [{ perspective: 1000 }, { rotateY: '-5deg' }],
     position: 'relative' as const,
     overflow: 'hidden',
+  },
+  recipientNamePreview: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 12,
+    textAlign: 'center',
   },
   quoteCardText: {
     fontSize: 16,

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image, Linking } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
@@ -9,6 +9,8 @@ import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
+import * as Clipboard from "expo-clipboard";
+import * as MediaLibrary from "expo-media-library";
 import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
@@ -99,19 +101,16 @@ export default function ProfileScreen() {
       const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\n✨ Discover Daily Whispers - A year of daily inspiration ✨\n\nExplore themes and gift quotes to someone special:\n${appLink}\n\n💝 Purchase Daily Whispers for a friend and brighten their year!`;
 
       if (Platform.OS === 'web') {
-        // For web, use the Web Share API or fallback to copying to clipboard
         if (navigator.share) {
           await navigator.share({
             title: 'Daily Whispers Quote',
             text: shareMessage,
           });
         } else {
-          // Fallback: copy to clipboard
           await navigator.clipboard.writeText(shareMessage);
           Alert.alert("Copied!", "Quote and app link copied to clipboard!");
         }
       } else {
-        // For mobile, capture the quote card as an image and share
         Alert.alert("Sharing Quote", "Preparing your quote card to share...");
         
         if (quoteCardRef.current) {
@@ -148,6 +147,49 @@ export default function ProfileScreen() {
     } catch (error) {
       console.log("Error sharing:", error);
       Alert.alert("Share Error", "Could not share the quote. Please try again.");
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      if (Platform.OS === 'web') {
+        Alert.alert("Save Not Available", "Saving images is not supported on web. Please use the share button instead.");
+        return;
+      }
+
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert("Permission Denied", "Please grant permission to save images to your photo library.");
+        return;
+      }
+
+      Alert.alert("Saving Quote", "Preparing your quote card to save...");
+      
+      if (quoteCardRef.current) {
+        const uri = await captureRef(quoteCardRef, {
+          format: "png",
+          quality: 0.95,
+        });
+
+        await MediaLibrary.saveToLibraryAsync(uri);
+        Alert.alert("Success!", "Quote card saved to your photo library!");
+        console.log("Quote saved successfully!");
+      }
+    } catch (error) {
+      console.log("Error saving:", error);
+      Alert.alert("Save Error", "Could not save the quote. Please try again.");
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      const copyText = `"${currentQuote}"\n\n- From Daily Whispers`;
+      await Clipboard.setStringAsync(copyText);
+      Alert.alert("Copied!", "Quote text copied to clipboard!");
+      console.log("Quote copied to clipboard");
+    } catch (error) {
+      console.log("Error copying:", error);
+      Alert.alert("Copy Error", "Could not copy the quote. Please try again.");
     }
   };
 
@@ -249,7 +291,7 @@ export default function ProfileScreen() {
             </View>
           )}
 
-          <Text style={[styles.title, { color: theme.colors.text }]}>
+          <Text style={[styles.title, { color: '#5d8aa8' }]}>
             {viewAsRecipient ? "Your Daily Quote" : "Today's Quote"}
           </Text>
 
@@ -289,7 +331,7 @@ export default function ProfileScreen() {
             <Pressable
               style={[
                 styles.button,
-                { backgroundColor: theme.colors.primary },
+                { backgroundColor: '#5d8aa8' },
               ]}
               onPress={handleShare}
             >
@@ -301,16 +343,41 @@ export default function ProfileScreen() {
             <Pressable
               style={[
                 styles.button,
-                { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#FFFFFF' },
+                { backgroundColor: '#5d8aa8' },
               ]}
-              onPress={loadPreviousQuote}
+              onPress={handleSave}
             >
-              <IconSymbol name="arrow.left" color={theme.colors.text} size={18} />
-              <Text style={[styles.buttonText, { color: theme.colors.text }]}>
-                Previous
+              <IconSymbol name="arrow.down.circle" color="#FFFFFF" size={18} />
+              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
+                Save
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[
+                styles.button,
+                { backgroundColor: '#5d8aa8' },
+              ]}
+              onPress={handleCopy}
+            >
+              <IconSymbol name="doc.on.doc" color="#FFFFFF" size={18} />
+              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
+                Copy
               </Text>
             </Pressable>
           </View>
+
+          <Pressable
+            style={[
+              styles.button,
+              { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#FFFFFF', marginBottom: 16 },
+            ]}
+            onPress={loadPreviousQuote}
+          >
+            <IconSymbol name="arrow.left" color={theme.colors.text} size={18} />
+            <Text style={[styles.buttonText, { color: theme.colors.text }]}>
+              Previous Quote
+            </Text>
+          </Pressable>
 
           {/* Purchase for Friend Button */}
           <Pressable
@@ -369,7 +436,7 @@ export default function ProfileScreen() {
             styles.settingsSection,
             Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }
           ]} glassEffectStyle="regular">
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            <Text style={[styles.sectionTitle, { color: '#5d8aa8' }]}>
               Notifications
             </Text>
             <Pressable
@@ -409,7 +476,7 @@ export default function ProfileScreen() {
             styles.section,
             Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }
           ]} glassEffectStyle="regular">
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            <Text style={[styles.sectionTitle, { color: '#5d8aa8' }]}>
               About Daily Whispers
             </Text>
             <Text style={[styles.infoText, { color: theme.colors.text }]}>
@@ -425,12 +492,12 @@ export default function ProfileScreen() {
             styles.section,
             Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)' }
           ]} glassEffectStyle="regular">
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            <Text style={[styles.sectionTitle, { color: '#5d8aa8' }]}>
               📖 How to Purchase & Gift
             </Text>
             <View style={styles.guideContainer}>
               <View style={styles.guideStep}>
-                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                <View style={[styles.stepNumber, { backgroundColor: '#5d8aa8' }]}>
                   <Text style={styles.stepNumberText}>1</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
@@ -439,7 +506,7 @@ export default function ProfileScreen() {
               </View>
               
               <View style={styles.guideStep}>
-                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                <View style={[styles.stepNumber, { backgroundColor: '#5d8aa8' }]}>
                   <Text style={styles.stepNumberText}>2</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
@@ -448,7 +515,7 @@ export default function ProfileScreen() {
               </View>
               
               <View style={styles.guideStep}>
-                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                <View style={[styles.stepNumber, { backgroundColor: '#5d8aa8' }]}>
                   <Text style={styles.stepNumberText}>3</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
@@ -457,7 +524,7 @@ export default function ProfileScreen() {
               </View>
               
               <View style={styles.guideStep}>
-                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                <View style={[styles.stepNumber, { backgroundColor: '#5d8aa8' }]}>
                   <Text style={styles.stepNumberText}>4</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
@@ -466,7 +533,7 @@ export default function ProfileScreen() {
               </View>
               
               <View style={styles.guideStep}>
-                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                <View style={[styles.stepNumber, { backgroundColor: '#5d8aa8' }]}>
                   <Text style={styles.stepNumberText}>5</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
@@ -475,7 +542,7 @@ export default function ProfileScreen() {
               </View>
               
               <View style={styles.guideStep}>
-                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                <View style={[styles.stepNumber, { backgroundColor: '#5d8aa8' }]}>
                   <Text style={styles.stepNumberText}>6</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>
@@ -484,7 +551,7 @@ export default function ProfileScreen() {
               </View>
               
               <View style={styles.guideStep}>
-                <View style={[styles.stepNumber, { backgroundColor: theme.colors.primary }]}>
+                <View style={[styles.stepNumber, { backgroundColor: '#5d8aa8' }]}>
                   <Text style={styles.stepNumberText}>7</Text>
                 </View>
                 <Text style={[styles.guideText, { color: theme.colors.text }]}>

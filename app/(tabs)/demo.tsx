@@ -58,7 +58,6 @@ export default function DemoScreen() {
       setCurrentStep(currentStep + 1);
       setShowQuote(false);
     } else {
-      // Demo complete, go back to home
       router.back();
     }
   };
@@ -92,7 +91,7 @@ export default function DemoScreen() {
       case 0:
         return (
           <View style={styles.stepContent}>
-            <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary }]}>
+            <View style={[styles.iconContainer, { backgroundColor: '#5d8aa8' }]}>
               <IconSymbol
                 ios_icon_name="gift.fill"
                 android_material_icon_name="card_giftcard"
@@ -129,7 +128,7 @@ export default function DemoScreen() {
                     {
                       backgroundColor: themeItem.buttonColor,
                       borderWidth: selectedTheme === themeItem.id ? 3 : 0,
-                      borderColor: theme.colors.primary,
+                      borderColor: '#5d8aa8',
                     },
                   ]}
                 >
@@ -231,8 +230,8 @@ export default function DemoScreen() {
                 </Pressable>
                 <Pressable style={[styles.shareButton, { backgroundColor: theme.dark ? '#2C2C2E' : '#F0F0F0' }]}>
                   <IconSymbol
-                    ios_icon_name="heart.fill"
-                    android_material_icon_name="favorite"
+                    ios_icon_name="arrow.down.circle"
+                    android_material_icon_name="save"
                     size={24}
                     color={theme.colors.text}
                   />
@@ -240,8 +239,8 @@ export default function DemoScreen() {
                 </Pressable>
                 <Pressable style={[styles.shareButton, { backgroundColor: theme.dark ? '#2C2C2E' : '#F0F0F0' }]}>
                   <IconSymbol
-                    ios_icon_name="link"
-                    android_material_icon_name="link"
+                    ios_icon_name="doc.on.doc"
+                    android_material_icon_name="content_copy"
                     size={24}
                     color={theme.colors.text}
                   />
@@ -273,7 +272,7 @@ export default function DemoScreen() {
                   ios_icon_name="chevron.left"
                   android_material_icon_name="arrow_back"
                   size={24}
-                  color={theme.colors.primary}
+                  color="#5d8aa8"
                 />
               </Pressable>
             ),
@@ -296,7 +295,7 @@ export default function DemoScreen() {
                 style={[
                   styles.progressDot,
                   {
-                    backgroundColor: index <= currentStep ? theme.colors.primary : theme.dark ? '#3C3C3E' : '#D0D0D0',
+                    backgroundColor: index <= currentStep ? '#5d8aa8' : theme.dark ? '#3C3C3E' : '#D0D0D0',
                   },
                 ]}
               />
@@ -304,7 +303,7 @@ export default function DemoScreen() {
           </View>
 
           {/* Step Title */}
-          <Text style={[styles.stepTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.stepTitle, { color: '#5d8aa8' }]}>
             {steps[currentStep].title}
           </Text>
           <Text style={[styles.stepSubtitle, { color: theme.colors.text, opacity: 0.7 }]}>
@@ -329,7 +328,7 @@ export default function DemoScreen() {
               style={[
                 styles.navButton,
                 styles.navButtonPrimary,
-                { backgroundColor: theme.colors.primary },
+                { backgroundColor: '#5d8aa8' },
                 currentStep === 0 && styles.navButtonFull,
               ]}
             >

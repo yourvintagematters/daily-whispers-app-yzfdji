@@ -58,7 +58,6 @@ function OptionButton({
   theme: any;
 }) {
   const scaleValue = useSharedValue(1);
-  const shadowOpacityValue = useSharedValue(0.1);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -69,12 +68,7 @@ function OptionButton({
   const handleHoverIn = () => {
     onHoverIn();
     scaleValue.value = withSpring(1.02, {
-      damping: 10,
-      mass: 1,
-      overshootClamping: false,
-    });
-    shadowOpacityValue.value = withSpring(0.2, {
-      damping: 10,
+      damping: 15,
       mass: 1,
       overshootClamping: false,
     });
@@ -83,14 +77,23 @@ function OptionButton({
   const handleHoverOut = () => {
     onHoverOut();
     scaleValue.value = withSpring(1, {
-      damping: 10,
+      damping: 15,
       mass: 1,
       overshootClamping: false,
     });
-    shadowOpacityValue.value = withSpring(0.1, {
-      damping: 10,
-      mass: 1,
-      overshootClamping: false,
+  };
+
+  const renderMultiplier = (text: string) => {
+    const parts = text.split(/(3x|2x|10x)/g);
+    return parts.map((part, index) => {
+      if (part === '3x' || part === '2x' || part === '10x') {
+        return (
+          <Text key={index} style={[styles.multiplierText, { color: theme.colors.text }]}>
+            {part}
+          </Text>
+        );
+      }
+      return <Text key={index}>{part}</Text>;
     });
   };
 
@@ -123,9 +126,9 @@ function OptionButton({
               {option.name}
             </Text>
             <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
-              {option.description}
+              {renderMultiplier(option.description)}
             </Text>
-            <Text style={[styles.optionPrice, { color: theme.colors.primary }]}>
+            <Text style={[styles.optionPrice, { color: '#5d8aa8' }]}>
               ${option.price.toFixed(2)}
             </Text>
           </View>
@@ -160,7 +163,7 @@ export default function PurchaseOptionsScreen() {
       onPress={() => router.back()}
       style={styles.headerButtonContainer}
     >
-      <IconSymbol name="chevron.left" color={theme.colors.primary} />
+      <IconSymbol name="chevron.left" color="#5d8aa8" />
     </Pressable>
   );
 
@@ -184,7 +187,7 @@ export default function PurchaseOptionsScreen() {
         >
           {/* Header Section */}
           <View style={styles.headerSection}>
-            <Text style={[styles.title, { color: theme.colors.text }]}>
+            <Text style={[styles.title, { color: '#5d8aa8' }]}>
               How Many People?
             </Text>
             <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
@@ -286,6 +289,10 @@ const styles = StyleSheet.create({
   optionDescription: {
     fontSize: 13,
     marginBottom: 8,
+  },
+  multiplierText: {
+    fontSize: 15,
+    fontWeight: '700',
   },
   optionPrice: {
     fontSize: 16,
