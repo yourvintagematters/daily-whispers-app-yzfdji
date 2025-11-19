@@ -1,11 +1,20 @@
 
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ActivityIndicator } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
-import { createPaymentIntent, validateCardNumber, createTestToken } from "@/utils/stripePayment";
+import { 
+  createPaymentIntent, 
+  confirmPayment, 
+  validateCardNumber, 
+  validateExpiryDate,
+  validateCVV,
+  getCardType,
+  CardDetails 
+} from "@/utils/stripePayment";
 import { isTestMode } from "@/utils/paymentConfig";
+import { supabase } from "@/app/integrations/supabase/client";
 
 interface PaymentFormData {
   cardNumber: string;
@@ -17,7 +26,7 @@ interface PaymentFormData {
 export default function PaymentScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { optionName, optionPrice, recipientsData, buyerTheme } = useLocalSearchParams();
+  const { optionName, optionPrice, recipientsData, buyerTheme, optionId } = useLocalSearchParams();
   
   const [paymentData, setPaymentData] = useState<PaymentFormData>({
     cardNumber: '',
@@ -27,9 +36,17 @@ export default function PaymentScreen() {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [cardType, setCardType] = useState<string>('');
 
   const updatePaymentData = (field: keyof PaymentFormData, value: string) => {
     setPaymentData(prev => ({ ...prev, [field]: value }));
+    setPaymentError(null); // Clear error when user types
+    
+    // Update card type when card number changes
+    if (field === 'cardNumber') {
+      setCardType(getCardType(value));
+    }
   };
 
   const formatCardNumber = (value: string) => {
@@ -46,41 +63,52 @@ export default function PaymentScreen() {
     return cleaned;
   };
 
-  const validatePaymentData = () => {
+  const validatePaymentData = (): { valid: boolean; error?: string } => {
     const cardNumberCleaned = paymentData.cardNumber.replace(/\s/g, '');
     
-    if (!validateCardNumber(cardNumberCleaned)) {
-      Alert.alert('Error', 'Please enter a valid card number');
-      return false;
-    }
-    if (!paymentData.expiryDate.match(/^\d{2}\/\d{2}$/)) {
-      Alert.alert('Error', 'Please enter expiry date in MM/YY format');
-      return false;
-    }
-    if (!paymentData.cvv.match(/^\d{3,4}$/)) {
-      Alert.alert('Error', 'Please enter a valid CVV');
-      return false;
-    }
     if (!paymentData.cardholderName.trim()) {
-      Alert.alert('Error', 'Please enter cardholder name');
-      return false;
+      return { valid: false, error: 'Please enter the cardholder name' };
     }
-    return true;
+
+    if (!validateCardNumber(cardNumberCleaned)) {
+      return { valid: false, error: 'Please enter a valid card number' };
+    }
+
+    const expiryParts = paymentData.expiryDate.split('/');
+    if (expiryParts.length !== 2) {
+      return { valid: false, error: 'Please enter expiry date in MM/YY format' };
+    }
+
+    const [month, year] = expiryParts;
+    if (!validateExpiryDate(month, year)) {
+      return { valid: false, error: 'Card has expired or expiry date is invalid' };
+    }
+
+    if (!validateCVV(paymentData.cvv, cardNumberCleaned)) {
+      return { valid: false, error: `Please enter a valid ${cardType === 'American Express' ? '4' : '3'}-digit CVV` };
+    }
+
+    return { valid: true };
   };
 
   const handleCompletePayment = async () => {
-    if (!validatePaymentData()) {
+    // Validate payment data
+    const validation = validatePaymentData();
+    if (!validation.valid) {
+      setPaymentError(validation.error || 'Invalid payment details');
+      Alert.alert('Validation Error', validation.error);
       return;
     }
 
     setIsProcessing(true);
+    setPaymentError(null);
     
     try {
       console.log('Processing payment with Stripe...');
       console.log('Test mode:', isTestMode());
       console.log('Payment amount:', optionPrice);
 
-      // Create payment intent with Stripe
+      // Step 1: Create payment intent
       const paymentIntentResult = await createPaymentIntent({
         amount: parseFloat(optionPrice as string),
         currency: 'usd',
@@ -93,6 +121,8 @@ export default function PaymentScreen() {
       });
 
       if (!paymentIntentResult.success) {
+        console.error('Payment intent creation failed:', paymentIntentResult.error);
+        setPaymentError(paymentIntentResult.error || 'Failed to create payment intent');
         Alert.alert('Payment Error', paymentIntentResult.error || 'Failed to create payment intent');
         setIsProcessing(false);
         return;
@@ -100,19 +130,71 @@ export default function PaymentScreen() {
 
       console.log('Payment intent created:', paymentIntentResult.paymentIntentId);
 
-      // Create a test token for the card
-      const cardToken = createTestToken(paymentData.cardNumber);
-      console.log('Card token created:', cardToken);
+      // Step 2: Prepare card details
+      const expiryParts = paymentData.expiryDate.split('/');
+      const cardDetails: CardDetails = {
+        cardNumber: paymentData.cardNumber.replace(/\s/g, ''),
+        expiryMonth: expiryParts[0],
+        expiryYear: `20${expiryParts[1]}`, // Convert YY to YYYY
+        cvv: paymentData.cvv,
+        cardholderName: paymentData.cardholderName,
+      };
 
-      // Simulate payment processing delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Step 3: Confirm payment
+      const confirmResult = await confirmPayment(
+        paymentIntentResult.paymentIntentId!,
+        paymentIntentResult.clientSecret!,
+        cardDetails
+      );
 
-      // In a real implementation, you would confirm the payment with Stripe
-      // For now, we'll simulate a successful payment
+      if (!confirmResult.success) {
+        console.error('Payment confirmation failed:', confirmResult.error);
+        setPaymentError(confirmResult.error || 'Payment failed');
+        Alert.alert(
+          'Payment Failed',
+          confirmResult.error || 'There was an error processing your payment. Please try again.',
+          [{ text: 'OK' }]
+        );
+        setIsProcessing(false);
+        return;
+      }
+
       console.log('Payment processed successfully');
 
+      // Step 4: Record payment in database
+      try {
+        const recipients = recipientsData ? JSON.parse(recipientsData as string) : [];
+        const { data: recordResult, error: recordError } = await supabase.functions.invoke('record-payment', {
+          body: {
+            paymentIntentId: confirmResult.paymentIntentId,
+            amount: parseFloat(optionPrice as string),
+            currency: 'usd',
+            status: 'succeeded',
+            optionName: optionName as string,
+            optionId: optionId,
+            buyerTheme: buyerTheme as string,
+            recipientCount: recipients.length,
+            recipients,
+            metadata: {
+              timestamp: new Date().toISOString(),
+            },
+          },
+        });
+
+        if (recordError) {
+          console.error('Error recording payment:', recordError);
+          // Don't fail the payment if recording fails
+        } else {
+          console.log('Payment recorded in database:', recordResult);
+        }
+      } catch (recordError) {
+        console.error('Error recording payment:', recordError);
+        // Don't fail the payment if recording fails
+      }
+
+      // Step 5: Show success message and navigate
       Alert.alert(
-        'Payment Successful!',
+        'Payment Successful! 🎉',
         'Your purchase has been completed. Recipients will receive their daily quotes starting tomorrow!',
         [
           {
@@ -125,7 +207,13 @@ export default function PaymentScreen() {
       );
     } catch (error) {
       console.error('Payment error:', error);
-      Alert.alert('Payment Failed', 'There was an error processing your payment. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      setPaymentError(errorMessage);
+      Alert.alert(
+        'Payment Error',
+        'There was an unexpected error processing your payment. Please try again or contact support.',
+        [{ text: 'OK' }]
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -170,7 +258,7 @@ export default function PaymentScreen() {
               <View style={[styles.testModeIndicator, { backgroundColor: theme.dark ? '#3C3C3E' : '#FFF3CD' }]}>
                 <IconSymbol name="info.circle.fill" color={theme.dark ? '#FFB81C' : '#FF9500'} />
                 <Text style={[styles.testModeText, { color: theme.dark ? '#FFB81C' : '#FF9500' }]}>
-                  Test Mode - Use test card numbers
+                  Test Mode - Use card: 4242 4242 4242 4242
                 </Text>
               </View>
             )}
@@ -203,6 +291,16 @@ export default function PaymentScreen() {
             </View>
           </View>
 
+          {/* Error Display */}
+          {paymentError && (
+            <View style={[styles.errorCard, { backgroundColor: theme.dark ? '#3C1F1F' : '#FFE5E5' }]}>
+              <IconSymbol name="exclamationmark.triangle.fill" color="#FF3B30" />
+              <Text style={[styles.errorText, { color: '#FF3B30' }]}>
+                {paymentError}
+              </Text>
+            </View>
+          )}
+
           {/* Payment Form */}
           <View style={[
             styles.formCard,
@@ -229,13 +327,21 @@ export default function PaymentScreen() {
                 placeholderTextColor={theme.dark ? '#98989D' : '#999'}
                 value={paymentData.cardholderName}
                 onChangeText={(text) => updatePaymentData('cardholderName', text)}
+                editable={!isProcessing}
               />
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
-                Card Number
-              </Text>
+              <View style={styles.labelRow}>
+                <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+                  Card Number
+                </Text>
+                {cardType && (
+                  <Text style={[styles.cardTypeLabel, { color: theme.colors.primary }]}>
+                    {cardType}
+                  </Text>
+                )}
+              </View>
               <TextInput
                 style={[
                   styles.input,
@@ -251,6 +357,7 @@ export default function PaymentScreen() {
                 value={formatCardNumber(paymentData.cardNumber)}
                 onChangeText={(text) => updatePaymentData('cardNumber', text)}
                 maxLength={19}
+                editable={!isProcessing}
               />
             </View>
 
@@ -274,6 +381,7 @@ export default function PaymentScreen() {
                   value={formatExpiryDate(paymentData.expiryDate)}
                   onChangeText={(text) => updatePaymentData('expiryDate', text)}
                   maxLength={5}
+                  editable={!isProcessing}
                 />
               </View>
 
@@ -297,6 +405,7 @@ export default function PaymentScreen() {
                   onChangeText={(text) => updatePaymentData('cvv', text)}
                   maxLength={4}
                   secureTextEntry
+                  editable={!isProcessing}
                 />
               </View>
             </View>
@@ -309,7 +418,7 @@ export default function PaymentScreen() {
           ]}>
             <IconSymbol name="lock.fill" color={theme.colors.primary} />
             <Text style={[styles.securityText, { color: theme.dark ? '#98989D' : '#666' }]}>
-              Your payment information is secure and encrypted
+              Your payment information is secure and encrypted with Stripe
             </Text>
           </View>
 
@@ -325,9 +434,18 @@ export default function PaymentScreen() {
             onPress={handleCompletePayment}
             disabled={isProcessing}
           >
-            <Text style={styles.completeButtonText}>
-              {isProcessing ? 'Processing...' : 'Complete Payment'}
-            </Text>
+            {isProcessing ? (
+              <View style={styles.processingContainer}>
+                <ActivityIndicator color="#FFFFFF" />
+                <Text style={[styles.completeButtonText, { marginLeft: 8 }]}>
+                  Processing...
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.completeButtonText}>
+                Complete Payment
+              </Text>
+            )}
           </Pressable>
 
           {/* Cancel Button */}
@@ -345,7 +463,6 @@ export default function PaymentScreen() {
     </>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -424,6 +541,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
+  errorCard: {
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  errorText: {
+    fontSize: 13,
+    fontWeight: '500',
+    flex: 1,
+  },
   formCard: {
     borderRadius: 12,
     padding: 16,
@@ -442,10 +572,19 @@ const styles = StyleSheet.create({
   inputGroup: {
     marginBottom: 12,
   },
+  labelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 6,
+  },
+  cardTypeLabel: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   input: {
     borderWidth: 1,
@@ -480,6 +619,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  processingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   completeButtonText: {
     fontSize: 16,

@@ -1,0 +1,352 @@
+
+# Payment Error Handling Reference
+
+## Common Payment Scenarios
+
+### ✅ Successful Payment
+**What happens:**
+- Payment is processed by Stripe
+- Payment record is saved to database
+- User sees success message
+- Recipients are set up for daily quotes
+
+**User sees:**
+"Payment Successful! 🎉
+Your purchase has been completed. Recipients will receive their daily quotes starting tomorrow!"
+
+---
+
+### ❌ Card Declined
+**Causes:**
+- Insufficient funds
+- Card reported lost or stolen
+- Bank declined the transaction
+- Card spending limit reached
+
+**User sees:**
+"Your card was declined. Please try a different payment method."
+
+**What to do:**
+- Try a different card
+- Contact your bank
+- Check card details are correct
+
+---
+
+### ❌ Expired Card
+**Causes:**
+- Card expiration date has passed
+
+**User sees:**
+"Your card has expired. Please use a different card."
+
+**What to do:**
+- Use a card with a valid expiration date
+- Update card information with your bank
+
+---
+
+### ❌ Incorrect CVV
+**Causes:**
+- Security code (CVV) doesn't match card
+
+**User sees:**
+"The security code (CVV) is incorrect. Please check and try again."
+
+**What to do:**
+- Check the 3-digit code on back of card (4 digits for Amex)
+- Re-enter the CVV carefully
+
+---
+
+### ❌ Invalid Card Number
+**Causes:**
+- Card number has typos
+- Card number fails Luhn algorithm validation
+
+**User sees:**
+"Please enter a valid card number"
+
+**What to do:**
+- Double-check the card number
+- Ensure all digits are entered correctly
+- Remove any spaces or dashes
+
+---
+
+### ❌ Network Error
+**Causes:**
+- No internet connection
+- Server timeout
+- API unavailable
+
+**User sees:**
+"Network connection error. Please check your internet and try again."
+
+**What to do:**
+- Check internet connection
+- Try again in a few moments
+- Contact support if problem persists
+
+---
+
+### ❌ Processing Error
+**Causes:**
+- Temporary Stripe API issue
+- Payment processor error
+
+**User sees:**
+"An error occurred while processing your card. Please try again."
+
+**What to do:**
+- Wait a moment and try again
+- Try a different card
+- Contact support if problem persists
+
+---
+
+## Test Cards for Development
+
+### Success Scenarios
+
+**Standard Success:**
+- Card: 4242 4242 4242 4242
+- Expiry: Any future date
+- CVV: Any 3 digits
+- Result: Payment succeeds
+
+**Visa Debit:**
+- Card: 4000 0566 5566 5556
+- Result: Payment succeeds
+
+**Mastercard:**
+- Card: 5555 5555 5555 4444
+- Result: Payment succeeds
+
+**American Express:**
+- Card: 3782 822463 10005
+- CVV: 4 digits
+- Result: Payment succeeds
+
+---
+
+### Failure Scenarios
+
+**Generic Decline:**
+- Card: 4000 0000 0000 0002
+- Result: Card declined
+
+**Insufficient Funds:**
+- Card: 4000 0000 0000 9995
+- Result: Insufficient funds error
+
+**Lost Card:**
+- Card: 4000 0000 0000 9987
+- Result: Lost card error
+
+**Stolen Card:**
+- Card: 4000 0000 0000 9979
+- Result: Stolen card error
+
+**Expired Card:**
+- Card: 4000 0000 0000 0069
+- Result: Expired card error
+
+**Incorrect CVC:**
+- Card: 4000 0000 0000 0127
+- Result: Incorrect CVV error
+
+**Processing Error:**
+- Card: 4000 0000 0000 0119
+- Result: Processing error
+
+**Rate Limit:**
+- Card: 4000 0000 0000 6975
+- Result: Rate limit error
+
+---
+
+## Validation Rules
+
+### Card Number
+- Must be 13-19 digits
+- Must pass Luhn algorithm
+- Spaces are automatically formatted
+
+### Expiry Date
+- Format: MM/YY
+- Month must be 01-12
+- Must be a future date
+- Cannot be expired
+
+### CVV
+- 3 digits for most cards
+- 4 digits for American Express
+- Must be numeric only
+
+### Cardholder Name
+- Cannot be empty
+- Should match name on card
+
+---
+
+## Security Features
+
+### Client-Side
+✅ Card validation before submission
+✅ Luhn algorithm check
+✅ Expiry date validation
+✅ CVV format validation
+✅ Card type detection
+✅ Input sanitization
+
+### Server-Side
+✅ Payment intent creation
+✅ Secure card tokenization
+✅ Payment confirmation
+✅ Error handling
+✅ Webhook verification
+✅ Database recording
+
+### Data Protection
+✅ No raw card numbers stored
+✅ Stripe handles PCI compliance
+✅ HTTPS encryption
+✅ Secret keys in environment variables
+✅ Client-side validation
+✅ Server-side verification
+
+---
+
+## Troubleshooting
+
+### Payment Not Processing
+1. Check internet connection
+2. Verify card details are correct
+3. Try a different card
+4. Check Stripe Dashboard for details
+5. Review Edge Function logs
+
+### Payment Succeeded but Not Recorded
+1. Check Supabase database (payments table)
+2. Review record-payment Edge Function logs
+3. Verify payment_intent_id in Stripe Dashboard
+4. Check for database connection errors
+
+### Webhook Not Working
+1. Verify webhook URL is correct
+2. Check STRIPE_WEBHOOK_SECRET is set
+3. Review stripe-webhook Edge Function logs
+4. Test webhook in Stripe Dashboard
+5. Verify webhook events are selected
+
+### Test Mode Issues
+1. Ensure testMode is true in paymentConfig.ts
+2. Use test card numbers only
+3. Check test publishable key is correct
+4. Verify you're in Stripe test mode
+
+### Live Mode Issues
+1. Ensure testMode is false in paymentConfig.ts
+2. Verify STRIPE_SECRET_KEY is set in Supabase
+3. Check live publishable key is correct
+4. Confirm you're in Stripe live mode
+5. Monitor first transactions closely
+
+---
+
+## Support Checklist
+
+When contacting support, provide:
+- [ ] Payment intent ID (from Stripe Dashboard)
+- [ ] Error message shown to user
+- [ ] Timestamp of payment attempt
+- [ ] Edge Function logs (if available)
+- [ ] Test mode or live mode
+- [ ] Card type used (Visa, Mastercard, etc.)
+- [ ] Browser/device information
+
+---
+
+## Quick Commands
+
+### Check Payment Status
+```sql
+SELECT * FROM payments 
+WHERE payment_intent_id = 'pi_xxx' 
+ORDER BY created_at DESC;
+```
+
+### View Recent Payments
+```sql
+SELECT * FROM payments 
+ORDER BY created_at DESC 
+LIMIT 10;
+```
+
+### Count Payments by Status
+```sql
+SELECT status, COUNT(*) 
+FROM payments 
+GROUP BY status;
+```
+
+### Find Failed Payments
+```sql
+SELECT * FROM payments 
+WHERE status = 'failed' 
+ORDER BY created_at DESC;
+```
+
+---
+
+## Best Practices
+
+### For Users
+1. Double-check card details before submitting
+2. Ensure sufficient funds are available
+3. Use a stable internet connection
+4. Keep card information secure
+5. Save confirmation for records
+
+### For Developers
+1. Always test in test mode first
+2. Monitor Edge Function logs
+3. Set up webhook handlers
+4. Track payment status in database
+5. Handle all error scenarios
+6. Provide clear error messages
+7. Never log sensitive card data
+8. Keep secret keys secure
+9. Use HTTPS for all API calls
+10. Validate input on client and server
+
+---
+
+## Emergency Procedures
+
+### If Payments Are Failing
+1. Check Stripe Dashboard status
+2. Review Edge Function logs
+3. Verify environment variables
+4. Test with test cards
+5. Check database connectivity
+6. Review recent code changes
+
+### If Webhooks Stop Working
+1. Verify webhook URL
+2. Check webhook signing secret
+3. Review webhook logs in Stripe
+4. Test webhook manually
+5. Redeploy webhook Edge Function
+
+### If Database Issues
+1. Check Supabase project status
+2. Verify database connection
+3. Review RLS policies
+4. Check table permissions
+5. Test with SQL queries
+
+---
+
+This reference guide covers all payment scenarios and error handling in your Daily Whispers app.
