@@ -222,10 +222,6 @@ export default function HomeScreen() {
 
           {/* Themes Section */}
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, textAlign: 'center' }]}>
-              Choose a Theme
-            </Text>
-
             {/* Universal Themes */}
             <Text style={[styles.subSectionTitle, { color: theme.colors.text }]}>
               Universal
@@ -337,11 +333,6 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 4,
   },
   subSectionTitle: {
     fontSize: 18,
