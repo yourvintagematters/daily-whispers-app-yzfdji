@@ -271,7 +271,7 @@ export default function HomeScreen() {
               How It Works
             </Text>
             <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
-              This is <Text style={styles.underlinedText}>not</Text> an automatic subscription-based app.{'\n\n'}
+              This is <Text style={styles.underlinedText}>not</Text> an automatic subscription-based app. It is a simple gift of love that lasts a year.{'\n\n'}
               1. Choose a theme{'\n'}
               2. Select your purchase option{'\n'}
               3. Enter recipient details{'\n'}
