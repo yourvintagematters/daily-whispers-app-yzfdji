@@ -1,0 +1,328 @@
+
+# Renewal Reminder Email Setup Guide
+
+## Overview
+
+The Daily Whispers app now includes an automated renewal reminder system that sends emails to customers 7 days before their 365-day subscription ends, encouraging them to renew their subscription.
+
+## Features
+
+- **Automatic Tracking**: The system automatically tracks when each purchase was made and calculates the subscription end date (365 days from purchase)
+- **Email Reminders**: Sends beautifully formatted HTML emails to recipients 7 days before their subscription expires
+- **Renewal Incentive**: Includes a 10% discount code (RENEW10) to encourage renewals
+- **Prevents Duplicates**: Tracks which reminders have been sent to avoid sending multiple emails
+- **Batch Processing**: Can process multiple renewal reminders in a single run
+
+## Database Schema
+
+The following fields have been added to the `payments` table:
+
+- `purchase_date`: Timestamp of when the purchase was made
+- `subscription_end_date`: Automatically calculated as purchase_date + 365 days
+- `renewal_reminder_sent`: Boolean flag indicating if reminder has been sent
+- `renewal_reminder_sent_at`: Timestamp of when the reminder was sent
+
+## Edge Functions
+
+### 1. send-renewal-reminder
+
+**Purpose**: Checks for subscriptions ending soon and sends renewal reminder emails
+
+**Endpoint**: `https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/send-renewal-reminder`
+
+**How it works**:
+- Queries the database for payments where:
+  - Status is 'succeeded'
+  - Subscription ends within the next 7 days
+  - Renewal reminder has not been sent yet
+- Sends personalized emails to all recipients
+- Marks reminders as sent in the database
+
+**Email Content**:
+- Personalized greeting with recipient name
+- Information about their current subscription theme
+- Subscription end date
+- Call-to-action button to renew
+- Special 10% discount offer with code RENEW10
+- Professional HTML formatting with Daily Whispers branding
+
+### 2. check-renewal-reminders-cron
+
+**Purpose**: Wrapper function designed to be called by a cron job scheduler
+
+**Endpoint**: `https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/check-renewal-reminders-cron`
+
+**How it works**:
+- Acts as a scheduled trigger for the send-renewal-reminder function
+- Can be called by external cron services or GitHub Actions
+- Includes optional authentication via CRON_SECRET environment variable
+
+## Email Service Setup
+
+The renewal reminder system uses **Resend** for sending emails. You need to:
+
+### 1. Sign up for Resend
+
+1. Go to https://resend.com
+2. Create a free account (includes 100 emails/day for free)
+3. Verify your domain or use their test domain for development
+
+### 2. Get Your API Key
+
+1. In Resend dashboard, go to API Keys
+2. Create a new API key
+3. Copy the API key (starts with `re_`)
+
+### 3. Add API Key to Supabase
+
+1. Go to your Supabase project dashboard
+2. Navigate to Project Settings > Edge Functions > Secrets
+3. Add a new secret:
+   - Name: `RESEND_API_KEY`
+   - Value: Your Resend API key (e.g., `re_123abc...`)
+
+### 4. Configure Sender Email
+
+In the `send-renewal-reminder` Edge Function, update the sender email:
+
+```typescript
+from: 'Daily Whispers <noreply@yourdomain.com>'
+```
+
+Replace `yourdomain.com` with your verified domain in Resend.
+
+## Scheduling Options
+
+You have several options for scheduling the daily renewal reminder checks:
+
+### Option 1: GitHub Actions (Recommended)
+
+Create a file `.github/workflows/renewal-reminders.yml` in your repository:
+
+```yaml
+name: Send Renewal Reminders
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Run daily at 9 AM UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Renewal Reminders
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/check-renewal-reminders-cron
+```
+
+**Setup**:
+1. Add your Supabase Service Role Key to GitHub Secrets:
+   - Go to your GitHub repository
+   - Settings > Secrets and variables > Actions
+   - Add new secret: `SUPABASE_SERVICE_ROLE_KEY`
+2. Commit the workflow file to your repository
+3. GitHub will automatically run it daily
+
+### Option 2: External Cron Service
+
+Use a service like:
+- **cron-job.org** (free, reliable)
+- **EasyCron** (free tier available)
+- **Zapier** (if you already use it)
+
+**Setup**:
+1. Create a new cron job
+2. Set URL: `https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/check-renewal-reminders-cron`
+3. Set schedule: Daily at 9 AM (or your preferred time)
+4. Add header: `Authorization: Bearer [your-service-role-key]`
+5. Method: POST
+
+### Option 3: Supabase pg_cron (Advanced)
+
+If you have access to Supabase's pg_cron extension:
+
+```sql
+-- Enable pg_cron extension
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+-- Schedule daily renewal reminder check at 9 AM UTC
+SELECT cron.schedule(
+  'daily-renewal-reminders',
+  '0 9 * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/check-renewal-reminders-cron',
+    headers := '{"Authorization": "Bearer [your-service-role-key]"}'::jsonb
+  );
+  $$
+);
+```
+
+## Testing
+
+### Manual Testing
+
+You can manually trigger the renewal reminder check:
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer [your-service-role-key]" \
+  https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/send-renewal-reminder
+```
+
+### Test with Sample Data
+
+To test the system, you can temporarily modify the reminder window in the `send-renewal-reminder` function:
+
+```typescript
+// Change from 7 days to 365 days for testing
+reminderDate.setDate(reminderDate.getDate() + 365);
+```
+
+This will send reminders for all subscriptions ending within the next year, allowing you to test with existing data.
+
+### Check Logs
+
+Monitor the Edge Function logs in Supabase:
+1. Go to Edge Functions in your Supabase dashboard
+2. Click on `send-renewal-reminder`
+3. View the Logs tab to see execution results
+
+## Currency Configuration
+
+All pricing in the renewal emails will display in **Australian Dollars (AUD)** as configured in the payment system.
+
+## Customization
+
+### Email Template
+
+To customize the renewal email template, edit the `generateRenewalEmailHTML` function in the `send-renewal-reminder` Edge Function:
+
+- Update branding colors
+- Modify the discount offer
+- Change the call-to-action text
+- Add additional content sections
+
+### Reminder Timing
+
+To change when reminders are sent (currently 7 days before expiry):
+
+In `send-renewal-reminder` function, modify:
+```typescript
+reminderDate.setDate(reminderDate.getDate() + 7); // Change 7 to your preferred days
+```
+
+### Discount Code
+
+To change the discount code or offer:
+
+In the email template, update:
+```html
+Use code: <strong>RENEW10</strong>
+```
+
+**Note**: You'll need to implement the actual discount code validation in your payment processing logic.
+
+## Monitoring
+
+### Check Reminder Status
+
+Query the database to see renewal reminder statistics:
+
+```sql
+-- Count reminders sent
+SELECT 
+  COUNT(*) as total_reminders_sent,
+  DATE(renewal_reminder_sent_at) as sent_date
+FROM payments
+WHERE renewal_reminder_sent = true
+GROUP BY DATE(renewal_reminder_sent_at)
+ORDER BY sent_date DESC;
+
+-- Find upcoming reminders
+SELECT 
+  id,
+  option_name,
+  subscription_end_date,
+  recipients
+FROM payments
+WHERE 
+  status = 'succeeded'
+  AND renewal_reminder_sent = false
+  AND subscription_end_date BETWEEN NOW() AND NOW() + INTERVAL '7 days'
+ORDER BY subscription_end_date;
+```
+
+### Email Delivery Tracking
+
+Check email delivery status in your Resend dashboard:
+1. Go to https://resend.com/emails
+2. View sent emails, delivery status, and open rates
+3. Monitor bounces and complaints
+
+## Troubleshooting
+
+### Emails Not Sending
+
+1. **Check Resend API Key**: Verify it's correctly set in Supabase secrets
+2. **Check Logs**: Review Edge Function logs for error messages
+3. **Verify Domain**: Ensure your sender domain is verified in Resend
+4. **Check Recipient Emails**: Ensure recipient emails in database are valid
+
+### Reminders Not Triggering
+
+1. **Check Cron Job**: Verify your scheduled job is running
+2. **Check Database**: Ensure subscription_end_date is set correctly
+3. **Check Reminder Flag**: Verify renewal_reminder_sent is false for pending reminders
+
+### Duplicate Emails
+
+The system prevents duplicates by setting `renewal_reminder_sent = true` after sending. If duplicates occur:
+1. Check if the flag is being set correctly
+2. Verify the cron job isn't running multiple times
+3. Check for race conditions if using multiple schedulers
+
+## Security Considerations
+
+1. **Service Role Key**: Keep your Supabase Service Role Key secure
+2. **CRON_SECRET**: Set a CRON_SECRET environment variable for additional security
+3. **Email Validation**: The system validates email addresses before sending
+4. **Rate Limiting**: Resend has rate limits; monitor your usage
+
+## Cost Considerations
+
+- **Resend Free Tier**: 100 emails/day, 3,000 emails/month
+- **Resend Paid Plans**: Start at $20/month for 50,000 emails
+- **Supabase Edge Functions**: Included in free tier (500K invocations/month)
+
+For most use cases, the free tiers should be sufficient.
+
+## Future Enhancements
+
+Potential improvements to consider:
+
+1. **Multiple Reminder Emails**: Send reminders at 30 days, 7 days, and 1 day before expiry
+2. **SMS Reminders**: Add SMS notifications via Twilio
+3. **In-App Notifications**: Show renewal prompts in the app
+4. **Renewal Analytics**: Track renewal rates and optimize timing
+5. **A/B Testing**: Test different email templates and offers
+6. **Personalized Offers**: Customize discounts based on purchase history
+
+## Support
+
+If you encounter issues:
+1. Check the Edge Function logs in Supabase dashboard
+2. Review Resend email logs for delivery issues
+3. Verify all environment variables are set correctly
+4. Test manually using the curl commands provided
+
+## Summary
+
+The renewal reminder system is now fully configured and ready to use. Once you:
+1. Set up your Resend API key
+2. Configure a cron scheduler
+3. Verify the email template
+
+The system will automatically send renewal reminders to customers 7 days before their subscription expires, helping to increase retention and revenue.

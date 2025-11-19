@@ -67,7 +67,7 @@ function ThemeButton({ item, onPress, onHoverIn, onHoverOut, hoveredTheme, theme
           {item.description}
         </Text>
         <Text style={[styles.themePrice, { color: themeColors.text, opacity: 0.7 }]}>
-          ${item.price.toFixed(2)}
+          AUD ${item.price.toFixed(2)}
         </Text>
       </View>
     </View>

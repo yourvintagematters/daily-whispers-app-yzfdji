@@ -17,7 +17,7 @@ export const PAYMENT_CONFIG = {
 
   // Payment processing settings
   payment: {
-    currency: 'usd',
+    currency: 'aud',
     // Timeout for payment processing (in milliseconds)
     timeout: 30000,
     // Retry attempts for failed payments

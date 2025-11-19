@@ -18,12 +18,13 @@ Send daily inspirational quotes as gifts. 365 days of love, laughter & wisdom.
 
 Daily Whispers is a unique gift-based app that lets you send 365 days of inspiration, love, and positivity to the people who matter most. Choose from beautifully curated quote collections, and your recipient will receive a new uplifting message every single day for an entire year.
 
-**7 Beautiful Quote Collections**
+**8 Beautiful Quote Collections**
 
 🤍 **You Are Loved** - Celebrating self-worth and reminding us we are appreciated
 😂 **The Funny Side of Life** - 365 days of laughter and humor about being human
 💎 **Gratitude Pearls** - Daily reminders to appreciate life's simple joys
 🍃 **Whispers from Nature** - Inspiration from the natural world
+👶 **Motherhood** - Celebrating the journey of motherhood with love and wisdom
 🐱 **A Cat's Life** - Feline philosophy celebrating independence and self-love
 🐕 **A Dog's Life** - Canine wisdom about loyalty, love, and living in the moment
 🤝 **Threads of Connection** - Affirming human connection and community
@@ -47,9 +48,9 @@ Daily Whispers is a unique gift-based app that lets you send 365 days of inspira
 🎁 Bundle options available
 
 **Pricing**
-- Individual Collections: $9.99
-- Besties Bundle (3 collections): $18.99
-- Share the Love Big Time (10 collections): $49.99
+- Individual Collections: AUD $9.99
+- Besties Bundle (3 collections): AUD $18.99
+- Share the Love Big Time (10 collections): AUD $49.99
 
 **Not a Subscription**
 Daily Whispers is a simple, one-time purchase gift that lasts a year. No recurring charges, no automatic renewals - just 365 days of daily inspiration.
@@ -80,12 +81,13 @@ Download Daily Whispers today and start spreading joy, one quote at a time! 💫
 
 Daily Whispers is a unique gift-based app that lets you send 365 days of inspiration, love, and positivity to the people who matter most. Choose from beautifully curated quote collections, and your recipient will receive a new uplifting message every single day for an entire year.
 
-**7 Beautiful Quote Collections**
+**8 Beautiful Quote Collections**
 
 🤍 **You Are Loved** - Celebrating self-worth and reminding us we are appreciated
 😂 **The Funny Side of Life** - 365 days of laughter and humor about being human
 💎 **Gratitude Pearls** - Daily reminders to appreciate life's simple joys
 🍃 **Whispers from Nature** - Inspiration from the natural world
+👶 **Motherhood** - Celebrating the journey of motherhood with love and wisdom
 🐱 **A Cat's Life** - Feline philosophy celebrating independence and self-love
 🐕 **A Dog's Life** - Canine wisdom about loyalty, love, and living in the moment
 🤝 **Threads of Connection** - Affirming human connection and community
@@ -182,7 +184,7 @@ daily quotes,inspirational,motivational,gift,notifications,positive affirmations
 **Version 1.0.0**
 🎉 Welcome to Daily Whispers!
 
-- 7 beautiful quote collections with 365 unique quotes each
+- 8 beautiful quote collections with 365 unique quotes each
 - Daily notifications to brighten your day
 - Easy gift sending to loved ones
 - Share and save your favorite quotes
@@ -241,7 +243,7 @@ Daily Whispers transforms the simple act of sharing quotes into a year-long gift
 ## Screenshot Captions
 
 **Screenshot 1 (Home Screen)**:
-"Choose from 7 beautifully themed quote collections"
+"Choose from 8 beautifully themed quote collections"
 
 **Screenshot 2 (Quote Preview)**:
 "Preview quotes before you purchase"
@@ -265,7 +267,7 @@ Email: demo@dailywhispers.com
 Password: DemoPassword123!
 
 **Testing Instructions**:
-1. Browse the 7 quote collections on the home screen
+1. Browse the 8 quote collections on the home screen
 2. Tap any collection to preview 3 sample quotes
 3. Use test card 4242 4242 4242 4242 for payment testing
 4. Enter any future expiry date and any 3-digit CVV
@@ -300,7 +302,7 @@ One Quote at a Time"
 - 10" Tablet: 1600 x 2560 pixels
 
 **Screenshot Content Suggestions**:
-1. Home screen with all 7 collections
+1. Home screen with all 8 collections
 2. Quote preview screen
 3. Beautiful quote display
 4. Gift sending interface

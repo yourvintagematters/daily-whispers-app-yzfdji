@@ -109,15 +109,18 @@ export default function PaymentScreen() {
       console.log('Payment amount:', optionPrice);
 
       // Step 1: Create payment intent
+      const recipients = recipientsData ? JSON.parse(recipientsData as string) : [];
       const paymentIntentResult = await createPaymentIntent({
         amount: parseFloat(optionPrice as string),
-        currency: 'usd',
+        currency: 'aud',
         description: `Daily Whispers - ${optionName}`,
         metadata: {
           optionName: optionName as string,
           buyerTheme: buyerTheme as string,
-          recipientCount: recipientsData ? JSON.parse(recipientsData as string).length.toString() : '0',
+          recipientCount: recipients.length.toString(),
         },
+        recipientEmail: recipients.length > 0 ? recipients[0].email : undefined,
+        recipientName: recipients.length > 0 ? recipients[0].name : undefined,
       });
 
       if (!paymentIntentResult.success) {
@@ -168,7 +171,7 @@ export default function PaymentScreen() {
           body: {
             paymentIntentId: confirmResult.paymentIntentId,
             amount: parseFloat(optionPrice as string),
-            currency: 'usd',
+            currency: 'aud',
             status: 'succeeded',
             optionName: optionName as string,
             optionId: optionId,
@@ -277,7 +280,7 @@ export default function PaymentScreen() {
                 {optionName}
               </Text>
               <Text style={[styles.summaryValue, { color: theme.colors.text }]}>
-                ${optionPrice}
+                AUD ${optionPrice}
               </Text>
             </View>
             <View style={[styles.summaryDivider, { borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA' }]} />
@@ -286,7 +289,7 @@ export default function PaymentScreen() {
                 Total
               </Text>
               <Text style={[styles.summaryTotalPrice, { color: theme.colors.primary }]}>
-                ${optionPrice}
+                AUD ${optionPrice}
               </Text>
             </View>
           </View>

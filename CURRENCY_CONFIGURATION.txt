@@ -1,0 +1,310 @@
+
+# Currency Configuration - Australian Dollars (AUD)
+
+## Overview
+
+The Daily Whispers app has been configured to use **Australian Dollars (AUD)** for all pricing, payment processing, and display values throughout the application and Stripe integration.
+
+## Changes Made
+
+### 1. Payment Configuration (`utils/paymentConfig.ts`)
+
+**Changed**:
+```typescript
+payment: {
+  currency: 'aud',  // Changed from 'usd' to 'aud'
+  timeout: 30000,
+  maxRetries: 3,
+}
+```
+
+This sets the default currency for all payment operations to AUD.
+
+### 2. Stripe Payment Integration (`utils/stripePayment.ts`)
+
+**Updated**: The `createPaymentIntent` function now defaults to AUD:
+```typescript
+currency: data.currency || 'aud',
+```
+
+This ensures all Stripe payment intents are created in Australian Dollars.
+
+### 3. Payment Screen (`app/(tabs)/(home)/payment.tsx`)
+
+**Updated**: All payment displays now show AUD:
+```typescript
+currency: 'aud',  // Changed from 'usd'
+```
+
+**Display Changes**:
+- Order summary shows: `AUD $9.99` (instead of `$9.99`)
+- Total amount shows: `AUD $9.99`
+
+### 4. Purchase Options Screen (`app/(tabs)/(home)/purchase-options.tsx`)
+
+**Updated**: Price display includes AUD prefix:
+```typescript
+AUD ${option.price.toFixed(2)}
+```
+
+**Displays**:
+- For Someone Special: AUD $9.99
+- Besties Bundle: AUD $18.99
+- Share the Love Big Time: AUD $49.99
+
+### 5. Home Screen (`app/(tabs)/(home)/index.tsx`)
+
+**Updated**: Theme prices display with AUD:
+```typescript
+AUD ${item.price.toFixed(2)}
+```
+
+### 6. Edge Functions
+
+**Updated**: `create-payment-intent` Edge Function now defaults to AUD:
+```typescript
+currency: currency || 'aud',
+```
+
+### 7. App Store Listing (`APP_STORE_LISTING_CONTENT.txt`)
+
+**Updated**: All pricing information now shows AUD:
+- Individual Collections: AUD $9.99
+- Besties Bundle (3 collections): AUD $18.99
+- Share the Love Big Time (10 collections): AUD $49.99
+
+## Stripe Configuration
+
+### Important: Stripe Account Settings
+
+To accept AUD payments, ensure your Stripe account is configured correctly:
+
+1. **Log in to Stripe Dashboard**: https://dashboard.stripe.com
+
+2. **Enable AUD Currency**:
+   - Go to Settings > Payment methods
+   - Ensure AUD is enabled as a supported currency
+   - If not enabled, click "Add currency" and select AUD
+
+3. **Bank Account**:
+   - For receiving AUD payments, you should have an Australian bank account connected
+   - Go to Settings > Bank accounts and public details
+   - Add an Australian bank account if not already added
+
+4. **Pricing**:
+   - Stripe fees for AUD transactions: 1.75% + $0.30 AUD per successful card charge
+   - International cards may have additional fees
+
+### Test Mode
+
+The app is currently in **production mode** (testMode: false in paymentConfig.ts).
+
+**Test Cards for AUD**:
+When testing in Stripe test mode, use these test cards:
+- Success: 4242 4242 4242 4242
+- Declined: 4000 0000 0000 0002
+- Insufficient funds: 4000 0000 0000 9995
+
+All test cards work with AUD currency.
+
+## Price Points
+
+Current pricing in AUD:
+
+| Product | Price (AUD) | Description |
+|---------|-------------|-------------|
+| Single Theme | $9.99 | One quote collection for one recipient |
+| Besties Bundle | $18.99 | Three quote collections (save $11) |
+| Share the Love Big Time | $49.99 | Ten quote collections + bonus (save $50) |
+
+### Price Comparison
+
+If you were previously using USD, here's the approximate conversion:
+- USD $9.99 ≈ AUD $15.50 (at current exchange rates)
+- However, we're keeping the same numeric values for simplicity
+
+**Note**: You may want to adjust these prices based on:
+1. Current USD to AUD exchange rates
+2. Your target market pricing strategy
+3. Competitor pricing in Australia
+
+### Recommended Pricing Strategy
+
+Consider these options:
+
+**Option 1: Keep Current Prices**
+- AUD $9.99, $18.99, $49.99
+- Simple, round numbers
+- Easy for customers to understand
+
+**Option 2: Adjust for Exchange Rate**
+- AUD $14.99, $28.99, $74.99
+- More aligned with USD pricing
+- May be more profitable
+
+**Option 3: Psychological Pricing**
+- AUD $9.95, $18.95, $49.95
+- Slightly lower perceived price
+- Common in Australian retail
+
+## Display Format
+
+All prices are displayed with the currency prefix:
+- Format: `AUD $XX.XX`
+- Example: `AUD $9.99`
+
+This clearly indicates to customers that prices are in Australian Dollars.
+
+## Payment Processing
+
+### How It Works
+
+1. **Customer enters payment details**
+2. **Amount is sent to Stripe in cents**: 
+   - AUD $9.99 → 999 cents
+3. **Stripe processes in AUD**
+4. **Payment confirmation returned**
+5. **Receipt shows AUD amount**
+
+### Currency Conversion
+
+- **No conversion needed**: Customers with Australian cards pay directly in AUD
+- **International cards**: Stripe handles conversion automatically
+  - Customer's bank may charge foreign transaction fees
+  - Exchange rate determined by customer's card issuer
+
+## Database Records
+
+All payment records in the database store:
+```typescript
+{
+  amount: 9.99,
+  currency: 'aud',
+  // ... other fields
+}
+```
+
+This ensures consistent currency tracking across all transactions.
+
+## Renewal Reminder Emails
+
+The renewal reminder emails will display prices in AUD:
+- "Renew your subscription for AUD $9.99"
+- Discount offers calculated in AUD
+
+## Tax Considerations
+
+### GST (Goods and Services Tax)
+
+**Important**: In Australia, digital products may be subject to 10% GST.
+
+**Current Implementation**: Prices shown are inclusive of any applicable taxes.
+
+**Recommendations**:
+1. **Consult a tax professional** to determine if you need to charge GST
+2. If GST applies, you have two options:
+   - **Include GST in price**: AUD $9.99 (includes $0.91 GST)
+   - **Add GST at checkout**: AUD $9.99 + $1.00 GST = AUD $10.99
+
+3. **Update Stripe settings** to handle tax collection if required
+
+### Tax Display
+
+If you need to show GST separately, update the payment screen to include:
+```typescript
+Subtotal: AUD $9.08
+GST (10%): AUD $0.91
+Total: AUD $9.99
+```
+
+## Refunds
+
+All refunds will be processed in AUD:
+- Full refund: AUD $9.99
+- Partial refund: Specified AUD amount
+
+Stripe handles refunds in the original currency automatically.
+
+## Reporting
+
+### Stripe Dashboard
+
+In your Stripe dashboard, you'll see:
+- All transactions in AUD
+- Revenue reports in AUD
+- Payouts to your Australian bank account in AUD
+
+### App Analytics
+
+If you're tracking revenue in your app:
+- Ensure analytics tools are configured for AUD
+- Update any revenue goals or targets to AUD amounts
+
+## Multi-Currency Support (Future)
+
+If you want to support multiple currencies in the future:
+
+1. **Detect user location**:
+```typescript
+const userCurrency = getUserCurrency(); // 'aud', 'usd', 'gbp', etc.
+```
+
+2. **Update payment config**:
+```typescript
+currency: userCurrency,
+```
+
+3. **Display appropriate prices**:
+```typescript
+const prices = {
+  aud: 9.99,
+  usd: 6.99,
+  gbp: 5.99,
+};
+```
+
+4. **Update Stripe integration** to handle multiple currencies
+
+## Testing Checklist
+
+Before going live, test the following:
+
+- [ ] Payment screen displays AUD correctly
+- [ ] Stripe payment intent created in AUD
+- [ ] Payment confirmation shows AUD amount
+- [ ] Database records store AUD currency
+- [ ] Receipt/confirmation emails show AUD
+- [ ] Renewal reminders display AUD pricing
+- [ ] App store listings show AUD prices
+- [ ] Test successful payment with Australian card
+- [ ] Test successful payment with international card
+- [ ] Test declined payment
+- [ ] Verify Stripe dashboard shows AUD transactions
+
+## Support
+
+If customers have questions about currency:
+
+**FAQ Responses**:
+
+Q: "Why are prices in AUD?"
+A: "Daily Whispers is an Australian-based service, and all prices are in Australian Dollars (AUD)."
+
+Q: "Can I pay in USD/other currency?"
+A: "Prices are in AUD, but you can use any credit card. Your bank will handle the currency conversion automatically."
+
+Q: "Will I be charged foreign transaction fees?"
+A: "If you're using a non-Australian card, your bank may charge foreign transaction fees. Please check with your card issuer."
+
+## Summary
+
+All pricing and payment processing in the Daily Whispers app is now configured for Australian Dollars (AUD):
+
+✅ Payment configuration updated to AUD
+✅ Stripe integration uses AUD
+✅ All UI displays show AUD prefix
+✅ Database stores AUD currency
+✅ App store listings updated to AUD
+✅ Renewal emails will show AUD pricing
+
+The app is ready for Australian market deployment with proper currency handling throughout the entire payment flow.

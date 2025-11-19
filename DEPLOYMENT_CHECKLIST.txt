@@ -1,0 +1,369 @@
+
+# Daily Whispers - Pre-Launch Deployment Checklist
+
+Use this checklist to ensure everything is configured correctly before launching your app.
+
+---
+
+## 🔐 ENVIRONMENT & SECRETS
+
+### Supabase Configuration
+- [ ] Project ID confirmed: `rfaqhkbbyvddaxyolxrx`
+- [ ] Service Role Key secured
+- [ ] Anon Key configured in app
+- [ ] Database migrations applied
+- [ ] RLS policies enabled on all tables
+
+### Stripe Configuration
+- [ ] Live mode enabled (testMode: false in paymentConfig.ts)
+- [ ] Live publishable key configured: `pk_live_51SN0VCD17kmTdMDJ7hWhbpcjEBmbQXG1qodb58IvAyqukZOWCHDl8Ht1eZ7CJPyq2jiTODJ7qSUWHQYvv8cA46zG00oP7nHikR`
+- [ ] Live secret key added to Supabase secrets as `STRIPE_SECRET_KEY`
+- [ ] AUD currency enabled in Stripe account
+- [ ] Australian bank account connected (if applicable)
+- [ ] Webhook endpoint configured (if using webhooks)
+
+### Resend Configuration (for renewal emails)
+- [ ] Resend account created
+- [ ] API key obtained
+- [ ] API key added to Supabase secrets as `RESEND_API_KEY`
+- [ ] Sender domain verified (or using test domain)
+- [ ] Sender email configured in send-renewal-reminder function
+
+---
+
+## 💳 PAYMENT SYSTEM
+
+### Currency & Pricing
+- [ ] All prices display "AUD $X.XX" format
+- [ ] Payment config set to 'aud'
+- [ ] Stripe payment intents use AUD
+- [ ] Database stores 'aud' currency
+- [ ] Test payment with Australian card successful
+- [ ] Test payment with international card successful
+
+### Payment Flow
+- [ ] Payment screen displays correctly
+- [ ] Card validation working
+- [ ] Payment intent creation successful
+- [ ] Payment confirmation working
+- [ ] Database records payment correctly
+- [ ] Error handling tested (declined card, etc.)
+- [ ] Receipt/confirmation working
+
+### Pricing Verification
+- [ ] Single Theme: AUD $9.99 ✓
+- [ ] Besties Bundle: AUD $18.99 ✓
+- [ ] Share the Love Big Time: AUD $49.99 ✓
+
+---
+
+## 📧 RENEWAL REMINDER SYSTEM
+
+### Database Setup
+- [ ] Migration `add_renewal_reminder_fields` applied
+- [ ] `purchase_date` column exists
+- [ ] `subscription_end_date` column exists
+- [ ] `renewal_reminder_sent` column exists
+- [ ] `renewal_reminder_sent_at` column exists
+- [ ] Database trigger created for auto-setting dates
+- [ ] Index created for efficient querying
+
+### Edge Functions
+- [ ] `send-renewal-reminder` deployed
+- [ ] `check-renewal-reminders-cron` deployed
+- [ ] Functions accessible via API
+- [ ] Function logs show no errors
+- [ ] Manual test successful
+
+### Email Configuration
+- [ ] Resend API key working
+- [ ] Test email sent successfully
+- [ ] Email template displays correctly
+- [ ] Personalization working (name, theme)
+- [ ] Discount code (RENEW10) displayed
+- [ ] Links in email working
+- [ ] Email branding correct
+
+### Scheduling
+- [ ] Cron job configured (GitHub Actions or external)
+- [ ] Schedule set to daily at 9 AM UTC
+- [ ] Authorization configured
+- [ ] Manual trigger tested
+- [ ] First automated run successful
+
+---
+
+## 📱 APP STORE LISTINGS
+
+### Content Updates
+- [ ] iOS description updated to 8 collections
+- [ ] Google Play description updated to 8 collections
+- [ ] Motherhood theme listed
+- [ ] All pricing shows AUD
+- [ ] Version notes updated
+- [ ] Screenshot captions updated
+- [ ] Testing instructions updated
+
+### Themes Listed (8 total)
+- [ ] 🤍 You Are Loved
+- [ ] 😂 The Funny Side of Life
+- [ ] 💎 Gratitude Pearls
+- [ ] 🍃 Whispers from Nature
+- [ ] 👶 Motherhood
+- [ ] 🐱 A Cat's Life
+- [ ] 🐕 A Dog's Life
+- [ ] 🤝 Threads of Connection
+
+### Submission
+- [ ] iOS App Store submission prepared
+- [ ] Google Play Store submission prepared
+- [ ] Screenshots updated (if needed)
+- [ ] App icons correct
+- [ ] Privacy policy updated
+- [ ] Terms of service updated
+
+---
+
+## 🧪 TESTING
+
+### Payment Testing
+- [ ] Test successful payment (Australian card)
+- [ ] Test successful payment (international card)
+- [ ] Test declined card
+- [ ] Test insufficient funds
+- [ ] Test expired card
+- [ ] Test incorrect CVV
+- [ ] Verify payment recorded in database
+- [ ] Verify payment appears in Stripe dashboard
+
+### Currency Testing
+- [ ] All screens show AUD prefix
+- [ ] Payment intent created in AUD
+- [ ] Stripe dashboard shows AUD transactions
+- [ ] Database stores AUD currency
+- [ ] Receipt shows AUD amount
+
+### Renewal Reminder Testing
+- [ ] Manual trigger sends email
+- [ ] Email received successfully
+- [ ] Email displays correctly on mobile
+- [ ] Email displays correctly on desktop
+- [ ] Links in email work
+- [ ] Discount code visible
+- [ ] Reminder flag set in database
+- [ ] No duplicate emails sent
+
+### User Flow Testing
+- [ ] Browse themes
+- [ ] Select theme
+- [ ] Choose purchase option
+- [ ] Enter recipient details
+- [ ] Select themes for recipients
+- [ ] Enter payment details
+- [ ] Complete payment
+- [ ] Receive confirmation
+- [ ] Verify database record
+
+---
+
+## 🔒 SECURITY
+
+### API Keys & Secrets
+- [ ] All API keys stored in Supabase secrets (not in code)
+- [ ] Service role key never exposed to client
+- [ ] Stripe secret key secure
+- [ ] Resend API key secure
+- [ ] No hardcoded credentials in repository
+
+### Database Security
+- [ ] RLS enabled on payments table
+- [ ] RLS policies tested
+- [ ] Only authorized access to sensitive data
+- [ ] No SQL injection vulnerabilities
+
+### Payment Security
+- [ ] Card details never stored in database
+- [ ] Payment processing server-side only
+- [ ] Stripe handles all sensitive card data
+- [ ] HTTPS enforced for all API calls
+
+---
+
+## 📊 MONITORING & ANALYTICS
+
+### Logging
+- [ ] Edge Function logs accessible
+- [ ] Payment errors logged
+- [ ] Email delivery tracked
+- [ ] Error monitoring set up
+
+### Dashboards
+- [ ] Supabase dashboard access confirmed
+- [ ] Stripe dashboard access confirmed
+- [ ] Resend dashboard access confirmed
+- [ ] Can view transactions and logs
+
+### Metrics to Track
+- [ ] Total payments
+- [ ] Revenue (in AUD)
+- [ ] Renewal reminder emails sent
+- [ ] Email open rates
+- [ ] Renewal conversion rate
+- [ ] Payment success rate
+- [ ] Error rates
+
+---
+
+## 📄 DOCUMENTATION
+
+### Internal Documentation
+- [ ] RENEWAL_REMINDER_QUICKSTART.txt reviewed
+- [ ] RENEWAL_REMINDER_SETUP.txt reviewed
+- [ ] CURRENCY_CONFIGURATION.txt reviewed
+- [ ] DISCOUNT_CODE_IMPLEMENTATION.txt reviewed
+- [ ] IMPLEMENTATION_SUMMARY.txt reviewed
+- [ ] CHANGES_SUMMARY.txt reviewed
+- [ ] DEPLOYMENT_CHECKLIST.txt (this file) reviewed
+
+### External Documentation
+- [ ] Privacy policy published
+- [ ] Terms of service published
+- [ ] Help/FAQ page created
+- [ ] Contact information available
+- [ ] Refund policy documented
+
+---
+
+## 🚀 LAUNCH PREPARATION
+
+### Pre-Launch
+- [ ] All tests passing
+- [ ] No critical bugs
+- [ ] Performance acceptable
+- [ ] App store submissions ready
+- [ ] Marketing materials prepared
+- [ ] Support email set up
+- [ ] Social media accounts ready
+
+### Launch Day
+- [ ] Submit to App Store
+- [ ] Submit to Google Play
+- [ ] Monitor for errors
+- [ ] Check payment processing
+- [ ] Verify email sending
+- [ ] Respond to early feedback
+
+### Post-Launch
+- [ ] Monitor Stripe dashboard daily
+- [ ] Check Resend email delivery
+- [ ] Review Edge Function logs
+- [ ] Track user feedback
+- [ ] Monitor app store reviews
+- [ ] Address any issues quickly
+
+---
+
+## 🎯 OPTIONAL ENHANCEMENTS
+
+### Discount Code System
+- [ ] RENEW10 coupon created in Stripe
+- [ ] Discount validation implemented
+- [ ] UI updated with discount field
+- [ ] Testing completed
+- [ ] Documentation: DISCOUNT_CODE_IMPLEMENTATION.txt
+
+### Renewal Landing Page
+- [ ] Page designed
+- [ ] Page implemented
+- [ ] Linked from emails
+- [ ] Shows available themes
+- [ ] Includes pricing
+
+### Analytics
+- [ ] Google Analytics integrated
+- [ ] Conversion tracking set up
+- [ ] Revenue tracking configured
+- [ ] User behavior tracked
+
+---
+
+## ✅ FINAL CHECKS
+
+### Critical Items
+- [ ] App builds successfully
+- [ ] No console errors
+- [ ] All API endpoints working
+- [ ] Database accessible
+- [ ] Payments processing
+- [ ] Emails sending
+
+### Business Items
+- [ ] Pricing strategy confirmed
+- [ ] Refund policy decided
+- [ ] Customer support plan ready
+- [ ] Marketing plan prepared
+- [ ] Launch date set
+
+### Legal Items
+- [ ] Privacy policy compliant
+- [ ] Terms of service reviewed
+- [ ] GST/tax requirements understood
+- [ ] Business registration complete (if required)
+- [ ] Payment processing agreement signed
+
+---
+
+## 📞 EMERGENCY CONTACTS
+
+### Technical Support
+- Supabase Support: https://supabase.com/support
+- Stripe Support: https://support.stripe.com
+- Resend Support: https://resend.com/support
+
+### Important Links
+- Supabase Dashboard: https://supabase.com/dashboard/project/rfaqhkbbyvddaxyolxrx
+- Stripe Dashboard: https://dashboard.stripe.com
+- Resend Dashboard: https://resend.com/emails
+
+### Backup Plan
+- [ ] Database backup procedure documented
+- [ ] Rollback plan prepared
+- [ ] Emergency contact list created
+- [ ] Incident response plan ready
+
+---
+
+## 🎉 READY TO LAUNCH?
+
+**All Critical Items Complete**: _____ / _____
+
+**All Optional Items Complete**: _____ / _____
+
+**Confidence Level**: ☐ Low  ☐ Medium  ☐ High
+
+**Launch Date**: _______________
+
+**Notes**:
+_____________________________________________
+_____________________________________________
+_____________________________________________
+
+---
+
+## 📝 SIGN-OFF
+
+**Reviewed By**: _______________
+
+**Date**: _______________
+
+**Approved for Launch**: ☐ Yes  ☐ No
+
+**If No, Reasons**:
+_____________________________________________
+_____________________________________________
+
+---
+
+**Good luck with your launch! 🚀**
+
+Remember: You can always iterate and improve after launch. Don't let perfection be the enemy of good!

@@ -129,7 +129,7 @@ function OptionButton({
               {renderMultiplier(option.description)}
             </Text>
             <Text style={[styles.optionPrice, { color: '#5d8aa8' }]}>
-              ${option.price.toFixed(2)}
+              AUD ${option.price.toFixed(2)}
             </Text>
           </View>
         </View>

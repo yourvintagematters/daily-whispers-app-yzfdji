@@ -1,0 +1,493 @@
+
+# Implementing the RENEW10 Discount Code
+
+## Overview
+
+The renewal reminder emails mention a 10% discount code (RENEW10). This document explains how to implement discount code validation and application in your payment flow.
+
+---
+
+## Current Status
+
+✅ **Implemented**:
+- Renewal emails mention RENEW10 code
+- Email template displays the discount offer
+
+❌ **Not Yet Implemented**:
+- Discount code validation
+- Price reduction when code is applied
+- Database tracking of discount usage
+
+---
+
+## Implementation Options
+
+### Option 1: Stripe Coupons (Recommended)
+
+Use Stripe's built-in coupon system for discount management.
+
+#### Advantages:
+- Stripe handles validation automatically
+- Built-in usage tracking
+- Can set expiration dates
+- Can limit number of uses
+- Works with Stripe's reporting
+
+#### Setup Steps:
+
+1. **Create Coupon in Stripe Dashboard**:
+   - Go to https://dashboard.stripe.com/coupons
+   - Click "Create coupon"
+   - Settings:
+     - **ID**: `RENEW10`
+     - **Type**: Percentage discount
+     - **Percentage off**: 10%
+     - **Duration**: Forever (or set expiration)
+     - **Max redemptions**: Unlimited (or set limit)
+   - Click "Create coupon"
+
+2. **Update Payment Screen UI**:
+
+Add discount code input field to `app/(tabs)/(home)/payment.tsx`:
+
+```typescript
+// Add to state
+const [discountCode, setDiscountCode] = useState('');
+const [discountApplied, setDiscountApplied] = useState(false);
+const [discountAmount, setDiscountAmount] = useState(0);
+
+// Add discount validation function
+const validateDiscountCode = async () => {
+  if (!discountCode.trim()) return;
+  
+  try {
+    const { data, error } = await supabase.functions.invoke('validate-discount', {
+      body: { code: discountCode.toUpperCase() }
+    });
+    
+    if (error || !data.valid) {
+      Alert.alert('Invalid Code', 'This discount code is not valid.');
+      return;
+    }
+    
+    setDiscountApplied(true);
+    const originalPrice = parseFloat(optionPrice as string);
+    const discount = originalPrice * (data.percentOff / 100);
+    setDiscountAmount(discount);
+    Alert.alert('Success!', `${data.percentOff}% discount applied!`);
+  } catch (error) {
+    console.error('Error validating discount:', error);
+    Alert.alert('Error', 'Could not validate discount code.');
+  }
+};
+
+// Add UI for discount code
+<View style={styles.discountSection}>
+  <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+    Discount Code (Optional)
+  </Text>
+  <View style={styles.discountInputRow}>
+    <TextInput
+      style={[styles.discountInput, { 
+        backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
+        color: theme.colors.text 
+      }]}
+      placeholder="Enter code"
+      placeholderTextColor={theme.dark ? '#98989D' : '#999'}
+      value={discountCode}
+      onChangeText={setDiscountCode}
+      autoCapitalize="characters"
+      editable={!discountApplied && !isProcessing}
+    />
+    <Pressable
+      style={[styles.applyButton, { 
+        backgroundColor: discountApplied ? '#34C759' : theme.colors.primary 
+      }]}
+      onPress={validateDiscountCode}
+      disabled={discountApplied || isProcessing}
+    >
+      <Text style={styles.applyButtonText}>
+        {discountApplied ? '✓ Applied' : 'Apply'}
+      </Text>
+    </Pressable>
+  </View>
+  {discountApplied && (
+    <Text style={[styles.discountSuccess, { color: '#34C759' }]}>
+      Discount applied: -AUD ${discountAmount.toFixed(2)}
+    </Text>
+  )}
+</View>
+
+// Update order summary to show discount
+{discountApplied && (
+  <>
+    <View style={styles.summaryRow}>
+      <Text style={[styles.summaryLabel, { color: theme.dark ? '#98989D' : '#666' }]}>
+        Discount ({discountCode})
+      </Text>
+      <Text style={[styles.summaryValue, { color: '#34C759' }]}>
+        -AUD ${discountAmount.toFixed(2)}
+      </Text>
+    </View>
+  </>
+)}
+
+// Update total calculation
+const finalPrice = discountApplied 
+  ? parseFloat(optionPrice as string) - discountAmount 
+  : parseFloat(optionPrice as string);
+```
+
+3. **Create Discount Validation Edge Function**:
+
+Create new file for Edge Function `validate-discount`:
+
+```typescript
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import Stripe from 'https://esm.sh/stripe@14.21.0?target=deno';
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+  apiVersion: '2023-10-16',
+  httpClient: Stripe.createFetchHttpClient()
+});
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
+};
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const { code } = await req.json();
+    
+    if (!code) {
+      return new Response(JSON.stringify({
+        valid: false,
+        error: 'No code provided'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+
+    // Retrieve coupon from Stripe
+    const coupon = await stripe.coupons.retrieve(code);
+    
+    if (!coupon || !coupon.valid) {
+      return new Response(JSON.stringify({
+        valid: false,
+        error: 'Invalid or expired coupon'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      });
+    }
+
+    return new Response(JSON.stringify({
+      valid: true,
+      percentOff: coupon.percent_off,
+      amountOff: coupon.amount_off,
+      currency: coupon.currency,
+      duration: coupon.duration,
+      name: coupon.name
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200
+    });
+  } catch (error) {
+    console.error('Error validating coupon:', error);
+    return new Response(JSON.stringify({
+      valid: false,
+      error: 'Coupon not found'
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200
+    });
+  }
+});
+```
+
+4. **Update Payment Intent Creation**:
+
+Modify the payment intent creation to include the coupon:
+
+```typescript
+const paymentIntentResult = await createPaymentIntent({
+  amount: finalPrice, // Use discounted price
+  currency: 'aud',
+  description: `Daily Whispers - ${optionName}`,
+  metadata: {
+    optionName: optionName as string,
+    buyerTheme: buyerTheme as string,
+    recipientCount: recipients.length.toString(),
+    discountCode: discountApplied ? discountCode : '',
+    originalAmount: optionPrice as string,
+    discountAmount: discountAmount.toString(),
+  },
+  coupon: discountApplied ? discountCode : undefined,
+});
+```
+
+5. **Update create-payment-intent Edge Function**:
+
+Add coupon support:
+
+```typescript
+const paymentIntent = await stripe.paymentIntents.create({
+  amount,
+  currency: currency || 'aud',
+  description: description || 'Daily Whispers Purchase',
+  metadata: {
+    ...metadata,
+    recipientEmail: recipientEmail || '',
+    recipientName: recipientName || ''
+  },
+  // Add coupon if provided
+  ...(coupon && { coupon }),
+  automatic_payment_methods: {
+    enabled: true
+  }
+});
+```
+
+---
+
+### Option 2: Manual Discount Calculation
+
+Implement discount validation in your app without using Stripe coupons.
+
+#### Advantages:
+- Full control over discount logic
+- Can implement complex rules
+- No dependency on Stripe coupons
+
+#### Disadvantages:
+- More code to maintain
+- Manual tracking required
+- No built-in Stripe reporting
+
+#### Implementation:
+
+1. **Create Discount Codes Table**:
+
+```sql
+CREATE TABLE discount_codes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code TEXT UNIQUE NOT NULL,
+  discount_type TEXT NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+  discount_value NUMERIC NOT NULL,
+  currency TEXT DEFAULT 'aud',
+  valid_from TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  valid_until TIMESTAMP WITH TIME ZONE,
+  max_uses INTEGER,
+  current_uses INTEGER DEFAULT 0,
+  active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE discount_codes ENABLE ROW LEVEL SECURITY;
+
+-- Allow anyone to read active codes (for validation)
+CREATE POLICY "Anyone can read active discount codes"
+  ON discount_codes FOR SELECT
+  USING (active = TRUE AND (valid_until IS NULL OR valid_until > NOW()));
+
+-- Insert RENEW10 code
+INSERT INTO discount_codes (code, discount_type, discount_value, max_uses)
+VALUES ('RENEW10', 'percentage', 10, NULL);
+```
+
+2. **Create Validation Edge Function**:
+
+```typescript
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
+};
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { code, amount } = await req.json();
+    
+    // Validate code in database
+    const { data: discountCode, error } = await supabaseClient
+      .from('discount_codes')
+      .select('*')
+      .eq('code', code.toUpperCase())
+      .eq('active', true)
+      .single();
+
+    if (error || !discountCode) {
+      return new Response(JSON.stringify({
+        valid: false,
+        error: 'Invalid discount code'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      });
+    }
+
+    // Check expiration
+    if (discountCode.valid_until && new Date(discountCode.valid_until) < new Date()) {
+      return new Response(JSON.stringify({
+        valid: false,
+        error: 'Discount code has expired'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      });
+    }
+
+    // Check usage limit
+    if (discountCode.max_uses && discountCode.current_uses >= discountCode.max_uses) {
+      return new Response(JSON.stringify({
+        valid: false,
+        error: 'Discount code has reached maximum uses'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
+      });
+    }
+
+    // Calculate discount
+    let discountAmount = 0;
+    if (discountCode.discount_type === 'percentage') {
+      discountAmount = amount * (discountCode.discount_value / 100);
+    } else {
+      discountAmount = discountCode.discount_value;
+    }
+
+    return new Response(JSON.stringify({
+      valid: true,
+      discountType: discountCode.discount_type,
+      discountValue: discountCode.discount_value,
+      discountAmount: discountAmount,
+      finalAmount: amount - discountAmount
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200
+    });
+  } catch (error) {
+    console.error('Error validating discount:', error);
+    return new Response(JSON.stringify({
+      valid: false,
+      error: 'Error validating discount code'
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500
+    });
+  }
+});
+```
+
+3. **Track Usage**:
+
+After successful payment, increment usage counter:
+
+```typescript
+// In record-payment Edge Function
+if (discountCode) {
+  await supabaseClient
+    .from('discount_codes')
+    .update({ current_uses: supabaseClient.raw('current_uses + 1') })
+    .eq('code', discountCode);
+}
+```
+
+---
+
+## Recommended Approach
+
+**Use Option 1 (Stripe Coupons)** because:
+- ✅ Less code to maintain
+- ✅ Built-in validation and tracking
+- ✅ Stripe handles edge cases
+- ✅ Better reporting in Stripe dashboard
+- ✅ Can set expiration dates easily
+- ✅ Can limit total uses globally
+
+---
+
+## Testing
+
+### Test the Discount Code:
+
+1. **Create test coupon in Stripe**:
+   - Use test mode in Stripe dashboard
+   - Create RENEW10 coupon with 10% off
+
+2. **Test in app**:
+   - Go through purchase flow
+   - Enter "RENEW10" in discount code field
+   - Click "Apply"
+   - Verify discount is applied
+   - Complete test payment
+
+3. **Verify in Stripe**:
+   - Check payment intent in Stripe dashboard
+   - Verify coupon was applied
+   - Check coupon usage statistics
+
+---
+
+## Additional Features
+
+### Multiple Discount Codes
+
+Create different codes for different purposes:
+- `RENEW10` - 10% off for renewals
+- `WELCOME15` - 15% off for new customers
+- `BUNDLE20` - 20% off for bundles
+- `FRIEND10` - 10% off for referrals
+
+### Expiring Codes
+
+Set expiration dates for limited-time offers:
+- Black Friday sales
+- Holiday promotions
+- Limited-time campaigns
+
+### Usage Limits
+
+Limit how many times a code can be used:
+- One-time use codes
+- Limited to first 100 customers
+- Per-customer usage limits
+
+---
+
+## Summary
+
+To implement the RENEW10 discount code:
+
+1. **Quick Setup** (Recommended):
+   - Create RENEW10 coupon in Stripe dashboard
+   - Add discount code input to payment screen
+   - Create validate-discount Edge Function
+   - Update payment intent to include coupon
+
+2. **Alternative Setup**:
+   - Create discount_codes table
+   - Implement validation logic
+   - Track usage manually
+
+**Estimated Time**: 1-2 hours for full implementation
+
+**Result**: Customers can use RENEW10 for 10% off renewals, increasing conversion rates from renewal reminder emails.

@@ -1,0 +1,276 @@
+
+# Daily Whispers - Quick Reference Card
+
+## 🔗 IMPORTANT URLS
+
+**Supabase Dashboard**
+https://supabase.com/dashboard/project/rfaqhkbbyvddaxyolxrx
+
+**Stripe Dashboard**
+https://dashboard.stripe.com
+
+**Resend Dashboard**
+https://resend.com/emails
+
+---
+
+## 🔑 API KEYS & SECRETS
+
+**Stripe Live Publishable Key** (in code)
+`pk_live_51SN0VCD17kmTdMDJ7hWhbpcjEBmbQXG1qodb58IvAyqukZOWCHDl8Ht1eZ7CJPyq2jiTODJ7qSUWHQYvv8cA46zG00oP7nHikR`
+
+**Supabase Secrets** (in dashboard)
+- `STRIPE_SECRET_KEY` - Your Stripe secret key
+- `RESEND_API_KEY` - Your Resend API key
+- `CRON_SECRET` - Optional cron authentication
+
+---
+
+## 💰 PRICING (AUD)
+
+| Product | Price |
+|---------|-------|
+| Single Theme | AUD $9.99 |
+| Besties Bundle | AUD $18.99 |
+| Share the Love Big Time | AUD $49.99 |
+
+---
+
+## 🎨 THEMES (8 Total)
+
+1. 🤍 You Are Loved
+2. 😂 The Funny Side of Life
+3. 💎 Gratitude Pearls
+4. 🍃 Whispers from Nature
+5. 👶 Motherhood
+6. 🐱 A Cat's Life
+7. 🐕 A Dog's Life
+8. 🤝 Threads of Connection
+
+---
+
+## 📧 RENEWAL REMINDER SYSTEM
+
+**Timing**: 7 days before subscription expires
+**Discount Code**: RENEW10 (10% off)
+**Email Service**: Resend
+**Frequency**: Daily check at 9 AM UTC
+
+**Manual Trigger**:
+```bash
+curl -X POST \
+  -H "Authorization: Bearer [SERVICE-ROLE-KEY]" \
+  https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/send-renewal-reminder
+```
+
+---
+
+## 🗄️ DATABASE QUERIES
+
+**Check Renewal Reminders Sent**:
+```sql
+SELECT COUNT(*) FROM payments WHERE renewal_reminder_sent = true;
+```
+
+**Find Upcoming Reminders**:
+```sql
+SELECT * FROM payments 
+WHERE renewal_reminder_sent = false 
+AND subscription_end_date BETWEEN NOW() AND NOW() + INTERVAL '7 days';
+```
+
+**Check Recent Payments**:
+```sql
+SELECT * FROM payments 
+ORDER BY created_at DESC 
+LIMIT 10;
+```
+
+**Revenue Summary**:
+```sql
+SELECT 
+  COUNT(*) as total_payments,
+  SUM(amount) as total_revenue,
+  currency
+FROM payments 
+WHERE status = 'succeeded'
+GROUP BY currency;
+```
+
+---
+
+## 🔧 EDGE FUNCTIONS
+
+**Deployed Functions**:
+1. `create-payment-intent` - Creates Stripe payment intent
+2. `confirm-payment` - Confirms payment with card details
+3. `get-payment-status` - Retrieves payment status
+4. `record-payment` - Records payment in database
+5. `stripe-webhook` - Handles Stripe webhooks
+6. `send-renewal-reminder` - Sends renewal emails
+7. `check-renewal-reminders-cron` - Cron wrapper
+
+**View Logs**:
+Supabase Dashboard > Edge Functions > [Function Name] > Logs
+
+---
+
+## 🧪 TEST CARDS (Stripe)
+
+**Success**: 4242 4242 4242 4242
+**Declined**: 4000 0000 0000 0002
+**Insufficient Funds**: 4000 0000 0000 9995
+**Expired**: 4000 0000 0000 0069
+
+**Expiry**: Any future date (e.g., 12/25)
+**CVV**: Any 3 digits (e.g., 123)
+
+---
+
+## 📱 COMMON TASKS
+
+### Test Payment Flow
+1. Open app
+2. Select theme
+3. Choose purchase option
+4. Enter recipient details
+5. Use test card: 4242 4242 4242 4242
+6. Complete payment
+7. Check database for record
+
+### Send Test Renewal Email
+```bash
+curl -X POST \
+  -H "Authorization: Bearer [SERVICE-ROLE-KEY]" \
+  https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/send-renewal-reminder
+```
+
+### Check Email Delivery
+1. Log in to Resend dashboard
+2. Go to Emails section
+3. View sent emails and status
+
+### View Payment in Stripe
+1. Log in to Stripe dashboard
+2. Go to Payments section
+3. Filter by AUD currency
+4. View transaction details
+
+---
+
+## 🚨 TROUBLESHOOTING
+
+**Emails Not Sending**
+1. Check `RESEND_API_KEY` in Supabase secrets
+2. View Edge Function logs
+3. Verify sender domain in Resend
+4. Check recipient email addresses
+
+**Payment Failing**
+1. Check Stripe API keys
+2. Verify AUD is enabled in Stripe
+3. Review payment logs
+4. Test with test card
+
+**Cron Not Running**
+1. Check GitHub Actions tab
+2. Verify cron service status
+3. Test manual trigger
+4. Check authorization
+
+**Database Issues**
+1. Check RLS policies
+2. Verify migrations applied
+3. Review table structure
+4. Check connection
+
+---
+
+## 📊 MONITORING
+
+**Daily Checks**:
+- [ ] Check Stripe dashboard for payments
+- [ ] Review Resend email delivery
+- [ ] Check Edge Function logs
+- [ ] Monitor app store reviews
+
+**Weekly Checks**:
+- [ ] Review revenue reports
+- [ ] Check renewal reminder stats
+- [ ] Analyze user feedback
+- [ ] Update documentation if needed
+
+**Monthly Checks**:
+- [ ] Review overall performance
+- [ ] Analyze renewal conversion rate
+- [ ] Check for security updates
+- [ ] Plan improvements
+
+---
+
+## 📞 SUPPORT
+
+**Technical Issues**:
+- Supabase: https://supabase.com/support
+- Stripe: https://support.stripe.com
+- Resend: https://resend.com/support
+
+**Documentation**:
+- Quick Start: `RENEWAL_REMINDER_QUICKSTART.txt`
+- Detailed Setup: `RENEWAL_REMINDER_SETUP.txt`
+- Currency Info: `CURRENCY_CONFIGURATION.txt`
+- Discount Codes: `DISCOUNT_CODE_IMPLEMENTATION.txt`
+- Full Summary: `IMPLEMENTATION_SUMMARY.txt`
+- Deployment: `DEPLOYMENT_CHECKLIST.txt`
+
+---
+
+## 🎯 KEY METRICS
+
+**Track These**:
+- Total Revenue (AUD)
+- Number of Purchases
+- Renewal Reminder Emails Sent
+- Email Open Rate
+- Renewal Conversion Rate
+- Payment Success Rate
+- Average Order Value
+
+**Goals** (Set Your Own):
+- Monthly Revenue: AUD $_____
+- Renewal Rate: _____%
+- Email Open Rate: _____%
+- Customer Satisfaction: _____%
+
+---
+
+## 🔐 SECURITY REMINDERS
+
+- ✅ Never commit API keys to repository
+- ✅ Use environment variables for secrets
+- ✅ Keep Stripe secret key secure
+- ✅ Enable RLS on all database tables
+- ✅ Use HTTPS for all API calls
+- ✅ Regularly update dependencies
+- ✅ Monitor for suspicious activity
+
+---
+
+## 📝 QUICK NOTES
+
+**Project ID**: rfaqhkbbyvddaxyolxrx
+**Currency**: AUD
+**Theme Count**: 8
+**Renewal Timing**: 7 days before expiry
+**Discount Code**: RENEW10 (10% off)
+**Email Service**: Resend
+**Payment Processor**: Stripe
+
+---
+
+**Last Updated**: [Current Date]
+**Version**: 1.0.0
+
+---
+
+**Print this page and keep it handy for quick reference!**

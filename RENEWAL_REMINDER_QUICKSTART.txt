@@ -1,0 +1,253 @@
+
+# Renewal Reminder Feature - Quick Start Guide
+
+## 🚀 Get Started in 5 Minutes
+
+This guide will help you quickly set up the renewal reminder email feature for Daily Whispers.
+
+---
+
+## Step 1: Sign Up for Resend (2 minutes)
+
+1. Go to https://resend.com
+2. Click "Sign Up" (free account includes 100 emails/day)
+3. Verify your email address
+4. Log in to your Resend dashboard
+
+---
+
+## Step 2: Get Your API Key (1 minute)
+
+1. In Resend dashboard, click "API Keys" in the left sidebar
+2. Click "Create API Key"
+3. Give it a name: "Daily Whispers Production"
+4. Copy the API key (starts with `re_`)
+   - **Important**: Save this key securely - you won't see it again!
+
+---
+
+## Step 3: Add API Key to Supabase (1 minute)
+
+1. Go to your Supabase project dashboard
+2. Navigate to: **Project Settings** > **Edge Functions** > **Secrets**
+3. Click "Add new secret"
+4. Enter:
+   - **Name**: `RESEND_API_KEY`
+   - **Value**: Paste your Resend API key (e.g., `re_123abc...`)
+5. Click "Save"
+
+---
+
+## Step 4: Set Up Daily Cron Job (1 minute)
+
+### Option A: GitHub Actions (Recommended)
+
+1. In your GitHub repository, create a new file:
+   `.github/workflows/renewal-reminders.yml`
+
+2. Paste this content:
+```yaml
+name: Send Renewal Reminders
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Daily at 9 AM UTC
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Renewal Reminders
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/check-renewal-reminders-cron
+```
+
+3. Add your Supabase Service Role Key to GitHub Secrets:
+   - Go to your GitHub repository
+   - Click **Settings** > **Secrets and variables** > **Actions**
+   - Click "New repository secret"
+   - Name: `SUPABASE_SERVICE_ROLE_KEY`
+   - Value: Your Supabase Service Role Key (from Supabase Project Settings > API)
+   - Click "Add secret"
+
+4. Commit the workflow file to your repository
+
+**Done!** GitHub will now run this daily at 9 AM UTC.
+
+### Option B: External Cron Service (Alternative)
+
+If you don't use GitHub, use a free service like cron-job.org:
+
+1. Go to https://cron-job.org and sign up
+2. Create a new cron job:
+   - **URL**: `https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/check-renewal-reminders-cron`
+   - **Schedule**: Daily at 9:00 AM
+   - **Method**: POST
+   - **Headers**: Add header
+     - Name: `Authorization`
+     - Value: `Bearer [your-supabase-service-role-key]`
+3. Save and enable the job
+
+---
+
+## Step 5: Test It! (Optional but Recommended)
+
+### Test Manually
+
+Run this command in your terminal (replace `[YOUR-SERVICE-ROLE-KEY]` with your actual key):
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer [YOUR-SERVICE-ROLE-KEY]" \
+  https://rfaqhkbbyvddaxyolxrx.supabase.co/functions/v1/send-renewal-reminder
+```
+
+**Expected Response**:
+```json
+{
+  "success": true,
+  "message": "No renewal reminders to send",
+  "count": 0
+}
+```
+
+This is normal if you don't have any subscriptions ending in the next 7 days.
+
+### Check Logs
+
+1. Go to Supabase Dashboard
+2. Navigate to **Edge Functions**
+3. Click on `send-renewal-reminder`
+4. Click the **Logs** tab
+5. You should see execution logs
+
+---
+
+## ✅ You're Done!
+
+The renewal reminder system is now active and will:
+
+- **Automatically check daily** for subscriptions ending in 7 days
+- **Send personalized emails** to recipients
+- **Include a 10% discount code** (RENEW10)
+- **Track which reminders have been sent** to avoid duplicates
+
+---
+
+## 📧 What the Email Looks Like
+
+Recipients will receive an email with:
+
+**Subject**: 🌟 Your Daily Whispers Subscription is Ending Soon
+
+**Content**:
+- Personalized greeting with their name
+- Information about their current theme
+- Subscription end date
+- "Renew Your Subscription" button
+- Special 10% discount offer (code: RENEW10)
+- Professional Daily Whispers branding
+
+---
+
+## 🔍 Monitoring
+
+### Check How Many Reminders Were Sent
+
+Run this SQL query in Supabase SQL Editor:
+
+```sql
+SELECT 
+  COUNT(*) as total_reminders_sent,
+  DATE(renewal_reminder_sent_at) as sent_date
+FROM payments
+WHERE renewal_reminder_sent = true
+GROUP BY DATE(renewal_reminder_sent_at)
+ORDER BY sent_date DESC;
+```
+
+### Check Upcoming Reminders
+
+```sql
+SELECT 
+  id,
+  option_name,
+  subscription_end_date,
+  recipients
+FROM payments
+WHERE 
+  status = 'succeeded'
+  AND renewal_reminder_sent = false
+  AND subscription_end_date BETWEEN NOW() AND NOW() + INTERVAL '7 days'
+ORDER BY subscription_end_date;
+```
+
+### Check Email Delivery
+
+1. Log in to Resend dashboard
+2. Go to **Emails** section
+3. View sent emails, delivery status, and open rates
+
+---
+
+## 🎯 Key Points
+
+- **Timing**: Emails are sent 7 days before subscription expires
+- **Frequency**: System runs once daily (at 9 AM UTC by default)
+- **Cost**: Free tier includes 100 emails/day (3,000/month)
+- **Discount Code**: RENEW10 for 10% off (you'll need to implement validation)
+- **No Duplicates**: System tracks which reminders have been sent
+
+---
+
+## 🆘 Troubleshooting
+
+### Emails Not Sending?
+
+1. **Check Resend API Key**: Verify it's correctly set in Supabase secrets
+2. **Check Logs**: Review Edge Function logs for errors
+3. **Verify Domain**: In Resend, verify your sender domain (or use test domain)
+4. **Check Recipient Emails**: Ensure emails in database are valid
+
+### Cron Job Not Running?
+
+1. **GitHub Actions**: Check the "Actions" tab in your repository
+2. **External Service**: Log in to your cron service and check job status
+3. **Manual Test**: Run the curl command to test manually
+
+### Need Help?
+
+- Check `RENEWAL_REMINDER_SETUP.txt` for detailed documentation
+- Review Edge Function logs in Supabase dashboard
+- Check Resend email logs for delivery issues
+
+---
+
+## 🎉 Success!
+
+Your renewal reminder system is now live and will help you:
+- **Retain customers** by reminding them before expiry
+- **Increase revenue** with the discount incentive
+- **Provide great service** with timely, helpful reminders
+
+The system runs automatically - no further action needed!
+
+---
+
+## 📝 Next Steps (Optional)
+
+Want to enhance the feature? Consider:
+
+1. **Implement Discount Code**: Add RENEW10 validation in payment processing
+2. **Create Renewal Page**: Build a dedicated renewal landing page
+3. **Track Metrics**: Monitor renewal rates and email performance
+4. **Add More Reminders**: Send at 30 days, 7 days, and 1 day before expiry
+5. **Customize Email**: Update the template with your branding
+
+See `RENEWAL_REMINDER_SETUP.txt` for detailed instructions on these enhancements.
+
+---
+
+**Questions?** Check the comprehensive documentation in `RENEWAL_REMINDER_SETUP.txt`

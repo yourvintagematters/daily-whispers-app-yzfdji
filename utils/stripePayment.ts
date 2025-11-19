@@ -51,9 +51,11 @@ export async function createPaymentIntent(
     const { data: result, error } = await supabase.functions.invoke('create-payment-intent', {
       body: {
         amount: Math.round(data.amount * 100), // Convert to cents
-        currency: data.currency,
+        currency: data.currency || 'aud',
         description: data.description,
         metadata: data.metadata,
+        recipientEmail: data.recipientEmail,
+        recipientName: data.recipientName,
       },
     });
 
