@@ -1,16 +1,17 @@
+
 {
   "expo": {
     "name": "Daily Whispers",
     "slug": "Daily Whispers",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/natively-dark.png",
+    "icon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/natively-dark.png",
+      "image": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#5d8aa8"
     },
     "ios": {
       "supportsTablet": true,
@@ -28,8 +29,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/natively-dark.png",
-        "backgroundColor": "#000000"
+        "foregroundImage": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
+        "backgroundColor": "#5d8aa8"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.dailywhispers.app",
@@ -44,7 +45,7 @@
       "googleServicesFile": "./google-services.json"
     },
     "web": {
-      "favicon": "./assets/images/final_quest_240x240.png",
+      "favicon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
       "bundler": "metro"
     },
     "plugins": [
@@ -54,8 +55,8 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/natively-dark.png",
-          "color": "#000000",
+          "icon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
+          "color": "#5d8aa8",
           "sounds": [],
           "mode": "production"
         }
@@ -80,13 +81,13 @@
       }
     },
     "notification": {
-      "icon": "./assets/images/natively-dark.png",
-      "color": "#000000",
+      "icon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
+      "color": "#5d8aa8",
       "androidMode": "default",
       "androidCollapsedTitle": "Daily Whispers"
     },
     "privacy": "public",
-    "description": "Daily Whispers - A gift-based app where you can purchase and send daily inspirational quotes to loved ones. Choose from 7 themed quote collections and brighten someone's day, every day for a year.",
+    "description": "Daily Whispers - A gift-based app where you can purchase and send daily inspirational quotes to loved ones. Choose from 8 themed quote collections and brighten someone's day, every day for a year.",
     "githubUrl": "https://github.com/yourusername/daily-whispers"
   },
   "scheme": "Daily Whispers"
