@@ -1,8 +1,7 @@
-
 {
   "expo": {
     "name": "Daily Whispers",
-    "slug": "daily-whispers",
+    "slug": "Daily Whispers",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
@@ -89,5 +88,6 @@
     "privacy": "public",
     "description": "Daily Whispers - A gift-based app where you can purchase and send daily inspirational quotes to loved ones. Choose from 7 themed quote collections and brighten someone's day, every day for a year.",
     "githubUrl": "https://github.com/yourusername/daily-whispers"
-  }
+  },
+  "scheme": "Daily Whispers"
 }

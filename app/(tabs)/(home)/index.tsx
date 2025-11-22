@@ -195,16 +195,19 @@ export default function HomeScreen() {
         >
           {/* Title Section */}
           <View style={styles.titleSection}>
-            <View style={styles.titleWithImage}>
-              <Text style={[styles.mainTitle, { color: '#5d8aa8' }]}>
-                Daily Whispers
-              </Text>
+            <Text style={[styles.mainTitle, { color: '#5d8aa8' }]}>
+              Daily Whispers
+            </Text>
+            
+            {/* Bird Logo in Circle */}
+            <View style={[styles.logoCircle, { backgroundColor: '#5d8aa8' }]}>
               <Image
                 source={LogoImage}
-                style={[styles.titleDecorativeImage, { tintColor: '#5d8aa8' }]}
+                style={[styles.logoImage, { tintColor: '#FFFFFF' }]}
                 resizeMode="contain"
               />
             </View>
+            
             <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
               Gift someone a year of daily quotes to show them you care.
             </Text>
@@ -311,18 +314,36 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   titleSection: {
-    marginBottom: 24,
+    marginBottom: 16,
     alignItems: 'center',
   },
   mainTitle: {
     fontSize: 32,
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 16,
+  },
+  logoCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  logoImage: {
+    width: 60,
+    height: 60,
   },
   subtitle: {
     fontSize: 18,
     fontWeight: '500',
     textAlign: 'center',
+    marginBottom: 0,
   },
   section: {
     marginBottom: 24,
@@ -336,13 +357,13 @@ const styles = StyleSheet.create({
   subSectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: 10,
     marginTop: 4,
     opacity: 0.8,
   },
   themeButtonContainer: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: 12,
     alignItems: 'flex-start',
     gap: 12,
   },
@@ -373,19 +394,19 @@ const styles = StyleSheet.create({
   themeName: {
     fontSize: 16,
     fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   themeDescription: {
     fontSize: 13,
-    lineHeight: 16,
-    marginBottom: 6,
+    lineHeight: 15,
+    marginBottom: 4,
   },
   themePrice: {
     fontSize: 14,
     fontWeight: '600',
   },
   quoteCardPressable: {
-    marginBottom: 16,
+    marginBottom: 12,
     marginLeft: 82,
   },
   quoteCardPreview: {
@@ -416,17 +437,6 @@ const styles = StyleSheet.create({
     right: 16,
     width: 43,
     height: 43,
-  },
-  titleWithImage: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    flexWrap: 'wrap',
-  },
-  titleDecorativeImage: {
-    width: 48,
-    height: 48,
   },
   infoSection: {
     borderRadius: 12,
