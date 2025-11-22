@@ -244,7 +244,7 @@ export default function HomeScreen() {
             ))}
 
             {/* Special Themes */}
-            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 4 }]}>
+            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 8 }]}>
               Special
             </Text>
             {specialThemes.map((item, index) => (
@@ -307,20 +307,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContainer: {
-    paddingVertical: 16,
+    paddingVertical: 12,
     paddingHorizontal: 16,
   },
   scrollContainerWithTabBar: {
     paddingBottom: 100,
   },
   titleSection: {
-    marginBottom: 16,
+    marginBottom: 8,
     alignItems: 'center',
   },
   mainTitle: {
     fontSize: 32,
     fontWeight: '700',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   logoCircle: {
     width: 100,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -346,24 +346,24 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   chooseThemeHeading: {
     fontSize: 22,
     fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: 8,
     textAlign: 'center',
   },
   subSectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: 8,
+    marginTop: 0,
     opacity: 0.8,
   },
   themeButtonContainer: {
     flexDirection: 'row',
-    marginBottom: 12,
+    marginBottom: 8,
     alignItems: 'flex-start',
     gap: 12,
   },
@@ -399,14 +399,14 @@ const styles = StyleSheet.create({
   themeDescription: {
     fontSize: 13,
     lineHeight: 15,
-    marginBottom: 4,
+    marginBottom: 3,
   },
   themePrice: {
     fontSize: 14,
     fontWeight: '600',
   },
   quoteCardPressable: {
-    marginBottom: 12,
+    marginBottom: 8,
     marginLeft: 82,
   },
   quoteCardPreview: {
