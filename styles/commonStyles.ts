@@ -1,3 +1,4 @@
+
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 export const colors = {
@@ -6,7 +7,7 @@ export const colors = {
   accent: '#64B5F6',     // Light Blue
   background: '#101824',  // Keeping dark background
   backgroundAlt: '#162133',  // Keeping dark background
-  text: '#e3e3e3',       // Keeping light text
+  text: '#1a1a1a',       // Changed to dark text for light backgrounds
   grey: '#90CAF9',       // Light Blue Grey
   card: '#193cb8',       // Keeping dark card background
 };

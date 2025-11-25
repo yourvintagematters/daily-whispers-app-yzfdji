@@ -84,7 +84,7 @@ export default function RecipientDetailsScreen() {
       onPress={() => router.back()}
       style={styles.headerButtonContainer}
     >
-      <IconSymbol name="chevron.left" color={theme.colors.primary} />
+      <IconSymbol name="chevron.left" color="#5d8aa8" />
     </Pressable>
   );
 
@@ -95,7 +95,7 @@ export default function RecipientDetailsScreen() {
 
     return (
       <View style={styles.themeSelectorContainer}>
-        <Text style={[styles.themeSelectorLabel, { color: theme.colors.text }]}>
+        <Text style={styles.themeSelectorLabel}>
           Select Theme
         </Text>
         <View style={styles.themeGrid}>
@@ -117,8 +117,8 @@ export default function RecipientDetailsScreen() {
               >
                 <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
                 {hoveredTheme === t.id && (
-                  <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
-                    <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                  <View style={styles.themeTooltip}>
+                    <Text style={styles.themeTooltipText}>
                       {t.name}
                     </Text>
                   </View>
@@ -144,8 +144,8 @@ export default function RecipientDetailsScreen() {
               >
                 <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
                 {hoveredTheme === t.id && (
-                  <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
-                    <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                  <View style={styles.themeTooltip}>
+                    <Text style={styles.themeTooltipText}>
                       {t.name}
                     </Text>
                   </View>
@@ -182,8 +182,8 @@ export default function RecipientDetailsScreen() {
             >
               <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
               {hoveredTheme === t.id && (
-                <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
-                  <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                <View style={styles.themeTooltip}>
+                  <Text style={styles.themeTooltipText}>
                     {t.name}
                   </Text>
                 </View>
@@ -209,8 +209,8 @@ export default function RecipientDetailsScreen() {
             >
               <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
               {hoveredTheme === t.id && (
-                <View style={[styles.themeTooltip, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }]}>
-                  <Text style={[styles.themeTooltipText, { color: theme.colors.text }]}>
+                <View style={styles.themeTooltip}>
+                  <Text style={styles.themeTooltipText}>
                     {t.name}
                   </Text>
                 </View>
@@ -242,10 +242,10 @@ export default function RecipientDetailsScreen() {
         >
           {/* Header Section */}
           <View style={styles.headerSection}>
-            <Text style={[styles.title, { color: theme.colors.text }]}>
+            <Text style={styles.title}>
               {optionName}
             </Text>
-            <Text style={[styles.subtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
+            <Text style={styles.subtitle}>
               Enter details for {count} recipient{count > 1 ? 's' : ''}
             </Text>
           </View>
@@ -255,50 +255,33 @@ export default function RecipientDetailsScreen() {
             {recipients.map((recipient, index) => (
               <View 
                 key={recipient.id}
-                style={[
-                  styles.recipientCard,
-                  { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
-                ]}
+                style={styles.recipientCard}
               >
-                <Text style={[styles.recipientNumber, { color: theme.colors.text }]}>
+                <Text style={styles.recipientNumber}>
                   Recipient {index + 1}
                 </Text>
 
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+                  <Text style={styles.inputLabel}>
                     Name
                   </Text>
                   <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
-                        color: theme.colors.text,
-                        borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
-                      }
-                    ]}
+                    style={styles.input}
                     placeholder="Enter recipient's name"
-                    placeholderTextColor={theme.dark ? '#98989D' : '#999'}
+                    placeholderTextColor="#999"
                     value={recipient.name}
                     onChangeText={(text) => updateRecipient(recipient.id, 'name', text)}
                   />
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+                  <Text style={styles.inputLabel}>
                     Email
                   </Text>
                   <TextInput
-                    style={[
-                      styles.input,
-                      {
-                        backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
-                        color: theme.colors.text,
-                        borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
-                      }
-                    ]}
+                    style={styles.input}
                     placeholder="Enter recipient's email"
-                    placeholderTextColor={theme.dark ? '#98989D' : '#999'}
+                    placeholderTextColor="#999"
                     keyboardType="email-address"
                     value={recipient.email}
                     onChangeText={(text) => updateRecipient(recipient.id, 'email', text)}
@@ -312,14 +295,11 @@ export default function RecipientDetailsScreen() {
 
           {/* Buyer Theme Section (for Share the Love Big Time) */}
           {optionId === 'shareTheLoveBigTime' && (
-            <View style={[
-              styles.buyerThemeCard,
-              { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
-            ]}>
-              <Text style={[styles.buyerThemeTitle, { color: theme.colors.text }]}>
+            <View style={styles.buyerThemeCard}>
+              <Text style={styles.buyerThemeTitle}>
                 🎁 Your Bonus Theme
               </Text>
-              <Text style={[styles.buyerThemeSubtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
+              <Text style={styles.buyerThemeSubtitle}>
                 Choose a theme for yourself as a bonus!
               </Text>
               {renderBuyerThemeSelector()}
@@ -328,7 +308,7 @@ export default function RecipientDetailsScreen() {
 
           {/* Continue Button */}
           <Pressable
-            style={[styles.continueButton, { backgroundColor: '#5d8aa8' }]}
+            style={styles.continueButton}
             onPress={handleContinueToPayment}
           >
             <Text style={styles.continueButtonText}>
@@ -359,10 +339,12 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 8,
+    color: '#1a1a1a',
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
+    color: '#2c5f7a',
   },
   recipientsContainer: {
     marginBottom: 24,
@@ -371,6 +353,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -381,6 +364,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 12,
+    color: '#1a1a1a',
   },
   inputGroup: {
     marginBottom: 12,
@@ -389,6 +373,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 6,
+    color: '#1a1a1a',
   },
   input: {
     borderWidth: 1,
@@ -396,6 +381,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
+    backgroundColor: '#F2F2F7',
+    color: '#1a1a1a',
+    borderColor: '#E5E5EA',
   },
   themeSelectorContainer: {
     marginTop: 12,
@@ -404,6 +392,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
+    color: '#1a1a1a',
   },
   themeGrid: {
     gap: 8,
@@ -435,6 +424,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -446,11 +436,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     whiteSpace: 'nowrap',
+    color: '#1a1a1a',
   },
   buyerThemeCard: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -461,10 +453,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
+    color: '#1a1a1a',
   },
   buyerThemeSubtitle: {
     fontSize: 13,
     marginBottom: 12,
+    color: '#2c5f7a',
   },
   continueButton: {
     borderRadius: 8,
@@ -472,6 +466,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     marginBottom: 24,
+    backgroundColor: '#5d8aa8',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

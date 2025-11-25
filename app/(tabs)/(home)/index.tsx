@@ -62,11 +62,11 @@ function ThemeButton({ item, onPress, onHoverIn, onHoverOut, hoveredTheme, theme
         </Pressable>
       </Animated.View>
       <View style={styles.themeTextContainer}>
-        <Text style={[styles.themeName, { color: themeColors.text }]}>{item.name}</Text>
-        <Text style={[styles.themeDescription, { color: themeColors.text }]}>
+        <Text style={styles.themeName}>{item.name}</Text>
+        <Text style={styles.themeDescription}>
           {item.description}
         </Text>
-        <Text style={[styles.themePrice, { color: themeColors.text, opacity: 0.7 }]}>
+        <Text style={styles.themePrice}>
           AUD ${item.price.toFixed(2)}
         </Text>
       </View>
@@ -85,7 +85,7 @@ function QuoteCardPreview({ themeId, themeColors, onPress }: { themeId: string; 
   return (
     <Pressable onPress={onPress} style={styles.quoteCardPressable}>
       <View style={[styles.quoteCardPreview, { backgroundColor: theme_data.pastelColor }]}>
-        <Text style={[styles.quoteCardText, { color: themeColors.text }]}>
+        <Text style={styles.quoteCardText}>
           "{randomQuote}"
         </Text>
         <Image
@@ -195,12 +195,12 @@ export default function HomeScreen() {
         >
           {/* Title Section */}
           <View style={styles.titleSection}>
-            <Text style={[styles.mainTitle, { color: '#5d8aa8' }]}>
+            <Text style={styles.mainTitle}>
               Daily Whispers
             </Text>
             
             {/* Bird Logo in Circle */}
-            <View style={[styles.logoCircle, { backgroundColor: '#5d8aa8' }]}>
+            <View style={styles.logoCircle}>
               <Image
                 source={LogoImage}
                 style={[styles.logoImage, { tintColor: '#FFFFFF' }]}
@@ -208,19 +208,19 @@ export default function HomeScreen() {
               />
             </View>
             
-            <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+            <Text style={styles.subtitle}>
               Gift someone a year of daily quotes to show them you care.
             </Text>
           </View>
 
           {/* Choose a Theme Section */}
           <View style={styles.section}>
-            <Text style={[styles.chooseThemeHeading, { color: '#5d8aa8' }]}>
+            <Text style={styles.chooseThemeHeading}>
               Choose a Theme
             </Text>
             
             {/* Universal Themes */}
-            <Text style={[styles.subSectionTitle, { color: theme.colors.text }]}>
+            <Text style={styles.subSectionTitle}>
               Universal
             </Text>
             {universalThemes.map((item, index) => (
@@ -244,7 +244,7 @@ export default function HomeScreen() {
             ))}
 
             {/* Special Themes */}
-            <Text style={[styles.subSectionTitle, { color: theme.colors.text, marginTop: 8 }]}>
+            <Text style={[styles.subSectionTitle, { marginTop: 8 }]}>
               Special
             </Text>
             {specialThemes.map((item, index) => (
@@ -269,11 +269,11 @@ export default function HomeScreen() {
           </View>
 
           {/* Info Section */}
-          <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#FFFFFF' }]}>
-            <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoTitle}>
               How It Works
             </Text>
-            <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+            <Text style={styles.infoText}>
               This is <Text style={styles.underlinedText}>not</Text> an automatic subscription-based app. It is a simple gift of love that lasts a year.{'\n\n'}
               1. Choose a theme{'\n'}
               2. Select your purchase option{'\n'}
@@ -283,7 +283,7 @@ export default function HomeScreen() {
             </Text>
             <Pressable
               onPress={() => router.push('/(tabs)/demo')}
-              style={[styles.demoButton, { backgroundColor: '#5d8aa8' }]}
+              style={styles.demoButton}
             >
               <IconSymbol 
                 ios_icon_name="play.circle.fill" 
@@ -321,6 +321,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
     marginBottom: 12,
+    color: '#5d8aa8',
   },
   logoCircle: {
     width: 100,
@@ -329,6 +330,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
+    backgroundColor: '#5d8aa8',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -344,6 +346,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
     marginBottom: 0,
+    color: '#2c5f7a',
   },
   section: {
     marginBottom: 16,
@@ -353,6 +356,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 8,
     textAlign: 'center',
+    color: '#5d8aa8',
   },
   subSectionTitle: {
     fontSize: 18,
@@ -360,6 +364,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 0,
     opacity: 0.8,
+    color: '#2c5f7a',
   },
   themeButtonContainer: {
     flexDirection: 'row',
@@ -395,15 +400,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 2,
+    color: '#1a1a1a',
   },
   themeDescription: {
     fontSize: 13,
     lineHeight: 15,
     marginBottom: 3,
+    color: '#2c5f7a',
   },
   themePrice: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#1a1a1a',
+    opacity: 0.7,
   },
   quoteCardPressable: {
     marginBottom: 8,
@@ -430,6 +439,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 27,
     fontWeight: '500',
+    color: '#1a1a1a',
   },
   cardDecorativeImage: {
     position: 'absolute',
@@ -442,16 +452,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
+    backgroundColor: '#FFFFFF',
   },
   infoTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
+    color: '#1a1a1a',
   },
   infoText: {
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 12,
+    color: '#2c5f7a',
   },
   underlinedText: {
     textDecorationLine: 'underline',
@@ -464,6 +477,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     gap: 8,
+    backgroundColor: '#5d8aa8',
   },
   demoButtonText: {
     color: '#FFFFFF',

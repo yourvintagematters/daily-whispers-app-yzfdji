@@ -88,7 +88,7 @@ function OptionButton({
     return parts.map((part, index) => {
       if (part === '3x' || part === '2x' || part === '10x') {
         return (
-          <Text key={index} style={[styles.multiplierText, { color: theme.colors.text }]}>
+          <Text key={index} style={styles.multiplierText}>
             {part}
           </Text>
         );
@@ -113,7 +113,6 @@ function OptionButton({
       <Pressable
         style={[
           styles.optionButton,
-          { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' },
           isHovered && styles.optionButtonHovered,
         ]}
         onPress={onPress}
@@ -122,13 +121,13 @@ function OptionButton({
       >
         <View style={styles.optionContent}>
           <View style={styles.optionTextContainer}>
-            <Text style={[styles.optionName, { color: theme.colors.text }]}>
+            <Text style={styles.optionName}>
               {option.name}
             </Text>
-            <Text style={[styles.optionDescription, { color: theme.dark ? '#98989D' : '#666' }]}>
+            <Text style={styles.optionDescription}>
               {renderMultiplier(option.description)}
             </Text>
-            <Text style={[styles.optionPrice, { color: '#5d8aa8' }]}>
+            <Text style={styles.optionPrice}>
               AUD ${option.price.toFixed(2)}
             </Text>
           </View>
@@ -187,10 +186,10 @@ export default function PurchaseOptionsScreen() {
         >
           {/* Header Section */}
           <View style={styles.headerSection}>
-            <Text style={[styles.title, { color: '#5d8aa8' }]}>
+            <Text style={styles.title}>
               Share the Love
             </Text>
-            <Text style={[styles.subtitle, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+            <Text style={styles.subtitle}>
               Choose how many people you want to gift to
             </Text>
           </View>
@@ -211,11 +210,11 @@ export default function PurchaseOptionsScreen() {
           </View>
 
           {/* Info Section */}
-          <View style={[styles.infoSection, { backgroundColor: theme.dark ? 'rgba(44,44,46,0.9)' : '#FFFFFF' }]}>
-            <Text style={[styles.infoTitle, { color: theme.colors.text }]}>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoTitle}>
               What Happens Next?
             </Text>
-            <Text style={[styles.infoText, { color: theme.dark ? '#B0B0B0' : '#555' }]}>
+            <Text style={styles.infoText}>
               1. Choose your option above{'\n'}
               2. Enter recipient details{'\n'}
               3. Select themes for each recipient{'\n'}
@@ -247,10 +246,12 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 8,
+    color: '#5d8aa8',
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
+    color: '#2c5f7a',
   },
   optionsContainer: {
     marginBottom: 24,
@@ -262,6 +263,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -285,33 +287,40 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
+    color: '#1a1a1a',
   },
   optionDescription: {
     fontSize: 13,
     marginBottom: 8,
+    color: '#2c5f7a',
   },
   multiplierText: {
     fontSize: 15,
     fontWeight: '700',
+    color: '#1a1a1a',
   },
   optionPrice: {
     fontSize: 16,
     fontWeight: '700',
+    color: '#5d8aa8',
   },
   infoSection: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     marginTop: 12,
+    backgroundColor: '#FFFFFF',
   },
   infoTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
+    color: '#1a1a1a',
   },
   infoText: {
     fontSize: 14,
     lineHeight: 20,
+    color: '#2c5f7a',
   },
   headerButtonContainer: {
     padding: 6,

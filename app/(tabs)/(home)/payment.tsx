@@ -227,7 +227,7 @@ export default function PaymentScreen() {
       onPress={() => router.back()}
       style={styles.headerButtonContainer}
     >
-      <IconSymbol name="chevron.left" color={theme.colors.primary} />
+      <IconSymbol name="chevron.left" color="#5d8aa8" />
     </Pressable>
   );
 
@@ -251,16 +251,16 @@ export default function PaymentScreen() {
         >
           {/* Header Section */}
           <View style={styles.headerSection}>
-            <Text style={[styles.title, { color: theme.colors.text }]}>
+            <Text style={styles.title}>
               Complete Payment
             </Text>
-            <Text style={[styles.subtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
+            <Text style={styles.subtitle}>
               Secure payment for your gift
             </Text>
             {isTestMode() && (
-              <View style={[styles.testModeIndicator, { backgroundColor: theme.dark ? '#3C3C3E' : '#FFF3CD' }]}>
-                <IconSymbol name="info.circle.fill" color={theme.dark ? '#FFB81C' : '#FF9500'} />
-                <Text style={[styles.testModeText, { color: theme.dark ? '#FFB81C' : '#FF9500' }]}>
+              <View style={styles.testModeIndicator}>
+                <IconSymbol name="info.circle.fill" color="#FF9500" />
+                <Text style={styles.testModeText}>
                   Test Mode - Use card: 4242 4242 4242 4242
                 </Text>
               </View>
@@ -268,27 +268,24 @@ export default function PaymentScreen() {
           </View>
 
           {/* Order Summary */}
-          <View style={[
-            styles.summaryCard,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
-          ]}>
-            <Text style={[styles.summaryTitle, { color: theme.colors.text }]}>
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryTitle}>
               Order Summary
             </Text>
             <View style={styles.summaryRow}>
-              <Text style={[styles.summaryLabel, { color: theme.dark ? '#98989D' : '#666' }]}>
+              <Text style={styles.summaryLabel}>
                 {optionName}
               </Text>
-              <Text style={[styles.summaryValue, { color: theme.colors.text }]}>
+              <Text style={styles.summaryValue}>
                 AUD ${optionPrice}
               </Text>
             </View>
-            <View style={[styles.summaryDivider, { borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA' }]} />
+            <View style={styles.summaryDivider} />
             <View style={styles.summaryRow}>
-              <Text style={[styles.summaryTotal, { color: theme.colors.text }]}>
+              <Text style={styles.summaryTotal}>
                 Total
               </Text>
-              <Text style={[styles.summaryTotalPrice, { color: theme.colors.primary }]}>
+              <Text style={styles.summaryTotalPrice}>
                 AUD ${optionPrice}
               </Text>
             </View>
@@ -296,38 +293,28 @@ export default function PaymentScreen() {
 
           {/* Error Display */}
           {paymentError && (
-            <View style={[styles.errorCard, { backgroundColor: theme.dark ? '#3C1F1F' : '#FFE5E5' }]}>
+            <View style={styles.errorCard}>
               <IconSymbol name="exclamationmark.triangle.fill" color="#FF3B30" />
-              <Text style={[styles.errorText, { color: '#FF3B30' }]}>
+              <Text style={styles.errorText}>
                 {paymentError}
               </Text>
             </View>
           )}
 
           {/* Payment Form */}
-          <View style={[
-            styles.formCard,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
-          ]}>
-            <Text style={[styles.formTitle, { color: theme.colors.text }]}>
+          <View style={styles.formCard}>
+            <Text style={styles.formTitle}>
               Card Details
             </Text>
 
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+              <Text style={styles.inputLabel}>
                 Cardholder Name
               </Text>
               <TextInput
-                style={[
-                  styles.input,
-                  {
-                    backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
-                    color: theme.colors.text,
-                    borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
-                  }
-                ]}
+                style={styles.input}
                 placeholder="John Doe"
-                placeholderTextColor={theme.dark ? '#98989D' : '#999'}
+                placeholderTextColor="#999"
                 value={paymentData.cardholderName}
                 onChangeText={(text) => updatePaymentData('cardholderName', text)}
                 editable={!isProcessing}
@@ -336,26 +323,19 @@ export default function PaymentScreen() {
 
             <View style={styles.inputGroup}>
               <View style={styles.labelRow}>
-                <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+                <Text style={styles.inputLabel}>
                   Card Number
                 </Text>
                 {cardType && (
-                  <Text style={[styles.cardTypeLabel, { color: theme.colors.primary }]}>
+                  <Text style={styles.cardTypeLabel}>
                     {cardType}
                   </Text>
                 )}
               </View>
               <TextInput
-                style={[
-                  styles.input,
-                  {
-                    backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
-                    color: theme.colors.text,
-                    borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
-                  }
-                ]}
+                style={styles.input}
                 placeholder="1234 5678 9012 3456"
-                placeholderTextColor={theme.dark ? '#98989D' : '#999'}
+                placeholderTextColor="#999"
                 keyboardType="numeric"
                 value={formatCardNumber(paymentData.cardNumber)}
                 onChangeText={(text) => updatePaymentData('cardNumber', text)}
@@ -366,20 +346,13 @@ export default function PaymentScreen() {
 
             <View style={styles.rowInputs}>
               <View style={[styles.inputGroup, { flex: 1 }]}>
-                <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+                <Text style={styles.inputLabel}>
                   Expiry Date
                 </Text>
                 <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
-                      color: theme.colors.text,
-                      borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
-                    }
-                  ]}
+                  style={styles.input}
                   placeholder="MM/YY"
-                  placeholderTextColor={theme.dark ? '#98989D' : '#999'}
+                  placeholderTextColor="#999"
                   keyboardType="numeric"
                   value={formatExpiryDate(paymentData.expiryDate)}
                   onChangeText={(text) => updatePaymentData('expiryDate', text)}
@@ -389,20 +362,13 @@ export default function PaymentScreen() {
               </View>
 
               <View style={[styles.inputGroup, { flex: 1, marginLeft: 12 }]}>
-                <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+                <Text style={styles.inputLabel}>
                   CVV
                 </Text>
                 <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      backgroundColor: theme.dark ? '#3C3C3E' : '#F2F2F7',
-                      color: theme.colors.text,
-                      borderColor: theme.dark ? '#5C5C5E' : '#E5E5EA',
-                    }
-                  ]}
+                  style={styles.input}
                   placeholder="123"
-                  placeholderTextColor={theme.dark ? '#98989D' : '#999'}
+                  placeholderTextColor="#999"
                   keyboardType="numeric"
                   value={paymentData.cvv}
                   onChangeText={(text) => updatePaymentData('cvv', text)}
@@ -415,12 +381,9 @@ export default function PaymentScreen() {
           </View>
 
           {/* Security Notice */}
-          <View style={[
-            styles.securityNotice,
-            { backgroundColor: theme.dark ? '#2C2C2E' : '#FFFFFF' }
-          ]}>
-            <IconSymbol name="lock.fill" color={theme.colors.primary} />
-            <Text style={[styles.securityText, { color: theme.dark ? '#98989D' : '#666' }]}>
+          <View style={styles.securityNotice}>
+            <IconSymbol name="lock.fill" color="#5d8aa8" />
+            <Text style={styles.securityText}>
               Your payment information is secure and encrypted with Stripe
             </Text>
           </View>
@@ -430,7 +393,6 @@ export default function PaymentScreen() {
             style={[
               styles.completeButton,
               { 
-                backgroundColor: theme.colors.primary,
                 opacity: isProcessing ? 0.6 : 1,
               }
             ]}
@@ -457,7 +419,7 @@ export default function PaymentScreen() {
             onPress={() => router.back()}
             disabled={isProcessing}
           >
-            <Text style={[styles.cancelButtonText, { color: theme.colors.primary }]}>
+            <Text style={styles.cancelButtonText}>
               Cancel
             </Text>
           </Pressable>
@@ -485,11 +447,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 8,
+    color: '#1a1a1a',
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
     marginBottom: 12,
+    color: '#2c5f7a',
   },
   testModeIndicator: {
     borderRadius: 8,
@@ -497,16 +461,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    backgroundColor: '#FFF3CD',
   },
   testModeText: {
     fontSize: 13,
     fontWeight: '500',
     flex: 1,
+    color: '#FF9500',
   },
   summaryCard: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -517,6 +484,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 12,
+    color: '#1a1a1a',
   },
   summaryRow: {
     flexDirection: 'row',
@@ -526,23 +494,28 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 14,
+    color: '#2c5f7a',
   },
   summaryValue: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#1a1a1a',
   },
   summaryDivider: {
     height: 1,
     marginVertical: 12,
     borderTopWidth: 1,
+    borderColor: '#E5E5EA',
   },
   summaryTotal: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#1a1a1a',
   },
   summaryTotalPrice: {
     fontSize: 18,
     fontWeight: '700',
+    color: '#5d8aa8',
   },
   errorCard: {
     borderRadius: 12,
@@ -551,16 +524,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    backgroundColor: '#FFE5E5',
   },
   errorText: {
     fontSize: 13,
     fontWeight: '500',
     flex: 1,
+    color: '#FF3B30',
   },
   formCard: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -571,6 +547,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 16,
+    color: '#1a1a1a',
   },
   inputGroup: {
     marginBottom: 12,
@@ -584,10 +561,12 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#1a1a1a',
   },
   cardTypeLabel: {
     fontSize: 12,
     fontWeight: '600',
+    color: '#5d8aa8',
   },
   input: {
     borderWidth: 1,
@@ -595,6 +574,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
+    backgroundColor: '#F2F2F7',
+    color: '#1a1a1a',
+    borderColor: '#E5E5EA',
   },
   rowInputs: {
     flexDirection: 'row',
@@ -606,10 +588,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    backgroundColor: '#FFFFFF',
   },
   securityText: {
     fontSize: 13,
     flex: 1,
+    color: '#2c5f7a',
   },
   completeButton: {
     borderRadius: 8,
@@ -617,6 +601,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     marginBottom: 12,
+    backgroundColor: '#5d8aa8',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -639,11 +624,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#007AFF',
+    borderColor: '#5d8aa8',
   },
   cancelButtonText: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#5d8aa8',
   },
   headerButtonContainer: {
     padding: 6,
