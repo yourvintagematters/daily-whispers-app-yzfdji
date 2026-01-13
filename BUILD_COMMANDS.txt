@@ -1,245 +1,89 @@
 
-# Daily Whispers - Quick Build Commands Reference
+# Daily Whispers - iOS Build Commands
 
 ## Prerequisites
-```bash
-# Install EAS CLI globally
-npm install -g eas-cli
+1. Install EAS CLI globally:
+   npm install -g eas-cli
 
-# Login to Expo
-eas login
+2. Login to Expo:
+   eas login
 
-# Initialize EAS project (first time only)
-eas init
-```
+3. Ensure you're enrolled in Apple Developer Program ($99/year)
 
-## Development Builds
+## Building for iOS
 
-### iOS Development
-```bash
-eas build --platform ios --profile development
-```
-
-### Android Development
-```bash
-eas build --platform android --profile development
-```
-
-## Preview Builds (Internal Testing)
-
-### iOS Preview
-```bash
-eas build --platform ios --profile preview
-```
-
-### Android Preview
-```bash
-eas build --platform android --profile preview
-```
-
-## Production Builds
-
-### iOS Production (App Store)
-```bash
-# Build
+### Production Build (for App Store)
 eas build --platform ios --profile production
 
-# Submit to App Store
-eas submit --platform ios --profile production
-```
+### Preview Build (for internal testing)
+eas build --platform ios --profile preview
 
-### Android Production (Google Play - AAB)
-```bash
-# Build AAB (required for Play Store)
+### Development Build (for development)
+eas build --platform ios --profile development
+
+## After Build Completes
+
+### Download the .ipa file
+- Go to https://expo.dev/accounts/[your-account]/projects/daily-whispers/builds
+- Click on the completed build
+- Download the .ipa file
+
+### Submit to App Store
+eas submit --platform ios --latest
+
+OR manually upload via Xcode:
+1. Open Xcode
+2. Go to Window > Organizer
+3. Drag and drop your .ipa file
+4. Click "Distribute App"
+5. Follow the prompts to upload to App Store Connect
+
+## Building for Android
+
+### Production AAB (for Google Play Store)
 eas build --platform android --profile production-aab
 
-# Submit to Google Play
-eas submit --platform android --profile production
-```
-
-### Android Production (APK for direct distribution)
-```bash
+### Production APK (for direct distribution)
 eas build --platform android --profile production
-```
 
-## Build Both Platforms Simultaneously
-```bash
-eas build --platform all --profile production
-```
-
-## Check Build Status
-```bash
+## Checking Build Status
 eas build:list
-```
 
-## View Build Details
-```bash
-eas build:view [BUILD_ID]
-```
-
-## Download Build
-```bash
-eas build:download [BUILD_ID]
-```
-
-## Update Credentials
-
-### iOS Credentials
-```bash
-eas credentials
-```
-
-### Android Keystore
-```bash
-eas credentials -p android
-```
-
-## Testing
-
-### Install on iOS Device (Development Build)
-```bash
-eas build --platform ios --profile development
-# Then install via TestFlight or direct download
-```
-
-### Install on Android Device (Development Build)
-```bash
-eas build --platform android --profile development
-# Then install APK directly on device
-```
-
-## Troubleshooting
-
-### Clear Build Cache
-```bash
-eas build --platform [ios|android] --profile production --clear-cache
-```
-
-### View Build Logs
-```bash
-eas build:view [BUILD_ID]
-```
-
-### Cancel Build
-```bash
-eas build:cancel [BUILD_ID]
-```
-
-## Environment Variables
-
-### Set Environment Variable for Build
-```bash
-eas build --platform ios --profile production --non-interactive
-```
-
-### View Current Configuration
-```bash
-eas config
-```
-
-## Useful Commands
-
-### Check EAS CLI Version
-```bash
-eas --version
-```
-
-### Update EAS CLI
-```bash
-npm install -g eas-cli@latest
-```
-
-### View Project Configuration
-```bash
-eas project:info
-```
-
-### View Build Queue
-```bash
-eas build:list --status in-queue
-```
-
-## Build Profiles Explained
-
-### development
-- Creates a development client
-- Includes debugging tools
-- Larger file size
-- For internal testing only
-
-### preview
-- Similar to production but for internal distribution
-- Good for beta testing
-- Smaller than development builds
-
-### production
-- Optimized for app stores
-- Smallest file size
-- No debugging tools
-- Ready for public release
-
-### production-aab
-- Android App Bundle format
-- Required for Google Play Store
-- Optimized for different device configurations
+## Viewing Build Logs
+eas build:view [build-id]
 
 ## Important Notes
 
-1. **First Build**: The first build will take longer as it sets up credentials
-2. **iOS Builds**: Require Apple Developer account ($99/year)
-3. **Android Builds**: First build generates keystore - SAVE IT SECURELY!
-4. **Build Time**: Typically 10-20 minutes per platform
-5. **Concurrent Builds**: Free tier allows 1 concurrent build
-6. **Build History**: Builds are stored for 30 days
+1. First build will take longer as EAS sets up certificates
+2. You'll be prompted to configure Apple credentials on first iOS build
+3. Build typically takes 10-20 minutes
+4. You'll receive an email when build completes
+5. Builds are stored on EAS servers for 30 days
 
-## Before Building
+## Troubleshooting
 
-1. Update version in app.json
-2. Update buildNumber (iOS) and versionCode (Android)
-3. Ensure all dependencies are installed
-4. Test locally first
-5. Commit all changes to git
+If build fails:
+1. Check build logs: eas build:view [build-id]
+2. Ensure all dependencies are compatible with Expo 54
+3. Verify app.json configuration is correct
+4. Check that bundle identifier is unique
 
-## After Building
+## App Store Submission Checklist
 
-1. Download and test the build
-2. Submit to app stores
-3. Monitor review status
-4. Respond to any review feedback
+Before submitting to App Store:
+✓ Update version number in app.json
+✓ Ensure STRIPE_MODE is set to "live" for production
+✓ Test the app thoroughly
+✓ Prepare App Store screenshots
+✓ Write app description and keywords
+✓ Set pricing (or free)
+✓ Configure age rating
+✓ Add privacy policy URL
+✓ Submit for review
 
-## Common Issues
+## Useful Links
 
-### "Build failed" - Check logs for specific error
-```bash
-eas build:view [BUILD_ID]
-```
-
-### "Credentials expired" - Update credentials
-```bash
-eas credentials
-```
-
-### "Bundle identifier already exists" - Change in app.json
-```json
-{
-  "ios": {
-    "bundleIdentifier": "com.yourcompany.uniquename"
-  }
-}
-```
-
-### "Keystore not found" - Generate new keystore
-```bash
-eas credentials -p android
-```
-
-## Support
-
-- EAS Documentation: https://docs.expo.dev/eas/
-- Expo Forums: https://forums.expo.dev/
-- Expo Discord: https://chat.expo.dev/
-
----
-
-For detailed deployment steps, see DEPLOYMENT_GUIDE.txt
-For production checklist, see PRODUCTION_CHECKLIST.txt
+- EAS Dashboard: https://expo.dev
+- Build Documentation: https://docs.expo.dev/build/introduction/
+- Submit Documentation: https://docs.expo.dev/submit/introduction/
+- App Store Connect: https://appstoreconnect.apple.com
