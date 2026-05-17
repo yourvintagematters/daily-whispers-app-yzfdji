@@ -1,11 +1,8 @@
 import * as React from "react";
 import { createContext, useCallback, useContext } from "react";
-import { ExtensionStorage } from "@bacons/apple-targets";
+import { Platform } from "react-native";
 
-// Initialize storage with your group ID
-const storage = new ExtensionStorage(
-  "group.com.<user_name>.<app_name>"
-);
+const APP_GROUP_ID = "group.com.dailywhispers.app";
 
 type WidgetContextType = {
   refreshWidget: () => void;
@@ -14,17 +11,36 @@ type WidgetContextType = {
 const WidgetContext = createContext<WidgetContextType | null>(null);
 
 export function WidgetProvider({ children }: { children: React.ReactNode }) {
-  // Update widget state whenever what we want to show changes
   React.useEffect(() => {
-    // set widget_state to null if we want to reset the widget
-    // storage.set("widget_state", null);
+    if (Platform.OS !== "ios") return;
 
-    // Refresh widget
-    ExtensionStorage.reloadWidget();
+    // Dynamically import to avoid loading native module on Android
+    import("@bacons/apple-targets").then(({ ExtensionStorage }) => {
+      console.log("[WidgetProvider] Initializing ExtensionStorage with group:", APP_GROUP_ID);
+      try {
+        new ExtensionStorage(APP_GROUP_ID);
+        ExtensionStorage.reloadWidget();
+        console.log("[WidgetProvider] Widget reloaded on mount");
+      } catch (e) {
+        console.warn("[WidgetProvider] Failed to initialize widget storage:", e);
+      }
+    });
   }, []);
 
   const refreshWidget = useCallback(() => {
-    ExtensionStorage.reloadWidget();
+    if (Platform.OS !== "ios") {
+      console.log("[WidgetProvider] refreshWidget called on non-iOS platform, skipping");
+      return;
+    }
+    console.log("[WidgetProvider] refreshWidget called");
+    import("@bacons/apple-targets").then(({ ExtensionStorage }) => {
+      try {
+        ExtensionStorage.reloadWidget();
+        console.log("[WidgetProvider] Widget reloaded");
+      } catch (e) {
+        console.warn("[WidgetProvider] Failed to reload widget:", e);
+      }
+    });
   }, []);
 
   return (
