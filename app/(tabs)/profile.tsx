@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image }
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
+import { Settings } from "lucide-react-native";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
@@ -263,6 +264,19 @@ export default function ProfileScreen() {
     </Pressable>
   );
 
+  const renderHeaderRight = () => (
+    <Pressable
+      onPress={() => {
+        console.log("[Profile] Settings button pressed");
+        router.push("/(tabs)/settings");
+      }}
+      style={styles.headerButtonContainer}
+      accessibilityLabel="Open Settings"
+    >
+      <Settings size={22} color={theme.colors.primary} strokeWidth={2} />
+    </Pressable>
+  );
+
   return (
     <>
       {Platform.OS === 'ios' && (
@@ -270,6 +284,7 @@ export default function ProfileScreen() {
           options={{
             title: viewAsRecipient ? "Recipient View" : "Today's Quote",
             headerLeft: renderHeaderLeft,
+            headerRight: renderHeaderRight,
           }}
         />
       )}

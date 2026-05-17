@@ -13,6 +13,7 @@ export default function TabLayout() {
       <Stack.Screen name="(home)" />
       <Stack.Screen name="profile" />
       <Stack.Screen name="demo" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }
