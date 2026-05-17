@@ -41,7 +41,6 @@
         "WRITE_EXTERNAL_STORAGE",
         "READ_EXTERNAL_STORAGE"
       ],
-      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
@@ -73,11 +72,12 @@
     "experiments": {
       "typedRoutes": true
     },
+    "updates": {
+      "enabled": false
+    },
     "extra": {
       "router": {},
-      "eas": {
-        "projectId": "your-eas-project-id"
-      }
+      "eas": {}
     },
     "notification": {
       "icon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
