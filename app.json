@@ -19,7 +19,8 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "Daily Whispers needs access to your photo library to save quotes as images.",
-        "NSPhotoLibraryAddUsageDescription": "Daily Whispers needs permission to save quotes to your photo library."
+        "NSPhotoLibraryAddUsageDescription": "Daily Whispers needs permission to save quotes to your photo library.",
+        "NSUserNotificationsUsageDescription": "This app requires notification permission so it can send you inspiring quotes each day."
       },
       "config": {
         "usesNonExemptEncryption": false
