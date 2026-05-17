@@ -10,6 +10,9 @@ export default function TabLayout() {
       }}
     >
       <Stack.Screen key="home" name="(home)" />
+      <Stack.Screen name="profile" />
+      <Stack.Screen name="demo" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }
