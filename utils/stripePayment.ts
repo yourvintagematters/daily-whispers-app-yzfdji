@@ -1,6 +1,6 @@
 
 // Client-side Stripe payment utilities for React Native
-import { supabase } from '@/app/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import { getPaymentErrorMessage } from './paymentConfig';
 
 export interface PaymentIntentData {

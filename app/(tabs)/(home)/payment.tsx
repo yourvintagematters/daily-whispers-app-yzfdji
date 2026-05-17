@@ -14,7 +14,7 @@ import {
   CardDetails 
 } from "@/utils/stripePayment";
 import { isTestMode } from "@/utils/paymentConfig";
-import { supabase } from "@/app/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PaymentFormData {
   cardNumber: string;

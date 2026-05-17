@@ -42,7 +42,7 @@ export default function DemoScreen() {
     } else {
       fadeAnim.setValue(0);
     }
-  }, [showQuote]);
+  }, [showQuote, fadeAnim]);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
