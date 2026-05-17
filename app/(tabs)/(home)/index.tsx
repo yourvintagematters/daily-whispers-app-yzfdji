@@ -185,8 +185,10 @@ export default function HomeScreen() {
           }}
         />
       )}
-      <View style={[styles.container, { backgroundColor: '#E6F2F8' }]}>
+      <View style={[styles.container, { backgroundColor: '#E6F2F8' }]} pointerEvents="box-none">
         <ScrollView
+          scrollEnabled={true}
+          style={styles.scrollView}
           contentContainerStyle={[
             styles.scrollContainer,
             Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
@@ -304,6 +306,9 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scrollView: {
     flex: 1,
   },
   scrollContainer: {
