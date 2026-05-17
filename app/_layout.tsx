@@ -5,7 +5,7 @@ import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SystemBars } from "react-native-edge-to-edge";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useColorScheme, Alert } from "react-native";
+import { useColorScheme, Alert, View } from "react-native";
 import { useNetworkState } from "expo-network";
 import {
   DarkTheme,
@@ -34,9 +34,19 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
+      console.log("[SplashScreen] Fonts loaded, hiding splash screen");
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  // Fallback: always hide splash after 3s
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("[SplashScreen] Fallback timeout reached, hiding splash screen");
+      SplashScreen.hideAsync();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // Set up notification handler
@@ -73,7 +83,9 @@ export default function RootLayout() {
   }, [networkState.isConnected, networkState.isInternetReachable]);
 
   if (!loaded) {
-    return null;
+    return (
+      <View style={{ flex: 1, backgroundColor: '#E6F2F8' }} />
+    );
   }
 
   const CustomDefaultTheme: Theme = {

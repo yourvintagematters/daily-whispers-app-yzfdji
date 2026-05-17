@@ -56,7 +56,7 @@
           "icon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
           "color": "#5d8aa8",
           "sounds": [],
-          "mode": "production"
+          "mode": "development"
         }
       ],
       [
