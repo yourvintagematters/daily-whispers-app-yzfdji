@@ -4,7 +4,6 @@ import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image }
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { IconSymbol } from "@/components/IconSymbol";
-import { Settings } from "lucide-react-native";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
@@ -264,18 +263,6 @@ export default function ProfileScreen() {
     </Pressable>
   );
 
-  const renderHeaderRight = () => (
-    <Pressable
-      onPress={() => {
-        console.log("[Profile] Settings button pressed");
-        router.push("/(tabs)/settings");
-      }}
-      style={styles.headerButtonContainer}
-      accessibilityLabel="Open Settings"
-    >
-      <Settings size={22} color={theme.colors.primary} strokeWidth={2} />
-    </Pressable>
-  );
 
   return (
     <>
@@ -284,7 +271,6 @@ export default function ProfileScreen() {
           options={{
             title: viewAsRecipient ? "Recipient View" : "Today's Quote",
             headerLeft: renderHeaderLeft,
-            headerRight: renderHeaderRight,
           }}
         />
       )}
@@ -391,6 +377,49 @@ export default function ProfileScreen() {
             <IconSymbol name="arrow.left" color={theme.colors.text} size={18} />
             <Text style={[styles.buttonText, { color: theme.colors.text }]}>
               Previous Quote
+            </Text>
+          </Pressable>
+
+          {/* Unsubscribe link */}
+          <Pressable
+            onPress={() => {
+              console.log("[Profile] Unsubscribe link tapped");
+              Alert.alert(
+                "Unsubscribe",
+                "Are you sure you want to unsubscribe? This will cancel your daily quote notifications and delete your data from our system. This cannot be undone.",
+                [
+                  { text: "Cancel", style: "cancel" },
+                  {
+                    text: "Yes, Unsubscribe",
+                    style: "destructive",
+                    onPress: async () => {
+                      console.log("[Profile] Unsubscribe confirmed");
+                      try {
+                        await Notifications.cancelAllScheduledNotificationsAsync();
+                        console.log("[Profile] All scheduled notifications cancelled");
+                        setNotificationsEnabled(false);
+                        console.log("[Profile] Calling delete-user-data edge function");
+                        const response = await fetch(
+                          "https://cyktcpdmlsfjyrnutmln.supabase.co/functions/v1/delete-user-data",
+                          { method: "POST" }
+                        );
+                        console.log("[Profile] delete-user-data response status:", response.status);
+                      } catch (error) {
+                        console.log("[Profile] Error during unsubscribe:", error);
+                      }
+                      Alert.alert(
+                        "Unsubscribed",
+                        "You've been unsubscribed. Your data will be deleted within 24 hours."
+                      );
+                    },
+                  },
+                ]
+              );
+            }}
+            style={styles.unsubscribeLink}
+          >
+            <Text style={styles.unsubscribeLinkText}>
+              Unsubscribe from daily quotes
             </Text>
           </Pressable>
 
@@ -806,5 +835,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     paddingTop: 4,
+  },
+  unsubscribeLink: {
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 16,
+    paddingVertical: 4,
+  },
+  unsubscribeLinkText: {
+    fontSize: 12,
+    color: '#999',
+    textDecorationLine: 'underline',
   },
 });

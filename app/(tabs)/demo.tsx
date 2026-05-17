@@ -121,7 +121,7 @@ export default function DemoScreen() {
                 </View>
               </View>
               <Text style={[styles.notificationBody, { color: theme.colors.text }]}>
-                Your daily quote from "{currentTheme.name}" is here! 💫
+                Your daily quote from John is here! 💫
               </Text>
               <Pressable
                 onPress={handleShowQuote}
