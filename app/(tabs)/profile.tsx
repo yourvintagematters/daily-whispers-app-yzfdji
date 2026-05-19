@@ -251,25 +251,19 @@ export default function ProfileScreen() {
             </View>
           )}
 
-          <View style={styles.buttonStack}>
-            <Pressable
-              style={[styles.button, styles.buttonFullWidth, { backgroundColor: '#5d8aa8' }]}
-              onPress={handleSave}
-            >
-              <IconSymbol name="arrow.down.circle" color="#FFFFFF" size={18} />
-              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Save this Quote
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.button, styles.buttonFullWidth, { backgroundColor: '#5d8aa8' }]}
-              onPress={handlePayItForward}
-            >
-              <IconSymbol name="heart.fill" color="#FFFFFF" size={18} />
-              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Pay it Forward
-              </Text>
-            </Pressable>
+          <View style={styles.circleButtonRow}>
+            <View style={styles.circleButtonWrapper}>
+              <Pressable style={[styles.circleButton, { backgroundColor: '#5d8aa8' }]} onPress={handleSave}>
+                <IconSymbol name="arrow.down.circle" color="#FFFFFF" size={28} />
+              </Pressable>
+              <Text style={styles.circleButtonLabel}>Save this Quote</Text>
+            </View>
+            <View style={styles.circleButtonWrapper}>
+              <Pressable style={[styles.circleButton, { backgroundColor: '#5d8aa8' }]} onPress={handlePayItForward}>
+                <IconSymbol name="heart.fill" color="#FFFFFF" size={28} />
+              </Pressable>
+              <Text style={styles.circleButtonLabel}>Pay it Forward</Text>
+            </View>
           </View>
 
           <Pressable
@@ -593,10 +587,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.7,
   },
-  buttonStack: {
-    gap: 12,
-    marginBottom: 16,
-  },
   button: {
     borderRadius: 8,
     padding: 12,
@@ -610,12 +600,37 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  buttonFullWidth: {
-    width: '100%',
-  },
   buttonText: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  circleButtonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 32,
+    marginBottom: 20,
+  },
+  circleButtonWrapper: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  circleButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  circleButtonLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#5d8aa8',
+    textAlign: 'center',
   },
   purchaseButton: {
     borderRadius: 12,

@@ -153,34 +153,35 @@ export default function DemoScreen() {
                 </Animated.View>
                 
                 {/* Action Buttons - Now outside and below the card */}
-                <View style={styles.actionButtonsContainer}>
-                  <Pressable 
-                    style={[styles.actionButton, { backgroundColor: '#5d8aa8' }]}
-                    onPress={handleSave}
-                  >
-                    <IconSymbol
-                      ios_icon_name="arrow.down.circle.fill"
-                      android_material_icon_name="save"
-                      size={18}
-                      color="#FFFFFF"
-                    />
-                    <Text style={[styles.actionButtonText, { color: '#FFFFFF' }]}>Save this Quote</Text>
-                  </Pressable>
-                  <Pressable 
-                    style={[styles.actionButton, { backgroundColor: '#5d8aa8' }]}
-                    onPress={() => {
-                      console.log('Pay it Forward button pressed in demo');
-                      router.push('/(tabs)/(home)');
-                    }}
-                  >
-                    <IconSymbol
-                      ios_icon_name="heart.fill"
-                      android_material_icon_name="favorite"
-                      size={18}
-                      color="#FFFFFF"
-                    />
-                    <Text style={[styles.actionButtonText, { color: '#FFFFFF' }]}>Pay it Forward</Text>
-                  </Pressable>
+                <View style={styles.circleButtonRow}>
+                  <View style={styles.circleButtonWrapper}>
+                    <Pressable style={[styles.circleButton, { backgroundColor: '#5d8aa8' }]} onPress={handleSave}>
+                      <IconSymbol
+                        ios_icon_name="arrow.down.circle.fill"
+                        android_material_icon_name="save"
+                        size={28}
+                        color="#FFFFFF"
+                      />
+                    </Pressable>
+                    <Text style={styles.circleButtonLabel}>Save this Quote</Text>
+                  </View>
+                  <View style={styles.circleButtonWrapper}>
+                    <Pressable
+                      style={[styles.circleButton, { backgroundColor: '#5d8aa8' }]}
+                      onPress={() => {
+                        console.log('Pay it Forward button pressed in demo');
+                        router.push('/(tabs)/(home)');
+                      }}
+                    >
+                      <IconSymbol
+                        ios_icon_name="heart.fill"
+                        android_material_icon_name="favorite"
+                        size={28}
+                        color="#FFFFFF"
+                      />
+                    </Pressable>
+                    <Text style={styles.circleButtonLabel}>Pay it Forward</Text>
+                  </View>
                 </View>
               </View>
             )}
@@ -464,30 +465,34 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.8,
   },
-  actionButtonsContainer: {
-    flexDirection: 'column',
-    gap: 12,
+  circleButtonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 32,
     marginTop: 20,
     marginBottom: 16,
-    width: '100%',
   },
-  actionButton: {
-    width: '100%',
-    borderRadius: 8,
-    padding: 12,
+  circleButtonWrapper: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  circleButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
   },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
+  circleButtonLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#5d8aa8',
+    textAlign: 'center',
   },
   navigationContainer: {
     flexDirection: 'row',
