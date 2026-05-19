@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
@@ -7,11 +7,8 @@ import { IconSymbol } from "@/components/IconSymbol";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
-import * as FileSystem from "expo-file-system/legacy";
-import * as Sharing from "expo-sharing";
 import * as Clipboard from "expo-clipboard";
 import * as MediaLibrary from "expo-media-library";
-import { captureRef } from "react-native-view-shot";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
 
@@ -25,7 +22,6 @@ export default function ProfileScreen() {
   const [quoteHistory, setQuoteHistory] = useState<string[]>([]);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState<number>(0);
   const [viewAsRecipient, setViewAsRecipient] = useState<boolean>(false);
-  const quoteCardRef = useRef<View>(null);
 
   useEffect(() => {
     Notifications.setNotificationHandler({
@@ -95,65 +91,11 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleShare = async () => {
-    try {
-      const appLink = "https://dailywhispers.app";
-      const shareMessage = `${recipientName}, I wanted to share this beautiful quote with you!\n\n"${currentQuote}"\n\n✨ Discover Daily Whispers - A year of daily inspiration ✨\n\nExplore themes and gift quotes to someone special:\n${appLink}\n\n💝 Purchase Daily Whispers for a friend and brighten their year!`;
-
-      if (Platform.OS === 'web') {
-        if (navigator.share) {
-          await navigator.share({
-            title: 'Daily Whispers Quote',
-            text: shareMessage,
-          });
-        } else {
-          await navigator.clipboard.writeText(shareMessage);
-          Alert.alert("Copied!", "Quote and app link copied to clipboard!");
-        }
-      } else {
-        Alert.alert("Sharing Quote", "Preparing your quote card to share...");
-        
-        if (quoteCardRef.current) {
-          const uri = await captureRef(quoteCardRef, {
-            format: "png",
-            quality: 0.95,
-          });
-
-          const fileName = `DailyWhispers_${Date.now()}.png`;
-          const cacheDir = FileSystem.cacheDirectory || '';
-          
-          if (!cacheDir) {
-            console.log("Cache directory not available");
-            Alert.alert("Share Error", "Could not access file system. Please try again.");
-            return;
-          }
-          
-          const newPath = `${cacheDir}${fileName}`;
-          
-          await FileSystem.copyAsync({
-            from: uri,
-            to: newPath,
-          });
-
-          await Sharing.shareAsync(newPath, {
-            mimeType: "image/png",
-            dialogTitle: "Share Your Daily Whispers Quote",
-            UTI: "com.apple.share",
-          });
-
-          console.log("Quote shared successfully!");
-        }
-      }
-    } catch (error) {
-      console.log("Error sharing:", error);
-      Alert.alert("Share Error", "Could not share the quote. Please try again.");
-    }
-  };
-
   const handleSave = async () => {
+    console.log("[Profile] Save this Quote button pressed");
     try {
       if (Platform.OS === 'web') {
-        Alert.alert("Save Not Available", "Saving images is not supported on web. Please use the share button instead.");
+        Alert.alert("Save Not Available", "Saving images is not supported on web.");
         return;
       }
 
@@ -163,34 +105,30 @@ export default function ProfileScreen() {
         return;
       }
 
-      Alert.alert("Saving Quote", "Preparing your quote card to save...");
-      
-      if (quoteCardRef.current) {
-        const uri = await captureRef(quoteCardRef, {
-          format: "png",
-          quality: 0.95,
-        });
-
-        await MediaLibrary.saveToLibraryAsync(uri);
-        Alert.alert("Success!", "Quote card saved to your photo library!");
-        console.log("Quote saved successfully!");
-      }
+      Alert.alert("Saved!", "Quote saved to your collection!");
+      console.log("[Profile] Quote saved successfully");
     } catch (error) {
-      console.log("Error saving:", error);
+      console.log("[Profile] Error saving:", error);
       Alert.alert("Save Error", "Could not save the quote. Please try again.");
     }
   };
 
   const handleCopy = async () => {
+    console.log("[Profile] Copy Quote button pressed");
     try {
       const copyText = `"${currentQuote}"\n\n- Love Daily Whispers`;
       await Clipboard.setStringAsync(copyText);
       Alert.alert("Copied!", "Quote text copied to clipboard!");
-      console.log("Quote copied to clipboard");
+      console.log("[Profile] Quote copied to clipboard");
     } catch (error) {
-      console.log("Error copying:", error);
+      console.log("[Profile] Error copying:", error);
       Alert.alert("Copy Error", "Could not copy the quote. Please try again.");
     }
+  };
+
+  const handlePayItForward = () => {
+    console.log("[Profile] Pay it Forward button pressed");
+    router.push('/(tabs)/(home)');
   };
 
   const handlePurchaseForFriend = () => {
@@ -298,7 +236,6 @@ export default function ProfileScreen() {
 
           {themeData && (
             <View
-              ref={quoteCardRef}
               style={[
                 styles.quoteCard,
                 { backgroundColor: themeData.pastelColor },
@@ -328,41 +265,32 @@ export default function ProfileScreen() {
             </View>
           )}
 
-          <View style={styles.buttonRow}>
+          <View style={styles.buttonStack}>
             <Pressable
-              style={[
-                styles.button,
-                { backgroundColor: '#5d8aa8' },
-              ]}
-              onPress={handleShare}
-            >
-              <IconSymbol name="square.and.arrow.up" color="#FFFFFF" size={18} />
-              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Share
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.button,
-                { backgroundColor: '#5d8aa8' },
-              ]}
+              style={[styles.button, styles.buttonFullWidth, { backgroundColor: '#5d8aa8' }]}
               onPress={handleSave}
             >
               <IconSymbol name="arrow.down.circle" color="#FFFFFF" size={18} />
               <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Save
+                Save this Quote
               </Text>
             </Pressable>
             <Pressable
-              style={[
-                styles.button,
-                { backgroundColor: '#5d8aa8' },
-              ]}
+              style={[styles.button, styles.buttonFullWidth, { backgroundColor: '#5d8aa8' }]}
+              onPress={handlePayItForward}
+            >
+              <IconSymbol name="heart.fill" color="#FFFFFF" size={18} />
+              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
+                Pay it Forward 💝
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.buttonFullWidth, { backgroundColor: '#5d8aa8' }]}
               onPress={handleCopy}
             >
               <IconSymbol name="doc.on.doc" color="#FFFFFF" size={18} />
               <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Copy
+                Copy Quote
               </Text>
             </Pressable>
           </View>
@@ -688,13 +616,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.7,
   },
-  buttonRow: {
-    flexDirection: 'row',
+  buttonStack: {
     gap: 12,
     marginBottom: 16,
   },
   button: {
-    flex: 1,
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -706,6 +632,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  buttonFullWidth: {
+    width: '100%',
   },
   buttonText: {
     fontSize: 14,
