@@ -252,18 +252,14 @@ export default function ProfileScreen() {
           )}
 
           <View style={styles.circleButtonRow}>
-            <View style={styles.circleButtonWrapper}>
-              <Pressable style={[styles.circleButton, { backgroundColor: '#5d8aa8' }]} onPress={handleSave}>
-                <IconSymbol name="arrow.down.circle" color="#FFFFFF" size={28} />
-              </Pressable>
+            <Pressable style={styles.circleButton} onPress={handleSave}>
+              <IconSymbol name="arrow.down.circle" color="#5d8aa8" size={28} />
               <Text style={styles.circleButtonLabel}>Save this Quote</Text>
-            </View>
-            <View style={styles.circleButtonWrapper}>
-              <Pressable style={[styles.circleButton, { backgroundColor: '#5d8aa8' }]} onPress={handlePayItForward}>
-                <IconSymbol name="heart.fill" color="#FFFFFF" size={28} />
-              </Pressable>
+            </Pressable>
+            <Pressable style={styles.circleButton} onPress={handlePayItForward}>
+              <IconSymbol name="heart.fill" color="#5d8aa8" size={28} />
               <Text style={styles.circleButtonLabel}>Pay it Forward</Text>
-            </View>
+            </Pressable>
           </View>
 
           <Pressable
@@ -610,14 +606,13 @@ const styles = StyleSheet.create({
     gap: 32,
     marginBottom: 20,
   },
-  circleButtonWrapper: {
-    alignItems: 'center',
-    gap: 8,
-  },
   circleButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#d0e4f0',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -627,10 +622,11 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   circleButtonLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
     color: '#5d8aa8',
     textAlign: 'center',
+    marginTop: 4,
   },
   purchaseButton: {
     borderRadius: 12,
