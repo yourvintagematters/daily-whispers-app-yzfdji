@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ActivityIndicator } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ActivityIndicator, Linking } from "react-native";
+import * as WebBrowser from 'expo-web-browser';
 import { useTheme } from "@react-navigation/native";
 import { IconSymbol } from "@/components/IconSymbol";
 import { 
@@ -416,12 +417,26 @@ export default function PaymentScreen() {
           {/* Cancel Button */}
           <Pressable
             style={styles.cancelButton}
-            onPress={() => router.back()}
+            onPress={() => {
+              console.log('Cancel button pressed');
+              router.back();
+            }}
             disabled={isProcessing}
           >
             <Text style={styles.cancelButtonText}>
               Cancel
             </Text>
+          </Pressable>
+
+          {/* Privacy Policy */}
+          <Pressable
+            style={styles.privacyLink}
+            onPress={() => {
+              console.log('Privacy Policy link pressed');
+              WebBrowser.openBrowserAsync('https://raw.githubusercontent.com/yourvintagematters/Privacy_Policy/refs/heads/main/Privacy_Policy');
+            }}
+          >
+            <Text style={styles.privacyLinkText}>Privacy Policy</Text>
           </Pressable>
         </ScrollView>
       </View>
@@ -633,5 +648,15 @@ const styles = StyleSheet.create({
   },
   headerButtonContainer: {
     padding: 6,
+  },
+  privacyLink: {
+    alignItems: 'center',
+    paddingVertical: 8,
+    marginBottom: 16,
+  },
+  privacyLinkText: {
+    fontSize: 12,
+    color: '#5d8aa8',
+    textDecorationLine: 'underline',
   },
 });
