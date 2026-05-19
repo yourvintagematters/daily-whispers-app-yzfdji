@@ -7,7 +7,6 @@ import { IconSymbol } from "@/components/IconSymbol";
 import { GlassView } from "expo-glass-effect";
 import { useTheme } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
-import * as Clipboard from "expo-clipboard";
 import * as MediaLibrary from "expo-media-library";
 import { DAILY_WHISPERS_THEMES, DAILY_WHISPERS_QUOTES } from "@/constants/Colors";
 import LogoImage from '@/assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png';
@@ -110,19 +109,6 @@ export default function ProfileScreen() {
     } catch (error) {
       console.log("[Profile] Error saving:", error);
       Alert.alert("Save Error", "Could not save the quote. Please try again.");
-    }
-  };
-
-  const handleCopy = async () => {
-    console.log("[Profile] Copy Quote button pressed");
-    try {
-      const copyText = `"${currentQuote}"\n\n- Love Daily Whispers`;
-      await Clipboard.setStringAsync(copyText);
-      Alert.alert("Copied!", "Quote text copied to clipboard!");
-      console.log("[Profile] Quote copied to clipboard");
-    } catch (error) {
-      console.log("[Profile] Error copying:", error);
-      Alert.alert("Copy Error", "Could not copy the quote. Please try again.");
     }
   };
 
@@ -281,16 +267,7 @@ export default function ProfileScreen() {
             >
               <IconSymbol name="heart.fill" color="#FFFFFF" size={18} />
               <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Pay it Forward 💝
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.button, styles.buttonFullWidth, { backgroundColor: '#5d8aa8' }]}
-              onPress={handleCopy}
-            >
-              <IconSymbol name="doc.on.doc" color="#FFFFFF" size={18} />
-              <Text style={[styles.buttonText, { color: '#FFFFFF' }]}>
-                Copy Quote
+                Pay it Forward
               </Text>
             </Pressable>
           </View>
