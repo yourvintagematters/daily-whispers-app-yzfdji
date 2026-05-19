@@ -72,11 +72,6 @@ export default function DemoScreen() {
     setCurrentQuoteIndex(Math.floor(Math.random() * currentQuotes.length));
   };
 
-  const handleShare = () => {
-    console.log('Share button pressed in demo');
-    // Share functionality would go here
-  };
-
   const handleSave = () => {
     console.log('Save button pressed in demo');
     // Save functionality would go here
@@ -160,28 +155,31 @@ export default function DemoScreen() {
                 {/* Action Buttons - Now outside and below the card */}
                 <View style={styles.actionButtonsContainer}>
                   <Pressable 
-                    style={[styles.roundButton, { backgroundColor: '#FFFFFF' }]}
-                    onPress={handleShare}
-                  >
-                    <IconSymbol
-                      ios_icon_name="square.and.arrow.up.fill"
-                      android_material_icon_name="share"
-                      size={24}
-                      color="#000000"
-                    />
-                    <Text style={[styles.buttonLabel, { color: '#000000' }]}>Share</Text>
-                  </Pressable>
-                  <Pressable 
-                    style={[styles.roundButton, { backgroundColor: '#FFFFFF' }]}
+                    style={[styles.actionButton, { backgroundColor: '#5d8aa8' }]}
                     onPress={handleSave}
                   >
                     <IconSymbol
                       ios_icon_name="arrow.down.circle.fill"
                       android_material_icon_name="save"
-                      size={24}
-                      color="#000000"
+                      size={18}
+                      color="#FFFFFF"
                     />
-                    <Text style={[styles.buttonLabel, { color: '#000000' }]}>Save</Text>
+                    <Text style={[styles.actionButtonText, { color: '#FFFFFF' }]}>Save this Quote</Text>
+                  </Pressable>
+                  <Pressable 
+                    style={[styles.actionButton, { backgroundColor: '#5d8aa8' }]}
+                    onPress={() => {
+                      console.log('Pay it Forward button pressed in demo');
+                      router.push('/(tabs)/(home)');
+                    }}
+                  >
+                    <IconSymbol
+                      ios_icon_name="heart.fill"
+                      android_material_icon_name="favorite"
+                      size={18}
+                      color="#FFFFFF"
+                    />
+                    <Text style={[styles.actionButtonText, { color: '#FFFFFF' }]}>Pay it Forward</Text>
                   </Pressable>
                 </View>
               </View>
@@ -467,28 +465,29 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   actionButtonsContainer: {
-    flexDirection: 'row',
-    gap: 20,
+    flexDirection: 'column',
+    gap: 12,
     marginTop: 20,
     marginBottom: 16,
-    justifyContent: 'center',
+    width: '100%',
   },
-  roundButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+  actionButton: {
+    width: '100%',
+    borderRadius: 8,
+    padding: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  buttonLabel: {
-    fontSize: 11,
+  actionButtonText: {
+    fontSize: 14,
     fontWeight: '600',
-    marginTop: 4,
   },
   navigationContainer: {
     flexDirection: 'row',
