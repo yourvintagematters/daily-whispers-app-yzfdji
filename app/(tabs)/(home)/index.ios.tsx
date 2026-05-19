@@ -149,30 +149,17 @@ export default function HomeScreen() {
   };
 
   const renderHeaderRight = () => (
-    <View style={styles.headerRightContainer}>
-      <Pressable
-        onPress={() => router.push('/(tabs)/demo')}
-        style={styles.headerButtonContainer}
-      >
-        <IconSymbol 
-          ios_icon_name="play.circle.fill" 
-          android_material_icon_name="play_circle" 
-          size={24}
-          color="#5d8aa8" 
-        />
-      </Pressable>
-      <Pressable
-        onPress={() => router.push('/(tabs)/profile')}
-        style={styles.headerButtonContainer}
-      >
-        <IconSymbol 
-          ios_icon_name="quote.bubble.fill" 
-          android_material_icon_name="format_quote" 
-          size={24}
-          color="#5d8aa8" 
-        />
-      </Pressable>
-    </View>
+    <Pressable
+      onPress={() => router.push('/(tabs)/demo')}
+      style={styles.headerButtonContainer}
+    >
+      <IconSymbol 
+        ios_icon_name="play.circle.fill" 
+        android_material_icon_name="play_circle" 
+        size={24}
+        color="#5d8aa8" 
+      />
+    </Pressable>
   );
 
   return (
@@ -488,11 +475,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
-  },
-  headerRightContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
   },
   headerButtonContainer: {
     padding: 6,
