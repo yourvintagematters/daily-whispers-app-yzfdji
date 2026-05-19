@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
       "resizeMode": "contain",
-      "backgroundColor": "#5d8aa8"
+      "backgroundColor": "#E6F2F8"
     },
     "ios": {
       "supportsTablet": true,
@@ -29,7 +29,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
-        "backgroundColor": "#5d8aa8"
+        "backgroundColor": "#E6F2F8"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.dailywhispers.app",
