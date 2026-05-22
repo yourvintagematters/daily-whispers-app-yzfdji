@@ -32,6 +32,17 @@ export default function RecipientDetailsScreen() {
   const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
   const themes = Object.values(DAILY_WHISPERS_THEMES);
 
+  const THEME_SHORT_LABELS: Record<string, string> = {
+    youAreLoved: 'Love',
+    funnySideOfLife: 'Funny',
+    gratitudePearls: 'Gratitude',
+    threadsOfConnection: 'Connection',
+    motherhood: 'Motherhood',
+    whispersFromNature: 'Nature',
+    aDogsLife: "Dog's Life",
+    aCatsLife: "Cat's Life",
+  };
+
   const updateRecipient = (id: string, field: keyof Recipient, value: string) => {
     setRecipients(recipients.map(r => 
       r.id === id ? { ...r, [field]: value } : r
@@ -101,56 +112,60 @@ export default function RecipientDetailsScreen() {
         <View style={styles.themeGrid}>
           <View style={styles.themeRow}>
             {firstRow.map(t => (
-              <Pressable
-                key={t.id}
-                style={[
-                  styles.themeOption,
-                  {
-                    backgroundColor: t.buttonColor,
-                    borderWidth: currentTheme === t.id ? 3 : 0,
-                    borderColor: currentTheme === t.id ? '#000' : 'transparent',
-                  }
-                ]}
-                onPress={() => updateRecipient(recipientId, 'selectedTheme', t.id)}
-                onMouseEnter={() => setHoveredTheme(t.id)}
-                onMouseLeave={() => setHoveredTheme(null)}
-              >
-                <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
-                {hoveredTheme === t.id && (
-                  <View style={styles.themeTooltip}>
-                    <Text style={styles.themeTooltipText}>
-                      {t.name}
-                    </Text>
-                  </View>
-                )}
-              </Pressable>
+              <View key={t.id} style={styles.themeOptionWrapper}>
+                <Pressable
+                  style={[
+                    styles.themeOption,
+                    {
+                      backgroundColor: t.buttonColor,
+                      borderWidth: currentTheme === t.id ? 3 : 0,
+                      borderColor: currentTheme === t.id ? '#000' : 'transparent',
+                    }
+                  ]}
+                  onPress={() => updateRecipient(recipientId, 'selectedTheme', t.id)}
+                  onMouseEnter={() => setHoveredTheme(t.id)}
+                  onMouseLeave={() => setHoveredTheme(null)}
+                >
+                  <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+                  {hoveredTheme === t.id && (
+                    <View style={styles.themeTooltip}>
+                      <Text style={styles.themeTooltipText}>
+                        {t.name}
+                      </Text>
+                    </View>
+                  )}
+                </Pressable>
+                <Text style={styles.themeOptionLabel} numberOfLines={1}>{THEME_SHORT_LABELS[t.id]}</Text>
+              </View>
             ))}
           </View>
           <View style={styles.themeRow}>
             {secondRow.map(t => (
-              <Pressable
-                key={t.id}
-                style={[
-                  styles.themeOption,
-                  {
-                    backgroundColor: t.buttonColor,
-                    borderWidth: currentTheme === t.id ? 3 : 0,
-                    borderColor: currentTheme === t.id ? '#000' : 'transparent',
-                  }
-                ]}
-                onPress={() => updateRecipient(recipientId, 'selectedTheme', t.id)}
-                onMouseEnter={() => setHoveredTheme(t.id)}
-                onMouseLeave={() => setHoveredTheme(null)}
-              >
-                <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
-                {hoveredTheme === t.id && (
-                  <View style={styles.themeTooltip}>
-                    <Text style={styles.themeTooltipText}>
-                      {t.name}
-                    </Text>
-                  </View>
-                )}
-              </Pressable>
+              <View key={t.id} style={styles.themeOptionWrapper}>
+                <Pressable
+                  style={[
+                    styles.themeOption,
+                    {
+                      backgroundColor: t.buttonColor,
+                      borderWidth: currentTheme === t.id ? 3 : 0,
+                      borderColor: currentTheme === t.id ? '#000' : 'transparent',
+                    }
+                  ]}
+                  onPress={() => updateRecipient(recipientId, 'selectedTheme', t.id)}
+                  onMouseEnter={() => setHoveredTheme(t.id)}
+                  onMouseLeave={() => setHoveredTheme(null)}
+                >
+                  <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+                  {hoveredTheme === t.id && (
+                    <View style={styles.themeTooltip}>
+                      <Text style={styles.themeTooltipText}>
+                        {t.name}
+                      </Text>
+                    </View>
+                  )}
+                </Pressable>
+                <Text style={styles.themeOptionLabel} numberOfLines={1}>{THEME_SHORT_LABELS[t.id]}</Text>
+              </View>
             ))}
           </View>
         </View>
@@ -166,56 +181,60 @@ export default function RecipientDetailsScreen() {
       <View style={styles.themeGrid}>
         <View style={styles.themeRow}>
           {firstRow.map(t => (
-            <Pressable
-              key={t.id}
-              style={[
-                styles.themeOption,
-                {
-                  backgroundColor: t.buttonColor,
-                  borderWidth: buyerTheme === t.id ? 3 : 0,
-                  borderColor: buyerTheme === t.id ? '#000' : 'transparent',
-                }
-              ]}
-              onPress={() => setBuyerTheme(t.id)}
-              onMouseEnter={() => setHoveredTheme(t.id)}
-              onMouseLeave={() => setHoveredTheme(null)}
-            >
-              <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
-              {hoveredTheme === t.id && (
-                <View style={styles.themeTooltip}>
-                  <Text style={styles.themeTooltipText}>
-                    {t.name}
-                  </Text>
-                </View>
-              )}
-            </Pressable>
+            <View key={t.id} style={styles.themeOptionWrapper}>
+              <Pressable
+                style={[
+                  styles.themeOption,
+                  {
+                    backgroundColor: t.buttonColor,
+                    borderWidth: buyerTheme === t.id ? 3 : 0,
+                    borderColor: buyerTheme === t.id ? '#000' : 'transparent',
+                  }
+                ]}
+                onPress={() => setBuyerTheme(t.id)}
+                onMouseEnter={() => setHoveredTheme(t.id)}
+                onMouseLeave={() => setHoveredTheme(null)}
+              >
+                <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+                {hoveredTheme === t.id && (
+                  <View style={styles.themeTooltip}>
+                    <Text style={styles.themeTooltipText}>
+                      {t.name}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+              <Text style={styles.themeOptionLabel} numberOfLines={1}>{THEME_SHORT_LABELS[t.id]}</Text>
+            </View>
           ))}
         </View>
         <View style={styles.themeRow}>
           {secondRow.map(t => (
-            <Pressable
-              key={t.id}
-              style={[
-                styles.themeOption,
-                {
-                  backgroundColor: t.buttonColor,
-                  borderWidth: buyerTheme === t.id ? 3 : 0,
-                  borderColor: buyerTheme === t.id ? '#000' : 'transparent',
-                }
-              ]}
-              onPress={() => setBuyerTheme(t.id)}
-              onMouseEnter={() => setHoveredTheme(t.id)}
-              onMouseLeave={() => setHoveredTheme(null)}
-            >
-              <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
-              {hoveredTheme === t.id && (
-                <View style={styles.themeTooltip}>
-                  <Text style={styles.themeTooltipText}>
-                    {t.name}
-                  </Text>
-                </View>
-              )}
-            </Pressable>
+            <View key={t.id} style={styles.themeOptionWrapper}>
+              <Pressable
+                style={[
+                  styles.themeOption,
+                  {
+                    backgroundColor: t.buttonColor,
+                    borderWidth: buyerTheme === t.id ? 3 : 0,
+                    borderColor: buyerTheme === t.id ? '#000' : 'transparent',
+                  }
+                ]}
+                onPress={() => setBuyerTheme(t.id)}
+                onMouseEnter={() => setHoveredTheme(t.id)}
+                onMouseLeave={() => setHoveredTheme(null)}
+              >
+                <Text style={styles.themeOptionEmoji}>{t.emoji}</Text>
+                {hoveredTheme === t.id && (
+                  <View style={styles.themeTooltip}>
+                    <Text style={styles.themeTooltipText}>
+                      {t.name}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+              <Text style={styles.themeOptionLabel} numberOfLines={1}>{THEME_SHORT_LABELS[t.id]}</Text>
+            </View>
           ))}
         </View>
       </View>
@@ -480,5 +499,16 @@ const styles = StyleSheet.create({
   },
   headerButtonContainer: {
     padding: 6,
+  },
+  themeOptionWrapper: {
+    alignItems: 'center',
+    width: 70,
+  },
+  themeOptionLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#1a1a1a',
+    marginTop: 6,
+    textAlign: 'center',
   },
 });
