@@ -2,7 +2,7 @@
   "expo": {
     "name": "Daily Whispers",
     "slug": "daily-whispers",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
     "userInterfaceStyle": "automatic",
