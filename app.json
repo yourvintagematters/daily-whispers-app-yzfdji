@@ -1,4 +1,4 @@
-se{
+{
   "expo": {
     "name": "Daily Whispers",
     "slug": "daily-whispers",
@@ -13,7 +13,7 @@ se{
       "backgroundColor": "#E6F2F8"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.dailywhispers.app",
       "buildNumber": "1.0.0",
       "infoPlist": {
