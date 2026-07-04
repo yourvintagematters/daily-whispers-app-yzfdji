@@ -13,7 +13,7 @@ se{
       "backgroundColor": "#E6F2F8"
     },
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.dailywhispers.app",
       "buildNumber": "1.0.0",
       "infoPlist": {
