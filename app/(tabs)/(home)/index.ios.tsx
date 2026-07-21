@@ -202,6 +202,10 @@ export default function HomeScreen() {
             </Text>
           </View>
 
+          <Text style={styles.singlePurchaseNote}>
+            Not a subscription - single purchase only
+          </Text>
+
           {/* Choose a Theme Section */}
           <View style={styles.section}>
             <Text style={styles.chooseThemeHeading}>
@@ -404,6 +408,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#1a1a1a',
+    opacity: 0.7,
+  },
+  singlePurchaseNote: {
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: '#2c5f7a',
+    marginBottom: 12,
     opacity: 0.7,
   },
   quoteCardPressable: {
