@@ -428,16 +428,26 @@ export default function PaymentScreen() {
             </Text>
           </Pressable>
 
-          {/* Privacy Policy */}
-          <Pressable
-            style={styles.privacyLink}
-            onPress={() => {
-              console.log('Privacy Policy link pressed');
-              WebBrowser.openBrowserAsync('https://raw.githubusercontent.com/yourvintagematters/Privacy_Policy/refs/heads/main/Privacy_Policy');
-            }}
-          >
-            <Text style={styles.privacyLinkText}>Privacy Policy</Text>
-          </Pressable>
+          {/* Privacy Policy & Terms of Service */}
+          <View style={styles.legalLinksRow}>
+            <Pressable
+              onPress={() => {
+                console.log('Privacy Policy link pressed');
+                WebBrowser.openBrowserAsync('https://raw.githubusercontent.com/yourvintagematters/Privacy_Policy/refs/heads/main/Privacy_Policy');
+              }}
+            >
+              <Text style={styles.privacyLinkText}>Privacy Policy</Text>
+            </Pressable>
+            <Text style={styles.legalSeparator}>·</Text>
+            <Pressable
+              onPress={() => {
+                console.log('Terms of Service link pressed');
+                router.push('/terms');
+              }}
+            >
+              <Text style={styles.privacyLinkText}>Terms of Service</Text>
+            </Pressable>
+          </View>
         </ScrollView>
       </View>
     </>
@@ -653,6 +663,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     marginBottom: 16,
+  },
+  legalLinksRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+    marginBottom: 16,
+    gap: 6,
+  },
+  legalSeparator: {
+    fontSize: 12,
+    color: '#5d8aa8',
   },
   privacyLinkText: {
     fontSize: 12,
