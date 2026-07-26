@@ -1,116 +1,67 @@
 
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ActivityIndicator, Linking } from "react-native";
+import { Pressable, StyleSheet, View, Text, Platform, ScrollView, TextInput, Alert, ActivityIndicator } from "react-native";
 import * as WebBrowser from 'expo-web-browser';
 import { useTheme } from "@react-navigation/native";
+import { useStripe, CardField } from "@stripe/stripe-react-native";
 import { IconSymbol } from "@/components/IconSymbol";
-import { 
-  createPaymentIntent, 
-  confirmPayment, 
-  validateCardNumber, 
-  validateExpiryDate,
-  validateCVV,
-  getCardType,
-  CardDetails 
+import {
+  createPaymentIntent,
+  confirmPayment,
 } from "@/utils/stripePayment";
 import { isTestMode } from "@/utils/paymentConfig";
 import { supabase } from "@/integrations/supabase/client";
 
-interface PaymentFormData {
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  cardholderName: string;
-}
-
 export default function PaymentScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const stripe = useStripe();
   const { optionName, optionPrice, recipientsData, buyerTheme, optionId } = useLocalSearchParams();
-  
-  const [paymentData, setPaymentData] = useState<PaymentFormData>({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardholderName: '',
-  });
 
+  const [cardComplete, setCardComplete] = useState(false);
+  const [cardholderName, setCardholderName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
-  const [cardType, setCardType] = useState<string>('');
-
-  const updatePaymentData = (field: keyof PaymentFormData, value: string) => {
-    setPaymentData(prev => ({ ...prev, [field]: value }));
-    setPaymentError(null); // Clear error when user types
-    
-    // Update card type when card number changes
-    if (field === 'cardNumber') {
-      setCardType(getCardType(value));
-    }
-  };
-
-  const formatCardNumber = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
-    const formatted = cleaned.replace(/(\d{4})(?=\d)/g, '$1 ');
-    return formatted.slice(0, 19);
-  };
-
-  const formatExpiryDate = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
-    if (cleaned.length >= 2) {
-      return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`;
-    }
-    return cleaned;
-  };
-
-  const validatePaymentData = (): { valid: boolean; error?: string } => {
-    const cardNumberCleaned = paymentData.cardNumber.replace(/\s/g, '');
-    
-    if (!paymentData.cardholderName.trim()) {
-      return { valid: false, error: 'Please enter the cardholder name' };
-    }
-
-    if (!validateCardNumber(cardNumberCleaned)) {
-      return { valid: false, error: 'Please enter a valid card number' };
-    }
-
-    const expiryParts = paymentData.expiryDate.split('/');
-    if (expiryParts.length !== 2) {
-      return { valid: false, error: 'Please enter expiry date in MM/YY format' };
-    }
-
-    const [month, year] = expiryParts;
-    if (!validateExpiryDate(month, year)) {
-      return { valid: false, error: 'Card has expired or expiry date is invalid' };
-    }
-
-    if (!validateCVV(paymentData.cvv, cardNumberCleaned)) {
-      return { valid: false, error: `Please enter a valid ${cardType === 'American Express' ? '4' : '3'}-digit CVV` };
-    }
-
-    return { valid: true };
-  };
 
   const handleCompletePayment = async () => {
-    // Validate payment data
-    const validation = validatePaymentData();
-    if (!validation.valid) {
-      setPaymentError(validation.error || 'Invalid payment details');
-      Alert.alert('Validation Error', validation.error);
+    console.log('[Payment] Complete Payment button pressed');
+
+    if (!cardComplete) {
+      const msg = 'Please enter complete card details';
+      setPaymentError(msg);
+      Alert.alert('Validation Error', msg);
       return;
     }
 
     setIsProcessing(true);
     setPaymentError(null);
-    
-    try {
-      console.log('Processing payment with Stripe...');
-      console.log('Test mode:', isTestMode());
-      console.log('Payment amount:', optionPrice);
 
-      // Step 1: Create payment intent
+    try {
+      console.log('[Payment] Processing payment with Stripe SDK...');
+      console.log('[Payment] Test mode:', isTestMode());
+      console.log('[Payment] Payment amount:', optionPrice);
+
+      // Step 1: Tokenize card via Stripe SDK — no raw card data leaves the device
+      console.log('[Payment] Creating payment method via Stripe SDK...');
+      const { paymentMethod, error: pmError } = await stripe.createPaymentMethod({
+        paymentMethodType: 'Card',
+      });
+
+      if (pmError || !paymentMethod) {
+        const errMsg = pmError?.message ?? 'Failed to tokenize card';
+        console.error('[Payment] createPaymentMethod error:', pmError);
+        setPaymentError(errMsg);
+        Alert.alert('Card Error', errMsg);
+        setIsProcessing(false);
+        return;
+      }
+
+      console.log('[Payment] Payment method created:', paymentMethod.id);
+
+      // Step 2: Create payment intent on the server
       const recipients = recipientsData ? JSON.parse(recipientsData as string) : [];
+      console.log('[Payment] Creating payment intent on server...');
       const paymentIntentResult = await createPaymentIntent({
         amount: parseFloat(optionPrice as string),
         currency: 'aud',
@@ -125,34 +76,25 @@ export default function PaymentScreen() {
       });
 
       if (!paymentIntentResult.success) {
-        console.error('Payment intent creation failed:', paymentIntentResult.error);
+        console.error('[Payment] Payment intent creation failed:', paymentIntentResult.error);
         setPaymentError(paymentIntentResult.error || 'Failed to create payment intent');
         Alert.alert('Payment Error', paymentIntentResult.error || 'Failed to create payment intent');
         setIsProcessing(false);
         return;
       }
 
-      console.log('Payment intent created:', paymentIntentResult.paymentIntentId);
+      console.log('[Payment] Payment intent created:', paymentIntentResult.paymentIntentId);
 
-      // Step 2: Prepare card details
-      const expiryParts = paymentData.expiryDate.split('/');
-      const cardDetails: CardDetails = {
-        cardNumber: paymentData.cardNumber.replace(/\s/g, ''),
-        expiryMonth: expiryParts[0],
-        expiryYear: `20${expiryParts[1]}`, // Convert YY to YYYY
-        cvv: paymentData.cvv,
-        cardholderName: paymentData.cardholderName,
-      };
-
-      // Step 3: Confirm payment
+      // Step 3: Confirm payment with payment method ID (no raw card data)
+      console.log('[Payment] Confirming payment with paymentMethodId:', paymentMethod.id);
       const confirmResult = await confirmPayment(
         paymentIntentResult.paymentIntentId!,
         paymentIntentResult.clientSecret!,
-        cardDetails
+        paymentMethod.id
       );
 
       if (!confirmResult.success) {
-        console.error('Payment confirmation failed:', confirmResult.error);
+        console.error('[Payment] Payment confirmation failed:', confirmResult.error);
         setPaymentError(confirmResult.error || 'Payment failed');
         Alert.alert(
           'Payment Failed',
@@ -163,11 +105,11 @@ export default function PaymentScreen() {
         return;
       }
 
-      console.log('Payment processed successfully');
+      console.log('[Payment] Payment confirmed successfully');
 
       // Step 4: Record payment in database
       try {
-        const recipients = recipientsData ? JSON.parse(recipientsData as string) : [];
+        console.log('[Payment] Recording payment in database...');
         const { data: recordResult, error: recordError } = await supabase.functions.invoke('record-payment', {
           body: {
             paymentIntentId: confirmResult.paymentIntentId,
@@ -186,17 +128,15 @@ export default function PaymentScreen() {
         });
 
         if (recordError) {
-          console.error('Error recording payment:', recordError);
-          // Don't fail the payment if recording fails
+          console.error('[Payment] Error recording payment:', recordError);
         } else {
-          console.log('Payment recorded in database:', recordResult);
+          console.log('[Payment] Payment recorded in database:', recordResult);
         }
       } catch (recordError) {
-        console.error('Error recording payment:', recordError);
-        // Don't fail the payment if recording fails
+        console.error('[Payment] Error recording payment:', recordError);
       }
 
-      // Step 5: Show success message and navigate
+      // Step 5: Show success and navigate
       Alert.alert(
         'Payment Successful! 🎉',
         'Your purchase has been completed. Recipients will receive their daily quotes starting tomorrow!',
@@ -204,13 +144,14 @@ export default function PaymentScreen() {
           {
             text: 'OK',
             onPress: () => {
+              console.log('[Payment] Navigating to home after successful payment');
               router.replace('/(tabs)/(home)');
-            }
-          }
+            },
+          },
         ]
       );
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('[Payment] Unexpected payment error:', error);
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
       setPaymentError(errorMessage);
       Alert.alert(
@@ -225,7 +166,10 @@ export default function PaymentScreen() {
 
   const renderHeaderLeft = () => (
     <Pressable
-      onPress={() => router.back()}
+      onPress={() => {
+        console.log('[Payment] Back button pressed');
+        router.back();
+      }}
       style={styles.headerButtonContainer}
     >
       <IconSymbol name="chevron.left" color="#5d8aa8" />
@@ -246,7 +190,7 @@ export default function PaymentScreen() {
         <ScrollView
           contentContainerStyle={[
             styles.scrollContainer,
-            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar
+            Platform.OS !== 'ios' && styles.scrollContainerWithTabBar,
           ]}
           showsVerticalScrollIndicator={false}
         >
@@ -316,68 +260,40 @@ export default function PaymentScreen() {
                 style={styles.input}
                 placeholder="John Doe"
                 placeholderTextColor="#999"
-                value={paymentData.cardholderName}
-                onChangeText={(text) => updatePaymentData('cardholderName', text)}
+                value={cardholderName}
+                onChangeText={(text) => {
+                  console.log('[Payment] Cardholder name updated');
+                  setCardholderName(text);
+                  setPaymentError(null);
+                }}
                 editable={!isProcessing}
+                autoCapitalize="words"
+                autoCorrect={false}
               />
             </View>
 
             <View style={styles.inputGroup}>
-              <View style={styles.labelRow}>
-                <Text style={styles.inputLabel}>
-                  Card Number
-                </Text>
-                {cardType && (
-                  <Text style={styles.cardTypeLabel}>
-                    {cardType}
-                  </Text>
-                )}
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="1234 5678 9012 3456"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-                value={formatCardNumber(paymentData.cardNumber)}
-                onChangeText={(text) => updatePaymentData('cardNumber', text)}
-                maxLength={19}
-                editable={!isProcessing}
+              <Text style={styles.inputLabel}>
+                Card Information
+              </Text>
+              <CardField
+                postalCodeEnabled={false}
+                placeholder={{ number: '4242 4242 4242 4242' }}
+                cardStyle={{
+                  backgroundColor: '#F2F2F7',
+                  textColor: '#1a1a1a',
+                  placeholderColor: '#999999',
+                  borderColor: '#E5E5EA',
+                  borderWidth: 1,
+                  borderRadius: 8,
+                }}
+                style={styles.cardField}
+                onCardChange={(details) => {
+                  console.log('[Payment] Card field changed, complete:', details.complete);
+                  setCardComplete(details.complete);
+                  setPaymentError(null);
+                }}
               />
-            </View>
-
-            <View style={styles.rowInputs}>
-              <View style={[styles.inputGroup, { flex: 1 }]}>
-                <Text style={styles.inputLabel}>
-                  Expiry Date
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="MM/YY"
-                  placeholderTextColor="#999"
-                  keyboardType="numeric"
-                  value={formatExpiryDate(paymentData.expiryDate)}
-                  onChangeText={(text) => updatePaymentData('expiryDate', text)}
-                  maxLength={5}
-                  editable={!isProcessing}
-                />
-              </View>
-
-              <View style={[styles.inputGroup, { flex: 1, marginLeft: 12 }]}>
-                <Text style={styles.inputLabel}>
-                  CVV
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="123"
-                  placeholderTextColor="#999"
-                  keyboardType="numeric"
-                  value={paymentData.cvv}
-                  onChangeText={(text) => updatePaymentData('cvv', text)}
-                  maxLength={4}
-                  secureTextEntry
-                  editable={!isProcessing}
-                />
-              </View>
             </View>
           </View>
 
@@ -393,9 +309,7 @@ export default function PaymentScreen() {
           <Pressable
             style={[
               styles.completeButton,
-              { 
-                opacity: isProcessing ? 0.6 : 1,
-              }
+              { opacity: isProcessing ? 0.6 : 1 },
             ]}
             onPress={handleCompletePayment}
             disabled={isProcessing}
@@ -418,7 +332,7 @@ export default function PaymentScreen() {
           <Pressable
             style={styles.cancelButton}
             onPress={() => {
-              console.log('Cancel button pressed');
+              console.log('[Payment] Cancel button pressed');
               router.back();
             }}
             disabled={isProcessing}
@@ -432,7 +346,7 @@ export default function PaymentScreen() {
           <View style={styles.legalLinksRow}>
             <Pressable
               onPress={() => {
-                console.log('Privacy Policy link pressed');
+                console.log('[Payment] Privacy Policy link pressed');
                 WebBrowser.openBrowserAsync('https://raw.githubusercontent.com/yourvintagematters/Privacy_Policy/refs/heads/main/Privacy_Policy');
               }}
             >
@@ -441,7 +355,7 @@ export default function PaymentScreen() {
             <Text style={styles.legalSeparator}>·</Text>
             <Pressable
               onPress={() => {
-                console.log('Terms of Service link pressed');
+                console.log('[Payment] Terms of Service link pressed');
                 router.push('/terms');
               }}
             >
@@ -577,21 +491,11 @@ const styles = StyleSheet.create({
   inputGroup: {
     marginBottom: 12,
   },
-  labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
+    marginBottom: 6,
     color: '#1a1a1a',
-  },
-  cardTypeLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#5d8aa8',
   },
   input: {
     borderWidth: 1,
@@ -603,8 +507,9 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
     borderColor: '#E5E5EA',
   },
-  rowInputs: {
-    flexDirection: 'row',
+  cardField: {
+    width: '100%',
+    height: 50,
   },
   securityNotice: {
     borderRadius: 12,
@@ -658,11 +563,6 @@ const styles = StyleSheet.create({
   },
   headerButtonContainer: {
     padding: 6,
-  },
-  privacyLink: {
-    alignItems: 'center',
-    paddingVertical: 8,
-    marginBottom: 16,
   },
   legalLinksRow: {
     flexDirection: 'row',

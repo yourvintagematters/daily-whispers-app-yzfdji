@@ -15,13 +15,12 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.dailywhispers.app",
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.0.3",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "Daily Whispers needs access to your photo library to save quotes as images.",
         "NSPhotoLibraryAddUsageDescription": "Daily Whispers needs permission to save quotes to your photo library.",
         "NSUserNotificationsUsageDescription": "Daily Whispers sends you an inspirational quote each day. Allow notifications to receive this gift from someone who cares about you."
-				
       },
       "config": {
         "usesNonExemptEncryption": false
@@ -41,7 +40,7 @@
         "VIBRATE",
         "WRITE_EXTERNAL_STORAGE",
         "READ_EXTERNAL_STORAGE"
-      ],
+      ]
     },
     "web": {
       "favicon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
@@ -67,7 +66,8 @@
           "savePhotosPermission": "Allow Daily Whispers to save quotes to your photo library.",
           "isAccessMediaLocationEnabled": true
         }
-      ]
+      ],
+      "@stripe/stripe-react-native"
     ],
     "scheme": "dailywhispers",
     "experiments": {

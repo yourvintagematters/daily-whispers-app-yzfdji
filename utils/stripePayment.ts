@@ -20,6 +20,7 @@ export interface PaymentResult {
   errorCode?: string;
 }
 
+/** @deprecated Raw card details are no longer sent to the server. Use paymentMethodId from Stripe SDK instead. */
 export interface CardDetails {
   cardNumber: string;
   expiryMonth: string;
@@ -95,28 +96,22 @@ export async function createPaymentIntent(
 }
 
 /**
- * Confirm a payment with card details via Supabase Edge Function
+ * Confirm a payment using a Stripe payment method ID (token) via Supabase Edge Function.
+ * Raw card details are never sent to the server.
  */
 export async function confirmPayment(
   paymentIntentId: string,
   clientSecret: string,
-  cardDetails: CardDetails
+  paymentMethodId: string
 ): Promise<PaymentResult> {
   try {
-    console.log('Confirming payment for intent:', paymentIntentId);
+    console.log('[confirmPayment] Confirming payment for intent:', paymentIntentId, 'with paymentMethodId:', paymentMethodId);
 
     // Call Supabase Edge Function to confirm payment
     const { data: result, error } = await supabase.functions.invoke('confirm-payment', {
       body: {
         paymentIntentId,
-        clientSecret,
-        cardDetails: {
-          number: cardDetails.cardNumber.replace(/\s/g, ''),
-          exp_month: parseInt(cardDetails.expiryMonth, 10),
-          exp_year: parseInt(cardDetails.expiryYear, 10),
-          cvc: cardDetails.cvv,
-          name: cardDetails.cardholderName,
-        },
+        paymentMethodId,
       },
     });
 
@@ -180,83 +175,5 @@ export async function getPaymentIntentStatus(paymentIntentId: string): Promise<{
   }
 }
 
-/**
- * Validate card number using Luhn algorithm
- */
-export function validateCardNumber(cardNumber: string): boolean {
-  const cleaned = cardNumber.replace(/\s/g, '');
-  if (!/^\d{13,19}$/.test(cleaned)) {
-    return false;
-  }
-
-  let sum = 0;
-  let isEven = false;
-
-  for (let i = cleaned.length - 1; i >= 0; i--) {
-    let digit = parseInt(cleaned[i], 10);
-
-    if (isEven) {
-      digit *= 2;
-      if (digit > 9) {
-        digit -= 9;
-      }
-    }
-
-    sum += digit;
-    isEven = !isEven;
-  }
-
-  return sum % 10 === 0;
-}
-
-/**
- * Validate expiry date
- */
-export function validateExpiryDate(month: string, year: string): boolean {
-  const monthNum = parseInt(month, 10);
-  const yearNum = parseInt(year, 10);
-
-  if (monthNum < 1 || monthNum > 12) {
-    return false;
-  }
-
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear() % 100; // Get last 2 digits
-  const currentMonth = currentDate.getMonth() + 1;
-
-  if (yearNum < currentYear) {
-    return false;
-  }
-
-  if (yearNum === currentYear && monthNum < currentMonth) {
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Validate CVV
- */
-export function validateCVV(cvv: string, cardNumber: string): boolean {
-  // American Express cards have 4-digit CVV
-  const isAmex = cardNumber.replace(/\s/g, '').startsWith('34') || 
-                 cardNumber.replace(/\s/g, '').startsWith('37');
-  
-  const expectedLength = isAmex ? 4 : 3;
-  return cvv.length === expectedLength && /^\d+$/.test(cvv);
-}
-
-/**
- * Get card type from card number
- */
-export function getCardType(cardNumber: string): string {
-  const cleaned = cardNumber.replace(/\s/g, '');
-  
-  if (/^4/.test(cleaned)) return 'Visa';
-  if (/^5[1-5]/.test(cleaned)) return 'Mastercard';
-  if (/^3[47]/.test(cleaned)) return 'American Express';
-  if (/^6(?:011|5)/.test(cleaned)) return 'Discover';
-  
-  return 'Unknown';
-}
+// validateCardNumber, validateExpiryDate, validateCVV, getCardType removed —
+// Stripe's CardField component handles all card validation natively.

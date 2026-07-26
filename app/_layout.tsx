@@ -17,6 +17,8 @@ import { StatusBar } from "expo-status-bar";
 import { Button } from "@/components/button";
 import { WidgetProvider } from "@/contexts/WidgetContext";
 import * as Notifications from "expo-notifications";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { getStripePublishableKey } from "@/utils/paymentConfig";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -118,6 +120,7 @@ export default function RootLayout() {
         <ThemeProvider
           value={colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme}
         >
+          <StripeProvider publishableKey={getStripePublishableKey()}>
           <WidgetProvider>
             <GestureHandlerRootView>
             <Stack>
@@ -153,6 +156,7 @@ export default function RootLayout() {
             <SystemBars style={"auto"} />
             </GestureHandlerRootView>
           </WidgetProvider>
+          </StripeProvider>
         </ThemeProvider>
     </>
   );
