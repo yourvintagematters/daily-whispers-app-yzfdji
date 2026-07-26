@@ -67,7 +67,7 @@
           "isAccessMediaLocationEnabled": true
         }
       ],
-      "@stripe/stripe-react-native"
+      ["@stripe/stripe-react-native", { "merchantIdentifier": "merchant.com.dailywhispers.app", "enableGooglePay": false }]
     ],
     "scheme": "dailywhispers",
     "experiments": {
