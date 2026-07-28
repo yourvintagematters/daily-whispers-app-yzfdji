@@ -4,11 +4,11 @@
     "slug": "daily-whispers",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/icon.png.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
+      "image": "./assets/images/icon.png.png",
       "resizeMode": "contain",
       "backgroundColor": "#E6F2F8"
     },
@@ -28,7 +28,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
+        "foregroundImage": "./assets/images/icon.png.png",
         "backgroundColor": "#E6F2F8"
       },
       "edgeToEdgeEnabled": true,
