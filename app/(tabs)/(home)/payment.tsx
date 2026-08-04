@@ -17,7 +17,7 @@ export default function PaymentScreen() {
   const theme = useTheme();
   const router = useRouter();
   const stripe = useStripe();
-  const { optionName, optionPrice, recipientsData, buyerTheme, optionId } = useLocalSearchParams();
+  const { optionName, optionPrice, recipientsData, buyerTheme, optionId, buyerName } = useLocalSearchParams();
 
   const [cardComplete, setCardComplete] = useState(false);
   const [cardholderName, setCardholderName] = useState('');
@@ -110,6 +110,7 @@ export default function PaymentScreen() {
       // Step 4: Record payment in database
       try {
         console.log('[Payment] Recording payment in database...');
+        console.log('[Payment] Invoking record-payment with buyerName:', buyerName);
         const { data: recordResult, error: recordError } = await supabase.functions.invoke('record-payment', {
           body: {
             paymentIntentId: confirmResult.paymentIntentId,
@@ -119,6 +120,7 @@ export default function PaymentScreen() {
             optionName: optionName as string,
             optionId: optionId,
             buyerTheme: buyerTheme as string,
+            buyerName: buyerName as string || null,
             recipientCount: recipients.length,
             recipients,
             metadata: {

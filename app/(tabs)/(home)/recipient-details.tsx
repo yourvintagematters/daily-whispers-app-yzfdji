@@ -28,6 +28,7 @@ export default function RecipientDetailsScreen() {
     }))
   );
   
+  const [buyerName, setBuyerName] = useState<string>('');
   const [buyerTheme, setBuyerTheme] = useState<string>('');
   const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
   const themes = Object.values(DAILY_WHISPERS_THEMES);
@@ -50,6 +51,11 @@ export default function RecipientDetailsScreen() {
   };
 
   const validateRecipients = () => {
+    if (!buyerName.trim()) {
+      Alert.alert('Error', 'Please enter your name');
+      return false;
+    }
+
     for (const recipient of recipients) {
       if (!recipient.name.trim()) {
         Alert.alert('Error', 'Please enter a name for all recipients');
@@ -74,9 +80,11 @@ export default function RecipientDetailsScreen() {
   };
 
   const handleContinueToPayment = () => {
+    console.log('[RecipientDetails] Continue to Payment pressed');
     if (validateRecipients()) {
-      console.log('Recipients validated:', recipients);
-      console.log('Buyer theme:', buyerTheme);
+      console.log('[RecipientDetails] Recipients validated:', recipients);
+      console.log('[RecipientDetails] Buyer name:', buyerName);
+      console.log('[RecipientDetails] Buyer theme:', buyerTheme);
       router.push({
         pathname: '/(tabs)/(home)/payment',
         params: {
@@ -85,6 +93,7 @@ export default function RecipientDetailsScreen() {
           optionPrice,
           recipientsData: JSON.stringify(recipients),
           buyerTheme,
+          buyerName,
         }
       });
     }
@@ -269,6 +278,30 @@ export default function RecipientDetailsScreen() {
             </Text>
           </View>
 
+          {/* Buyer Name Section */}
+          <View style={styles.buyerNameCard}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>
+                Your Name
+              </Text>
+              <Text style={styles.buyerNameSubtitle}>
+                So your recipient knows who sent this gift
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your name"
+                placeholderTextColor="#999"
+                value={buyerName}
+                onChangeText={(text) => {
+                  console.log('[RecipientDetails] Buyer name changed');
+                  setBuyerName(text);
+                }}
+                autoCapitalize="words"
+                autoCorrect={false}
+              />
+            </View>
+          </View>
+
           {/* Recipients Section */}
           <View style={styles.recipientsContainer}>
             {recipients.map((recipient, index) => (
@@ -364,6 +397,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
     color: '#2c5f7a',
+  },
+  buyerNameCard: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  buyerNameSubtitle: {
+    fontSize: 12,
+    color: '#2c5f7a',
+    marginBottom: 8,
+    marginTop: -2,
   },
   recipientsContainer: {
     marginBottom: 24,
