@@ -29,6 +29,7 @@ export default function RecipientDetailsScreen() {
   );
   
   const [buyerName, setBuyerName] = useState<string>('');
+  const [buyerEmail, setBuyerEmail] = useState<string>('');
   const [buyerTheme, setBuyerTheme] = useState<string>('');
   const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
   const themes = Object.values(DAILY_WHISPERS_THEMES);
@@ -53,6 +54,11 @@ export default function RecipientDetailsScreen() {
   const validateRecipients = () => {
     if (!buyerName.trim()) {
       Alert.alert('Error', 'Please enter your name');
+      return false;
+    }
+
+    if (!buyerEmail.trim() || !buyerEmail.includes('@')) {
+      Alert.alert('Error', 'Please enter your email address so your recipient knows who sent this gift');
       return false;
     }
 
@@ -94,6 +100,7 @@ export default function RecipientDetailsScreen() {
           recipientsData: JSON.stringify(recipients),
           buyerTheme,
           buyerName,
+          buyerEmail,
         }
       });
     }
@@ -297,6 +304,22 @@ export default function RecipientDetailsScreen() {
                   setBuyerName(text);
                 }}
                 autoCapitalize="words"
+                autoCorrect={false}
+              />
+            </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Your Email</Text>
+              <Text style={styles.buyerNameSubtitle}>
+                So your recipient sees this gift is from you
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                placeholderTextColor="#999"
+                value={buyerEmail}
+                onChangeText={(text) => setBuyerEmail(text)}
+                keyboardType="email-address"
+                autoCapitalize="none"
                 autoCorrect={false}
               />
             </View>

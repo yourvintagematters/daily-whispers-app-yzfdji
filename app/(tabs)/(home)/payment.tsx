@@ -17,7 +17,7 @@ export default function PaymentScreen() {
   const theme = useTheme();
   const router = useRouter();
   const stripe = useStripe();
-  const { optionName, optionPrice, recipientsData, buyerTheme, optionId, buyerName } = useLocalSearchParams();
+  const { optionName, optionPrice, recipientsData, buyerTheme, optionId, buyerName, buyerEmail } = useLocalSearchParams();
 
   const [cardComplete, setCardComplete] = useState(false);
   const [cardholderName, setCardholderName] = useState('');
@@ -121,6 +121,7 @@ export default function PaymentScreen() {
             optionId: optionId,
             buyerTheme: buyerTheme as string,
             buyerName: buyerName as string || null,
+            buyerEmail: buyerEmail as string || null,
             recipientCount: recipients.length,
             recipients,
             metadata: {
