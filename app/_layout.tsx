@@ -19,6 +19,7 @@ import { WidgetProvider } from "@/contexts/WidgetContext";
 import * as Notifications from "expo-notifications";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { getStripePublishableKey } from "@/utils/paymentConfig";
+import * as Linking from "expo-linking";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -48,6 +49,39 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }, 3000);
     return () => clearTimeout(timer);
+  }, []);
+
+  // ── Deep link handling ────────────────────────────────────────────────────
+  useEffect(() => {
+    const handleUrl = (url: string) => {
+      console.log("[DeepLink] Incoming URL:", url);
+      const parsed = Linking.parse(url);
+      console.log("[DeepLink] Parsed:", JSON.stringify(parsed));
+      if (parsed.path === "recipient" || parsed.hostname === "recipient") {
+        const token = parsed.queryParams?.token as string | undefined;
+        console.log("[DeepLink] Navigating to /recipient with token:", token ? token.slice(0, 8) + "..." : "none");
+        if (token) {
+          router.push({ pathname: "/recipient", params: { token } });
+        } else {
+          router.push("/recipient");
+        }
+      }
+    };
+
+    // Handle cold-start URL
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        console.log("[DeepLink] Cold-start URL:", url);
+        handleUrl(url);
+      }
+    });
+
+    // Handle foreground URL events
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      handleUrl(url);
+    });
+
+    return () => subscription.remove();
   }, []);
 
   useEffect(() => {
@@ -126,6 +160,12 @@ export default function RootLayout() {
             <Stack>
               {/* Main app with tabs */}
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+              {/* Recipient quote screen — deep-linked, no header */}
+              <Stack.Screen
+                name="recipient"
+                options={{ headerShown: false, animation: "fade" }}
+              />
 
               {/* Modal Demo Screens */}
               <Stack.Screen
