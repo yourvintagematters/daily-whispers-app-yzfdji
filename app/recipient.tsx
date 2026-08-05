@@ -14,6 +14,7 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as MediaLibrary from 'expo-media-library';
 import * as Notifications from 'expo-notifications';
@@ -147,6 +148,23 @@ export default function RecipientScreen() {
     console.log('[RecipientScreen] Notification permission status:', status);
     if (status === 'granted') {
       console.log('[RecipientScreen] Notification permission granted');
+      try {
+        const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+        console.log('[RecipientScreen] Fetching Expo push token, projectId:', projectId);
+        const expoPushToken = await Notifications.getExpoPushTokenAsync({ projectId });
+        console.log('[RecipientScreen] Expo push token obtained:', expoPushToken.data);
+        const { error: supabaseError } = await supabase
+          .from('recipient_tokens')
+          .update({ expo_push_token: expoPushToken.data, notifications_enabled: true })
+          .eq('token', token);
+        if (supabaseError) {
+          console.error('[RecipientScreen] Failed to save push token to Supabase:', supabaseError);
+        } else {
+          console.log('[RecipientScreen] Push token saved to Supabase successfully');
+        }
+      } catch (err) {
+        console.error('[RecipientScreen] Error obtaining or saving push token:', err);
+      }
     } else {
       console.log('[RecipientScreen] Notification permission denied');
     }
