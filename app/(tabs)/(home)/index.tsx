@@ -150,8 +150,11 @@ export default function HomeScreen() {
 
   const renderHeaderRight = () => (
     <Pressable
-      onPress={() => router.push('/(tabs)/demo')}
-      style={styles.headerButtonContainer}
+      onPress={() => {
+        console.log('Header Demo button pressed');
+        router.push('/(tabs)/demo');
+      }}
+      style={styles.headerDemoPill}
     >
       <IconSymbol 
         ios_icon_name="play.circle.fill" 
@@ -159,6 +162,7 @@ export default function HomeScreen() {
         size={24}
         color="#5d8aa8" 
       />
+      <Text style={styles.headerDemoLabel}>Demo</Text>
     </Pressable>
   );
 
@@ -488,7 +492,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  headerButtonContainer: {
-    padding: 6,
+  headerDemoPill: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  headerDemoLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#5d8aa8',
+    marginTop: 2,
   },
 });

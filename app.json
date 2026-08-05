@@ -45,8 +45,15 @@
         {
           "action": "VIEW",
           "autoVerify": true,
-          "data": [{ "scheme": "dailywhispers" }],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "data": [
+            {
+              "scheme": "dailywhispers"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },

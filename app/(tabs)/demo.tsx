@@ -116,7 +116,7 @@ export default function DemoScreen() {
                 </View>
               </View>
               <Text style={[styles.notificationBody, { color: theme.colors.text }]}>
-                Your daily quote from John is here! 💫
+                Your daily quote from Mika is here! 💫
               </Text>
               <Pressable
                 onPress={handleShowQuote}
@@ -137,7 +137,7 @@ export default function DemoScreen() {
                   ]}
                 >
                   <Text style={[styles.recipientNameTop, { color: theme.colors.text }]}>
-                    Dear Sarah
+                    Dear Dani
                   </Text>
                   <Text style={[styles.quoteText, { color: theme.colors.text }]}>
                     "{currentQuotes[currentQuoteIndex]}"
@@ -148,7 +148,7 @@ export default function DemoScreen() {
                     resizeMode="contain"
                   />
                   <Text style={[styles.purchaserNameBottom, { color: theme.colors.text }]}>
-                    Love, John
+                    Love, Mika
                   </Text>
                 </Animated.View>
                 

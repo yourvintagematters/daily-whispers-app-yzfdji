@@ -54,6 +54,7 @@ export default function RecipientScreen() {
   const [error, setError] = useState<string | null>(null);
   const [showNotifModal, setShowNotifModal] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [unsubscribing, setUnsubscribing] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const cardRef = useRef<View>(null);
@@ -190,6 +191,49 @@ export default function RecipientScreen() {
     router.push('/(tabs)/(home)');
   };
 
+  const handleUnsubscribe = () => {
+    console.log('[RecipientScreen] Unsubscribe link tapped');
+    Alert.alert(
+      'Stop Daily Quotes?',
+      'Are you sure you want to stop receiving your daily quotes? This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Yes, Unsubscribe',
+          style: 'destructive',
+          onPress: confirmUnsubscribe,
+        },
+      ]
+    );
+  };
+
+  const confirmUnsubscribe = async () => {
+    console.log('[RecipientScreen] Unsubscribe confirmed, calling edge function');
+    setUnsubscribing(true);
+    try {
+      const { error: fnError } = await supabase.functions.invoke(
+        'unsubscribe-recipient',
+        { body: { token } }
+      );
+      if (fnError) {
+        console.error('[RecipientScreen] Unsubscribe edge function error:', fnError.message);
+        throw new Error(fnError.message);
+      }
+      console.log('[RecipientScreen] Unsubscribe successful, clearing token from AsyncStorage');
+      await AsyncStorage.removeItem(ASYNC_KEY_TOKEN);
+      Alert.alert(
+        "You've been unsubscribed.",
+        "You won't receive any more daily quotes.",
+        [{ text: 'OK', onPress: () => router.push('/(tabs)/(home)') }]
+      );
+    } catch (err) {
+      console.error('[RecipientScreen] Unsubscribe error:', err);
+      Alert.alert('Something went wrong. Please try again.');
+    } finally {
+      setUnsubscribing(false);
+    }
+  };
+
   // ── Derived values ────────────────────────────────────────────────────────
   const themeKey = quoteData?.theme as keyof typeof DAILY_WHISPERS_THEMES | undefined;
   const themeObj = themeKey ? DAILY_WHISPERS_THEMES[themeKey] : null;
@@ -290,6 +334,19 @@ export default function RecipientScreen() {
               </Text>
             </Pressable>
           </View>
+
+          {/* Unsubscribe link */}
+          <Pressable
+            onPress={handleUnsubscribe}
+            disabled={unsubscribing}
+            style={styles.unsubscribeLink}
+          >
+            {unsubscribing ? (
+              <ActivityIndicator size="small" color="#999" />
+            ) : (
+              <Text style={styles.unsubscribeLinkText}>Unsubscribe from daily quotes</Text>
+            )}
+          </Pressable>
         </ScrollView>
 
         {/* Notification Permission Modal */}
@@ -449,6 +506,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
     width: 80,
+  },
+  unsubscribeLink: {
+    paddingTop: 24,
+    paddingBottom: 8,
+    alignItems: 'center',
+  },
+  unsubscribeLinkText: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'center',
   },
   // Modal
   modalOverlay: {
