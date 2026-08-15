@@ -4,11 +4,11 @@
     "slug": "daily-whispers",
     "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/icon.png.png",
+      "image": "./assets/images/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#E6F2F8"
     },
