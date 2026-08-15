@@ -32,7 +32,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#E6F2F8"
       },
       "edgeToEdgeEnabled": true,
