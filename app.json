@@ -43,19 +43,22 @@
         "READ_EXTERNAL_STORAGE"
       ],
       "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "dailywhispers"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
-        }
+  {
+    "action": "VIEW",
+    "autoVerify": true,
+    "data": [
+      {
+        "scheme": "https",
+        "host": "derryth.com.au",
+        "pathPrefix": "/recipient"
+      }
+    ],
+    "category": [
+      "BROWSABLE",
+      "DEFAULT"
+    ]
+  }
+
       ]
     },
     "web": {
