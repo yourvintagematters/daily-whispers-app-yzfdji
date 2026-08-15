@@ -2,7 +2,7 @@
   "expo": {
     "name": "Daily Whispers",
     "slug": "daily-whispers",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png.png",
     "userInterfaceStyle": "automatic",
@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.dailywhispers.app",
-      "buildNumber": "1.0.3",
+      "buildNumber": "1.0.4",
       "associatedDomains": ["applinks:derryth.com.au"],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
