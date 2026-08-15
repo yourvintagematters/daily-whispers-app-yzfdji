@@ -20,11 +20,12 @@
         "applinks:derryth.com.au"
       ],
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSPhotoLibraryUsageDescription": "Daily Whispers needs access to your photo library to save quotes as images.",
-        "NSPhotoLibraryAddUsageDescription": "Daily Whispers needs permission to save quotes to your photo library.",
-        "NSUserNotificationsUsageDescription": "Daily Whispers sends you an inspirational quote each day. Allow notifications to receive this gift from someone who cares about you."
-      },
+  "ITSAppUsesNonExemptEncryption": false,
+  "NSPhotoLibraryUsageDescription": "Daily Whispers needs access to your photo library to save quotes as images.",
+  "NSPhotoLibraryAddUsageDescription": "Daily Whispers needs permission to save quotes to your photo library.",
+  "NSUserNotificationsUsageDescription": "Daily Whispers sends you an inspirational quote each day. Allow notifications to receive this gift from someone who cares about you.",
+  "NSLocalNotificationUsageDescription": "Daily Whispers sends you an inspirational quote each day. Allow notifications to receive this gift from someone who cares about you."
+},
       "config": {
         "usesNonExemptEncryption": false
       }
