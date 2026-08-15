@@ -350,7 +350,7 @@ export default function PaymentScreen() {
             <Pressable
               onPress={() => {
                 console.log('[Payment] Privacy Policy link pressed');
-                WebBrowser.openBrowserAsync('https://raw.githubusercontent.com/yourvintagematters/Privacy_Policy/refs/heads/main/Privacy_Policy');
+                WebBrowser.openBrowserAsync('https://yourvintagematters.github.io/Derryth_Nash_Creative/privacy_policy_daily_whispers');
               }}
             >
               <Text style={styles.privacyLinkText}>Privacy Policy</Text>
