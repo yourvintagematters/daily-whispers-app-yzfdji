@@ -96,10 +96,13 @@ export default function RootLayout() {
 
     // Listen for notification responses
     const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        console.log("Notification response:", response);
-      }
-    );
+  (response) => {
+    const token = response.notification.request.content.data?.token;
+    if (token) {
+      router.push(`/recipient?token=${token}`);
+    }
+  }
+);
 
     return () => {
       subscription.remove();
