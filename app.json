@@ -16,7 +16,9 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.dailywhispers.app",
       "buildNumber": "1.0.4",
-      "associatedDomains": ["applinks:derryth.com.au"],
+      "associatedDomains": [
+        "applinks:derryth.com.au"
+      ],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "Daily Whispers needs access to your photo library to save quotes as images.",
@@ -43,22 +45,21 @@
         "READ_EXTERNAL_STORAGE"
       ],
       "intentFilters": [
-  {
-    "action": "VIEW",
-    "autoVerify": true,
-    "data": [
-      {
-        "scheme": "https",
-        "host": "derryth.com.au",
-        "pathPrefix": "/recipient"
-      }
-    ],
-    "category": [
-      "BROWSABLE",
-      "DEFAULT"
-    ]
-  }
-
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "derryth.com.au",
+              "pathPrefix": "/recipient"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "web": {
