@@ -16,7 +16,7 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.dailywhispers.app",
       "buildNumber": "1.0.3",
-      "associatedDomains": ["applinks:derryth.com.au"]
+      "associatedDomains": ["applinks:derryth.com.au"],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "Daily Whispers needs access to your photo library to save quotes as images.",
