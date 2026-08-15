@@ -112,7 +112,8 @@
       "androidMode": "default",
       "androidCollapsedTitle": "Daily Whispers"
     },
-    "privacy": "public",
+   "privacy": "public",
+"privacyPolicyUrl": "https://yourvintagematters.github.io/Derryth_Nash_Creative/privacy_policy_daily_whispers",
     "description": "Daily Whispers - A gift-based app where you can purchase and send daily inspirational quotes to loved ones. Choose from 8 themed quote collections and brighten someone's day, every day for a year."
   },
   "scheme": "Daily Whispers"
