@@ -11,7 +11,7 @@ export function HeaderRightButton() {
       onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
       style={styles.headerButtonContainer}
     >
-      <IconSymbol ios_icon_name="plus" android_material_icon_name="add" color={theme.colors.primary} />
+      <IconSymbol name="plus" color={theme.colors.primary} />
     </Pressable>
   );
 }
@@ -24,7 +24,8 @@ export function HeaderLeftButton() {
       onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
       style={styles.headerButtonContainer}
     >
-      <IconSymbol ios_icon_name="gear" android_material_icon_name="settings" color={theme.colors.primary} />
+      <IconSymbol name="gear" color={theme.colors.primary} />
+
     </Pressable>
   );
 }
