@@ -157,11 +157,10 @@ export default function HomeScreen() {
       style={styles.headerDemoPill}
     >
       <IconSymbol 
-        ios_icon_name="play.circle.fill" 
-        android_material_icon_name="play_circle" 
-        size={24}
-        color="#5d8aa8" 
-      />
+  name="play.fill"
+  size={24}
+  color="#5d8aa8" 
+/>
       <Text style={styles.headerDemoLabel}>Demo</Text>
     </Pressable>
   );
@@ -283,11 +282,10 @@ export default function HomeScreen() {
               style={styles.demoButton}
             >
               <IconSymbol 
-                ios_icon_name="play.circle.fill" 
-                android_material_icon_name="play_circle" 
-                size={20}
-                color="#FFFFFF" 
-              />
+  name="play.fill"
+  size={24}
+  color="#5d8aa8" 
+/>
               <Text style={styles.demoButtonText}>
                 Try Interactive Demo
               </Text>
