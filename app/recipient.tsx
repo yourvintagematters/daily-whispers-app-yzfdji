@@ -329,11 +329,10 @@ export default function RecipientScreen() {
                 <ActivityIndicator size="small" color={buttonColor} />
               ) : (
                 <IconSymbol
-                  ios_icon_name="arrow.down.circle.fill"
-                  android_material_icon_name="save"
-                  size={28}
-                  color={buttonColor}
-                />
+  name="square.and.arrow.down"
+  size={28}
+  color={buttonColor}
+/>
               )}
               <Text style={[styles.circleButtonLabel, { color: buttonColor }]}>
                 Save this Quote
@@ -342,11 +341,10 @@ export default function RecipientScreen() {
 
             <Pressable style={styles.circleButton} onPress={handlePayItForward}>
               <IconSymbol
-                ios_icon_name="heart.fill"
-                android_material_icon_name="favorite"
-                size={28}
-                color={buttonColor}
-              />
+  name="heart.fill"
+  size={28}
+  color={buttonColor}
+/>
               <Text style={[styles.circleButtonLabel, { color: buttonColor }]}>
                 Pay it Forward
               </Text>
