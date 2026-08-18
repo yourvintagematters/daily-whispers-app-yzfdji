@@ -38,13 +38,11 @@
       "edgeToEdgeEnabled": true,
       "package": "com.dailywhispers.app",
       "versionCode": 2,
-      "permissions": [
-        "NOTIFICATIONS",
-        "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE",
-        "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE"
-      ],
+     "permissions": [
+  "NOTIFICATIONS",
+  "RECEIVE_BOOT_COMPLETED",
+  "VIBRATE"
+],
       "intentFilters": [
         {
           "action": "VIEW",
