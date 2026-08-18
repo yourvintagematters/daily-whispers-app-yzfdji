@@ -22,7 +22,7 @@ export default function HomeLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: Platform.OS === 'ios',
+       headerShown: true,
         headerRight: () => <SettingsButton />,
       }}
     >
