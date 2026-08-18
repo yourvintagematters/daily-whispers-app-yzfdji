@@ -55,6 +55,7 @@ const MAPPING = {
   "multiply": "clear",
   "trash.fill": "delete",
   "trash": "delete-outline",
+  "ellipsis": "more-horiz",
 
   // Editing & Creation
   "pencil": "edit",
@@ -80,6 +81,8 @@ const MAPPING = {
   "play.fill": "play-arrow",
   "pause.fill": "pause",
   "stop.fill": "stop",
+  "play.circle": "play-circle-outline",
+  "play.circle.fill": "play-circle-filled",
 
   // System & Settings
   "gear": "settings",
@@ -120,6 +123,7 @@ const MAPPING = {
   "dollarsign.circle.fill": "monetization-on",
   "bag.fill": "shopping-bag",
   "bag": "shopping-bag",
+  "gift.fill": "card-giftcard",
 
   // Location & Maps
   "location.fill": "location-on",
@@ -149,6 +153,8 @@ const MAPPING = {
   "square.and.arrow.down": "download",
   "arrow.up.doc.fill": "upload-file",
   "link": "link",
+  "arrow.down.circle": "download",
+  "arrow.down.circle.fill": "download",
 
   // Search & Discovery
   "magnifyingglass": "search",
