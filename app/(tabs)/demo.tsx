@@ -156,11 +156,10 @@ export default function DemoScreen() {
                 <View style={styles.circleButtonRow}>
                   <Pressable style={styles.circleButton} onPress={handleSave}>
                     <IconSymbol
-                      ios_icon_name="arrow.down.circle.fill"
-                      android_material_icon_name="save"
-                      size={28}
-                      color="#5d8aa8"
-                    />
+  name="square.and.arrow.down"
+  size={28}
+  color="#5d8aa8"
+/>
                     <Text style={styles.circleButtonLabel}>Save this Quote</Text>
                   </Pressable>
                   <Pressable
@@ -171,11 +170,10 @@ export default function DemoScreen() {
                     }}
                   >
                     <IconSymbol
-                      ios_icon_name="heart.fill"
-                      android_material_icon_name="favorite"
-                      size={28}
-                      color="#5d8aa8"
-                    />
+  name="heart.fill"
+  size={28}
+  color="#5d8aa8"
+/>
                     <Text style={styles.circleButtonLabel}>Pay it Forward</Text>
                   </Pressable>
                 </View>
@@ -217,12 +215,11 @@ export default function DemoScreen() {
             title: 'Demo',
             headerLeft: () => (
               <Pressable onPress={() => router.back()} style={styles.headerButton}>
-                <IconSymbol
-                  ios_icon_name="chevron.left"
-                  android_material_icon_name="arrow_back"
-                  size={24}
-                  color="#5d8aa8"
-                />
+               <IconSymbol
+  name="chevron.left"
+  size={24}
+  color="#5d8aa8"
+/>
               </Pressable>
             ),
           }}
