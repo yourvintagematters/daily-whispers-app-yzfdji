@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396903303761",
+    "project_id": "daily-whispers",
+    "storage_bucket": "daily-whispers.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396903303761:android:d33fea0f1db9e4ac4c8670",
+        "android_client_info": {
+          "package_name": "com.dailywhispers.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5LK8pv6wjOtlwp-PzDreKmtxxjAR-W8E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
