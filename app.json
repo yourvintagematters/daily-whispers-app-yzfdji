@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Daily Whispers",
-    "slug": "daily-whispers",
+    "slug": "daily-whispers-app-yzfdji",
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -38,13 +38,13 @@
       "edgeToEdgeEnabled": true,
       "package": "com.dailywhispers.app",
       "versionCode": 2,
-    "permissions": [
-  "NOTIFICATIONS",
-  "RECEIVE_BOOT_COMPLETED",
-  "VIBRATE",
-  "READ_MEDIA_IMAGES",
-  "READ_MEDIA_VIDEO"
-],
+      "permissions": [
+        "NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO"
+      ],
       "intentFilters": [
         {
           "action": "VIEW",
