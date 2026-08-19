@@ -44,7 +44,6 @@
         "VIBRATE",
         "READ_MEDIA_IMAGES",
         "READ_MEDIA_VIDEO"
-        "supportsTablet": false }
       ],
       "intentFilters": [
         {
