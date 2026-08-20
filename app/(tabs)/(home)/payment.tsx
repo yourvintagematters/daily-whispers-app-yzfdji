@@ -139,20 +139,18 @@ export default function PaymentScreen() {
         console.error('[Payment] Error recording payment:', recordError);
       }
 
-      // Step 5: Show success and navigate
-      Alert.alert(
-        'Payment Successful! 🎉',
-        'Your purchase has been completed. Recipients will receive their daily quotes starting tomorrow!',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              console.log('[Payment] Navigating to home after successful payment');
-              router.replace('/(tabs)/(home)');
-            },
-          },
-        ]
-      );
+      // Step 5: Navigate to gift confirmation screen
+      console.log('[Payment] Navigating to gift confirmation screen');
+      const firstRecipientName = recipients.length > 0 ? recipients[0].name : 'your recipient';
+      router.replace({
+        pathname: '/(tabs)/(home)/gift-confirmation',
+        params: {
+          optionName: optionName as string,
+          optionPrice: optionPrice as string,
+          recipientName: firstRecipientName,
+          buyerName: (buyerName as string) || 'A friend',
+        },
+      });
     } catch (error) {
       console.error('[Payment] Unexpected payment error:', error);
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
