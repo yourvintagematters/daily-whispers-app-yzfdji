@@ -8,7 +8,7 @@ export const PAYMENT_CONFIG = {
   // Stripe configuration
   stripe: {
     // PRODUCTION MODE - false for live deployment, true for testing
-    testMode: false,
+    testMode: true,
     // Test API keys (for development only)
     testPublishableKey: 'pk_test_51SN0VCD17kmTdMDJe4HOvt0h9XSdRMqtui4g4jgbMgKd4mmAEvKuW4NGVUdwyRCbIatOj6X75fE6x98lmABoTstG00tg3PE9L4',
     // Production keys - Your live publishable key
