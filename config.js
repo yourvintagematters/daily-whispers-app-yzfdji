@@ -12,7 +12,7 @@ export const TEST_SUPABASE_URL = "https://pweskdufsgkzneibjnhe.supabase.co";
 export const TEST_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3ZXNrZHVmc2drem5laWJqbmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNDc3OTcsImV4cCI6MjEwMjgyMzc5N30.jZ9XdMMe62HVBf3Y7AI3L4XWNgJiMWP8S-ERMnpECUk";
 
 // TEST STRIPE VALUES
-export const TEST_STRIPE_PUBLIC_KEY = "pk_test_XXXXXXXXXXXXXXXXXXXXXXXX";
+export const TEST_STRIPE_PUBLIC_KEY = "pk_test_51SN0VCD17kmTdMDJe4HOvt0h9XSdRMqtui4g4jgbMgKd4mmAEvKuW4NGVUdwyRCbIatOj6X75fE6x98lmABoTstG00tg3PE9L4";
 
 // Mode helper
 export const IS_TEST_MODE = MODE === "test";
