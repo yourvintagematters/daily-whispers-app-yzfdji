@@ -104,9 +104,14 @@
       "enabled": false
     },
     "extra": {
-      "router": {},
-      "eas": {}
-    },
+  "supabaseUrl": "https://cyktcpdmlsfjyrnutmln.supabase.co",
+  "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3ZXNrZHVmc2drem5laWJqbmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNDc3OTcsImV4cCI6MjEwMjgyMzc5N30.jZ9XdMMe62HVBf3Y7AI3L4XWNgJiMWP8S-ERMnpECUk",
+  "stripePublishableKey": "pk_test_51SN0VCD17kmTdMDJe4HOvt0h9XSdRMqtui4g4jgbMgKd4mmAEvKuW4NGVUdwyRCbIatOj6X75fE6x98lmABoTstG00tg3PE9L4",
+  "apiUrl": "https://cyktcpdmlsfjyrnutmln.supabase.co/functions/v1",
+  "router": {},
+  "eas": {}
+},
+
     "notification": {
       "icon": "./assets/images/b84729c0-4f36-41ea-9d92-e46ccc02a67c.png",
       "color": "#5d8aa8",
