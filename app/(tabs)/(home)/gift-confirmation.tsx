@@ -23,7 +23,7 @@ export default function GiftConfirmationScreen() {
   const resolvedOptionName = (optionName as string) || "";
   const resolvedOptionPrice = (optionPrice as string) || "";
 
-  const messageTemplate = `Dear ${resolvedRecipientName}, Just a quick note to let you know I am sending you a gift. Keep an eye out for an email from dailywhispers@derryth.com.au. If you click the link you can download the app to receive a year of daily quotes from me to you. Please enjoy! From ${resolvedBuyerName}.`;
+  const messageTemplate = `Dear ${resolvedRecipientName}, Just a quick note to let you know I am sending you a gift. Keep an eye out for an email from dailywhispers@derryth.com.au and when you open it, click the link to download the Daily Whispers app to receive a year of daily quotes from me to you. Please enjoy! From ${resolvedBuyerName}.`;
 
   const [message, setMessage] = useState(messageTemplate);
 
